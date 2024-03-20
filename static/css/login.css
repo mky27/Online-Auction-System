@@ -1,0 +1,71 @@
+@charset "utf-8";
+
+.image {
+    position: absolute;
+    top: 15%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 250px;
+    height: 250px;
+}
+
+.rounded-box {
+    width: 300px;
+    margin: auto;
+    background-color: #ffffff;
+    border-radius: 20px;
+    padding: 20px;
+    text-align: center;
+    position: relative;
+    top: 50%;
+    border: 3px solid #252525;
+    font-size: 13px;
+}
+
+.login-input {
+    width: 65%;
+    padding: 10px;
+    margin: 13px auto;
+    border-radius: 10px;
+    border: 1px solid #252525;
+    text-align: center;
+    height: 13px;
+}
+
+.login-button {
+    width: 60%;
+    padding: 10px;
+    margin: 20px auto;
+    border: none;
+    border-radius: 12px;
+    background-color: #252525;
+    color: white;
+    cursor: pointer;
+}
+
+.login-button:hover {
+    background-color: #3c3c3c;
+}
+
+.rmb-checkbox{
+    cursor: pointer;
+}
+
+.forgot-password,
+.register {
+    font-size: 13px;
+    margin-top: 20px;
+    text-decoration: none; /*link without underline */
+    color: black;
+    display: inline-block;
+}
+
+.forgot-password:hover,
+.register:hover{
+    color: #5e5e5e;
+}
+
+.tab {
+    display: inline-block;
+    margin-left: .5em;
+}

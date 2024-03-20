@@ -1,0 +1,36 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register | Bidify</title>
+    <script>
+    </script>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/register.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/font.css' %}">
+</head>
+
+<body>
+    <div>
+        <img src="{% static 'image/bidify.jpg' %}" alt="bidify" class="logo">
+        <br><br><br><br><br><br><br><br><br><br><br>
+    </div>
+    
+    <div class="rounded-box">
+        <h2>Register</h2><br><br>
+            <form action="{% url 'register_pi' %}" method="post">
+                <label for="username" class="label">New Username:</label>
+                <input type="text" class="register-input" name="username" placeholder="New Username" required><br>
+                <label for="password" class="label">New Password:</label>
+                <input type="password" class="register-input" name="password" placeholder="New Password" required><br>
+                <label for="password" class="label">Confirm Password:</label>
+                <input type="password" class="register-input" name="password" placeholder="Confirm Password" required><br><br>
+                <div class="next-button">
+                    <button type="submit">Next</button>
+                </div><br>
+            </form>        
+    </div>
+</body>
+</html>

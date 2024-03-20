@@ -1,0 +1,113 @@
+@charset "utf-8";
+
+.logo {
+    position: absolute;
+    top: 15%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 250px;
+    height: 250px;
+}
+
+.rounded-box {
+    width: 900px;
+    margin: auto;
+    background-color: #ffffff;
+    border-radius: 20px;
+    padding: 20px;
+    position: relative;
+    border: 3px solid #252525;
+    font-size: 13px;
+    text-align: center;
+}
+
+.register_pi-input1 {
+    width: 33%;
+    padding: 10px;
+    margin: 7px;
+    border-radius: 5px;
+    border: 1px solid #252525;
+    text-align: center;
+    font-weight: bold;
+    height: 10px;
+}
+
+.register_pi-input2 {
+    width: 15%;
+    padding: 10px;
+    margin: 7px;
+    border-radius: 5px;
+    border: 1px solid #252525;
+    text-align: center;
+    height: 10px;
+    font-family: Arial, Helvetica, sans-serif;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.register_pi-input3 {
+    width: 10%;
+    padding: 5px;
+    margin: 7px;
+    border-radius: 5px;
+    border: 1px solid #252525;
+    text-align: center;
+    height: 32px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.register_pi-input4 {
+    width: 23%;
+    padding: 10px;
+    margin: 7px;
+    border-radius: 5px;
+    border: 1px solid #252525;
+    text-align: center;
+    font-weight: bold;
+    height: 10px;
+}
+
+.container {
+    display: flex;
+    flex-direction: row; /* Arrange items horizontally */
+    align-items: center; /* Center items horizontally */
+    justify-content: center; 
+}
+
+textarea {
+    font-family: Arial, Helvetica, sans-serif;
+    width: 33%;
+    height: 50px;
+    padding: 10px;
+    margin: 7px;
+    border-radius: 5px;
+    border: 1px solid #252525;
+    text-align: left;
+    font-weight: bold;
+    resize: none;
+}
+
+.next-button {
+    text-align: right;
+    width: 550px;
+}
+
+button {
+    width: 33%;
+    padding: 10px;
+    border: none;
+    border-radius: 12px;
+    background-color: #252525;
+    color: white;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #3c3c3c;
+}
+
+.tab {
+    display: inline-block;
+    margin-left: 5em;
+}
