@@ -1,50 +1,14 @@
-{% load static %}
+{% extends 'base.html' %}
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Register Personal Information | Bidify</title>
-    <script>
-    </script>
-    <link rel="stylesheet" type="text/css" href="{% static 'css/register_pi.css' %}">
-    <link rel="stylesheet" type="text/css" href="{% static 'css/font.css' %}">
-</head>
-
-<body>
-    <div>
-        <img src="{% static 'image/bidify.jpg' %}" alt="bidify" class="logo">
-        <br><br><br><br><br><br><br><br><br><br><br>
-    </div>
-    
-    <div class="rounded-box">
-        <h2>Personal Information</h2><br>
-            <form action="#" method="post">
-                <label for="fname" class="label">First Name:</label>
-                <input type="text" class="register_pi-input1" name="fname" required><span class="tab"></span> 
-                <label for="lname" class="label">Last Name:</label>
-                <input type="text" class="register_pi-input1" name="lname" required><br><br><br>
-                <label for="dob" class="label">Date of Birth:</label>
-                <input type="date" class="register_pi-input2" name="dob" required><span class="tab"></span> 
-                <label for="gender" class="label">Gender:</label>
-                <select id="gender" name="gender" class="register_pi-input3" required>
-                    <option value=""></option>
-                    <option value="male">Male</option>
-                    <option value="female">Female</option>
-                </select><span class="tab"></span> 
-                <label for="phoneno" class="label" >Phone Number:</label>
-                <input type="tel" class="register_pi-input4" name="phoneno" required><br><br><br>
-                <div class="container">
-                    <label for="email" class="label">Email:</label>
-                    <input type="email" class="register_pi-input1" name="email" required><span class="tab"></span>
-                    <label for="address" class="label">Address:</label>
-                    <textarea id="address" name="address" required></textarea><br>
-                </div><br><br>
-                <div class="next-button">
-                    <button type="submit">Register</button>
-                </div><br>
-            </form>
-    </div>
-</body>
-</html>
+{% block content %}
+<h1>Personal Information</h1>
+<table>
+<form method="post" action="{% url 'register_pi' username=username %}">
+    {% csrf_token %}
+    <tr>
+    {{ form }}
+    <td><button name="register">Register</button></td>
+    </tr>
+</form>
+</table>
+{% endblock %}

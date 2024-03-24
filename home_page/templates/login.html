@@ -1,36 +1,7 @@
-{% load static %}
+{% extends 'base.html' %}
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login | Bidify</title>
-    <script>
-    </script>
-    <link rel="stylesheet" type="text/css" href="{% static 'css/login.css' %}">
-    <link rel="stylesheet" type="text/css" href="{% static 'css/font.css' %}">
+{% block content %}
+<h1>Login</h1>
 
-</head>
-
-<body>
-    <div>
-        <img src="{% static 'image/bidify.jpg' %}" alt="bidify" class="image">
-        <br><br><br><br><br><br><br><br><br><br><br><br><br>
-    </div>
-    
-    <div class="rounded-box"><br><br>
-        <form action="#" method="post">
-            <label for="username">Username:</label><span class="tab"></span>
-            <input type="text" class="login-input" name="username" placeholder="Username" required><br>
-            <label for="password">Password:</label><span class="tab"></span>
-            <input type="password" class="login-input" name="password" placeholder="Password" required><br><br>
-            <label><input type="checkbox" class="rmb-checkbox"> Remember me</label><br><br>
-            <button type="submit" class="login-button">Login</button>
-        </form><br>
-        <a href="forget_pass" class="forgot-password">Forgot password</a><span class="tab"></span> 
-        <b>|</b><span class="tab"></span><a href="{% url 'register' %}" class="register">Register</a>
-    </div>
-
-</body>
-</html>
+<a href="{% url 'register' %}">Register</a>
+{% endblock %}

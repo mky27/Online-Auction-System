@@ -1,21 +1,6 @@
-{% load static %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Main Page | Bidify</title>
-    <script>
-    </script>
-</head>
+{% extends 'base.html' %}
 
-<body>
-    <div class="headnav">
-        <p><a href="{% url 'login' %}">Login or Register</a></p>
-    </div>
-    <div class="image-container">
-        <img src="{% static 'image/bidify.jpg' %}" alt="bidify">
-    </div>
-    <hr>
-</body>
-</html>
+{% block content %}
+<h1>Home Page</h1>
+<p><a href="{% url 'login' %}">Login or Register</a></p>
+{% endblock %}
