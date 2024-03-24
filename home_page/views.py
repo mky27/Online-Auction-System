@@ -1,3 +1,4 @@
+from django.db import IntegrityError
 from django.shortcuts import loader, redirect, render
 from django.views.decorators.csrf import csrf_exempt
 from .forms import UserRegistrationForm, PersonalInfoForm
@@ -23,17 +24,18 @@ def register(request):
             password = form.cleaned_data['password']
             confirm_password = form.cleaned_data['confirm_password']
             if password != confirm_password:
-                return render(request, 'register.html', {'form': form, 'error': 'Passwords do not match.'})
+                context = {'form': form, 'error': 'Passwords do not match.'}
+                return render(request, 'register.html', context)
             else:
-                # Save user registration data to OASuser table
-                user = OASuser.objects.create(username=username, password=password,)
-                # Redirect to register_pi view with user's username as a parameter
-                return redirect('register_pi', username=username)
+                try:
+                    user = OASuser.objects.create(username=username, password=password,) # Save user registration data to OASuser table
+                    return redirect('register_pi', username=username) # Redirect to register_pi view with user's username as a parameter
+                except IntegrityError:
+                    context = {'form': form, 'error': 'Username already exists. Please choose a different username.'}
+                    return render(request, 'register.html', context)
     else:
         form = UserRegistrationForm()
-        context = {}
-        context['title'] = "Register | Bidify"
-        context['form'] = form
+        context = {'title': "Register | Bidify", 'form': form}
     return render(request, 'register.html', context)
 
 def register_pi(request, username):
@@ -41,7 +43,6 @@ def register_pi(request, username):
     if request.method == 'POST':
         form = PersonalInfoForm(request.POST)
         if form.is_valid():
-            # Save personal information data to OASuser table
             first_name = form.cleaned_data['first_name']
             last_name = form.cleaned_data['last_name']
             date_of_birth = form.cleaned_data['date_of_birth']
@@ -56,7 +57,7 @@ def register_pi(request, username):
             user.phone_number = phone_number
             user.email = email
             user.address = address
-            user.save()
+            user.save() # Save personal information data to OASuser table
             return redirect('login')
     else:
         form = PersonalInfoForm()

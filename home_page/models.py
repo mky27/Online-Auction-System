@@ -15,6 +15,12 @@ class OASuser(models.Model):
     def __str__(self):
         return self.username
     
+    # python manage.py makemigrations
+    # python manage.py migrate
+
+    # python manage.py runserver
+
     # python manage.py shell
     # from home_page.models import OASuser
     # OASuser.objects.all()
+    
