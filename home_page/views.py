@@ -1,5 +1,5 @@
 from django.db import IntegrityError
-from django.shortcuts import loader, redirect, render
+from django.shortcuts import redirect, render
 from django.views.decorators.csrf import csrf_exempt
 from .forms import UserRegistrationForm, PersonalInfoForm
 from .models import OASuser
@@ -21,18 +21,16 @@ def register(request):
         form = UserRegistrationForm(request.POST)
         if form.is_valid():
             username = form.cleaned_data['username']
-            password = form.cleaned_data['password']
+            userPass = form.cleaned_data['userPass']
             confirm_password = form.cleaned_data['confirm_password']
-            if password != confirm_password:
-                context = {'form': form, 'error': 'Passwords do not match.'}
-                return render(request, 'register.html', context)
+            if userPass != confirm_password:
+                context = {'form': form, 'error': 'Passwords do not match.', 'title': 'Register | Bidify'}
             else:
                 try:
-                    user = OASuser.objects.create(username=username, password=password,) # Save user registration data to OASuser table
+                    OASuser.objects.create(username=username, userPass=userPass) # Save user registration data to OASuser table
                     return redirect('register_pi', username=username) # Redirect to register_pi view with user's username as a parameter
                 except IntegrityError:
-                    context = {'form': form, 'error': 'Username already exists. Please choose a different username.'}
-                    return render(request, 'register.html', context)
+                    context = {'form': form, 'error': 'Username already exists. Please choose a different username.', 'title': 'Register | Bidify'}
     else:
         form = UserRegistrationForm()
         context = {'title': "Register | Bidify", 'form': form}
@@ -43,22 +41,23 @@ def register_pi(request, username):
     if request.method == 'POST':
         form = PersonalInfoForm(request.POST)
         if form.is_valid():
-            first_name = form.cleaned_data['first_name']
-            last_name = form.cleaned_data['last_name']
+            fName = form.cleaned_data['fName']
+            lName = form.cleaned_data['lName']
             date_of_birth = form.cleaned_data['date_of_birth']
             gender = form.cleaned_data['gender']
-            phone_number = form.cleaned_data['phone_number']
+            phoneNo = form.cleaned_data['phoneNo']
             email = form.cleaned_data['email']
             address = form.cleaned_data['address']
-            user.first_name = first_name
-            user.last_name = last_name
+            user.fName = fName
+            user.lName =lName
             user.date_of_birth = date_of_birth
             user.gender = gender
-            user.phone_number = phone_number
+            user.phoneNo = phoneNo
             user.email = email
             user.address = address
             user.save() # Save personal information data to OASuser table
             return redirect('login')
     else:
         form = PersonalInfoForm()
-    return render(request, 'register_pi.html', {'form': form, 'username': username})
+        context = {'title': "Personal Info | Bidify", 'form': form, 'username': username}
+    return render(request, 'register_pi.html', context)
