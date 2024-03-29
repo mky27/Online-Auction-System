@@ -5,11 +5,9 @@
 <table>
 <form method="post" action="{% url 'register_pi' username=username %}">
     {% csrf_token %}
-    <tr>
-    {{ form }}
+    {{ form.as_p }}
     {{ error }}
-    <td><button name="register">Register</button></td>
-    </tr>
+    <button name="register">Register</button>
 </form>
 </table>
 {% endblock %}

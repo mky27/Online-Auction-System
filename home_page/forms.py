@@ -13,3 +13,7 @@ class PersonalInfoForm(forms.Form):
     phoneNo = forms.CharField(label='Phone Number', max_length=20)
     email = forms.EmailField(label='Email')
     address = forms.CharField(label='Address', widget=forms.Textarea)
+
+class LoginForm(forms.Form):
+    username = forms.CharField(label='Username', max_length=15)
+    userPass = forms.CharField(label='Password', widget=forms.PasswordInput)

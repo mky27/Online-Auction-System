@@ -1,20 +1,35 @@
 from django.db import IntegrityError
 from django.shortcuts import redirect, render
-from django.views.decorators.csrf import csrf_exempt
-from .forms import UserRegistrationForm, PersonalInfoForm
+from django.contrib.auth.hashers import make_password
+from django.contrib.auth import authenticate, login
+from .forms import UserRegistrationForm, PersonalInfoForm, LoginForm
 from .models import OASuser
 
 # Create your views here.
 
 def home_page(request):
-  context = {}
-  context['title'] = "Main Page | Bidify"
-  return render(request, 'home_page.html', context)
+    context = {}
+    context['title'] = "Main Page | Bidify"
+    return render(request, 'home_page.html', context)
   
-def login(request):
-  context = {}
-  context['title'] = "Login | Bidify"
-  return render(request, 'login.html', context)
+def log_in(request):
+    if request.method == 'POST':
+        form = LoginForm(request.POST)
+        if form.is_valid():
+            username = form.cleaned_data['username']
+            userPass = form.cleaned_data['userPass']
+            user = authenticate(request, username=username, userPass=userPass)
+            if user is not None:
+                login(request, user)
+                # Redirect to a success page
+                return redirect('home_page')
+            else:
+                # Invalid login
+                context = {'form': form, 'error' : "Invalid username or password.", 'title': "Login | Bidify"}
+    else:
+        form = LoginForm()
+        context = {'form': form, 'title': "Login | Bidify"}
+    return render(request, 'login.html', context)
 
 def register(request):
     if request.method == 'POST':
@@ -27,7 +42,7 @@ def register(request):
                 context = {'form': form, 'error': 'Passwords do not match.', 'title': 'Register | Bidify'}
             else:
                 try:
-                    OASuser.objects.create(username=username, userPass=userPass) # Save user registration data to OASuser table
+                    OASuser.objects.create(username=username, userPass=make_password(userPass)) # Save user registration data to OASuser table
                     return redirect('register_pi', username=username) # Redirect to register_pi view with user's username as a parameter
                 except IntegrityError:
                     context = {'form': form, 'error': 'Username already exists. Please choose a different username.', 'title': 'Register | Bidify'}

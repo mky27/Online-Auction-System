@@ -2,6 +2,11 @@
 
 {% block content %}
 <h1>Login</h1>
-
+<form method="post" action="{% url 'login' %}">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button name="login">Login</button>
+</form>
+{{ error }}
 <a href="{% url 'register' %}">Register</a>
 {% endblock %}

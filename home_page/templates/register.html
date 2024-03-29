@@ -2,13 +2,10 @@
 
 {% block content %}
 <h1>Register</h1>
-<table>
 <form method="post" action="{% url 'register' %}">
     {% csrf_token %}
-    <tr>
-    {{ form }}
-    <td><button name="next">Next</button></td>
-    </tr>
+    {{ form.as_p }}
+    <button name="next">Next</button>
 </form>
-</table>
+{{ error }}
 {% endblock %}
