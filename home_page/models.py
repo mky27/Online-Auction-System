@@ -12,7 +12,7 @@ class OASuser(models.Model):
     phoneNo = models.CharField(max_length=20)
     email = models.EmailField()
     address = models.TextField()
-    last_login = models.DateTimeField()
+    last_login = models.DateTimeField(default=datetime.date.today)
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
  
@@ -21,6 +21,27 @@ class OASuser(models.Model):
     
     def check_password(self, raw_password):
         return check_password_hash(raw_password, self.userPass)
+    
+    def has_perm(self, perm, obj=None):
+        """
+        Does the user have a specific permission?
+        """
+        # Simplest possible answer: Yes, always
+        return True
+
+    def has_module_perms(self, app_label):
+        """
+        Does the user have permissions to view the app `app_label`?
+        """
+        # Simplest possible answer: Yes, always
+        return True
+
+    def get_username(self):
+        """
+        Return the username of the user.
+        """
+        return self.username
+
 
 
     # python manage.py makemigrations

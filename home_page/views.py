@@ -75,4 +75,4 @@ def register_pi(request, username):
     else:
         form = PersonalInfoForm()
         context = {'title': "Personal Info | Bidify", 'form': form, 'username': username}
-    return render(request, 'register_pi.html', context)
+        return render(request, 'register_pi.html', context)
