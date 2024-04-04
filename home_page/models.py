@@ -43,7 +43,6 @@ class OASuser(models.Model):
         return self.username
 
 
-
     # python manage.py makemigrations
     # python manage.py migrate
 
