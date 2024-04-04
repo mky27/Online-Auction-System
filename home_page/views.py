@@ -1,7 +1,7 @@
 from django.db import IntegrityError
 from django.shortcuts import redirect, render
 from django.contrib.auth.hashers import make_password
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
 from .forms import UserRegistrationForm, PersonalInfoForm, LoginForm
 from .models import OASuser
 
@@ -9,7 +9,6 @@ from .models import OASuser
 
 def home_page(request):
     context = {}
-    context['title'] = "Main Page | Bidify"
     return render(request, 'home_page.html', context)
   
 def log_in(request):
@@ -21,15 +20,20 @@ def log_in(request):
             user = authenticate(request, username=username, userPass=userPass)
             if user is not None:
                 login(request, user)
+                print(user.id)
                 # Redirect to a success page
                 return redirect('home_page')
             else:
                 # Invalid login
-                context = {'form': form, 'error' : "Invalid username or password.", 'title': "Login | Bidify"}
+                context = {'form': form, 'error' : "Invalid username or password."}
     else:
         form = LoginForm()
-        context = {'form': form, 'title': "Login | Bidify"}
+        context = {'form': form}
     return render(request, 'login.html', context)
+
+def log_out(request):
+    logout(request)
+    return redirect('home_page')  
 
 def register(request):
     if request.method == 'POST':
@@ -39,16 +43,16 @@ def register(request):
             userPass = form.cleaned_data['userPass']
             confirm_password = form.cleaned_data['confirm_password']
             if userPass != confirm_password:
-                context = {'form': form, 'error': 'Passwords do not match.', 'title': 'Register | Bidify'}
+                context = {'form': form, 'error': 'Passwords do not match.'}
             else:
                 try:
                     OASuser.objects.create(username=username, userPass=make_password(userPass)) # Save user registration data to OASuser table
                     return redirect('register_pi', username=username) # Redirect to register_pi view with user's username as a parameter
                 except IntegrityError:
-                    context = {'form': form, 'error': 'Username already exists. Please choose a different username.', 'title': 'Register | Bidify'}
+                    context = {'form': form, 'error': 'Username already exists. Please choose a different username.'}
     else:
         form = UserRegistrationForm()
-        context = {'title': "Register | Bidify", 'form': form}
+        context = {'form': form}
     return render(request, 'register.html', context)
 
 def register_pi(request, username):
@@ -74,5 +78,5 @@ def register_pi(request, username):
             return redirect('login')
     else:
         form = PersonalInfoForm()
-        context = {'title': "Personal Info | Bidify", 'form': form, 'username': username}
-        return render(request, 'register_pi.html', context)
+        context = {'form': form, 'username': username}
+    return render(request, 'register_pi.html', context)
