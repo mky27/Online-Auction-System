@@ -1,6 +1,7 @@
 import datetime
 from django.db import models
 from django.contrib.auth.hashers import check_password as check_password_hash
+from django.contrib.auth.hashers import make_password
 
 class OASuser(models.Model):
     username = models.CharField(max_length=15, unique=True)
@@ -43,6 +44,10 @@ class OASuser(models.Model):
     @property
     def is_authenticated(self):
         return self.is_active
+    
+    def set_password(self, raw_password):
+        self.userPass = make_password(raw_password)
+
 
     # python manage.py makemigrations
     # python manage.py migrate

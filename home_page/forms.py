@@ -2,8 +2,8 @@ from django import forms
 
 class UserRegistrationForm(forms.Form):
     username = forms.CharField(label='Username', max_length=15)
-    userPass = forms.CharField(label='Password', widget=forms.PasswordInput)
-    confirm_password = forms.CharField(label='Confirm Password', widget=forms.PasswordInput)
+    userPass = forms.CharField(label='Password', widget=forms.PasswordInput())
+    confirm_password = forms.CharField(label='Confirm Password', widget=forms.PasswordInput())
 
 class PersonalInfoForm(forms.Form):
     fName = forms.CharField(label='First Name', max_length=50)
@@ -16,4 +16,12 @@ class PersonalInfoForm(forms.Form):
 
 class LoginForm(forms.Form):
     username = forms.CharField(label='Username', max_length=15)
-    userPass = forms.CharField(label='Password', widget=forms.PasswordInput)
+    userPass = forms.CharField(label='Password', widget=forms.PasswordInput())
+
+class ForgotPassForm(forms.Form):
+    username = forms.CharField(label='Username', max_length=15)
+    email = forms.EmailField(label='Email')
+
+class ResetPassForm(forms.Form):
+    userPass = forms.CharField(label='New Password', widget=forms.PasswordInput())
+    confirm_password = forms.CharField(label='Confirm Password', widget=forms.PasswordInput())

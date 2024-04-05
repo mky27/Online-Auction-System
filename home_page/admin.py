@@ -3,6 +3,6 @@ from home_page.models import OASuser
 # Register your models here.
 
 class OASuserAdmin(admin.ModelAdmin):
-    list_display = ['username', 'userPass']
+    list_display = ['username', 'userPass', 'email']
 
 admin.site.register(OASuser, OASuserAdmin)
