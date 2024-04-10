@@ -4,7 +4,7 @@ from django.shortcuts import redirect, render
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.password_validation import validate_password
-from .forms import UserRegistrationForm, PersonalInfoForm, LoginForm, ForgotPassForm, ResetPassForm
+from .forms import UserRegistrationForm, PersonalInfoForm, LoginForm, ForgotPassForm, ResetPassForm, validate_username
 from .models import OASuser
 
 # Create your views here.
@@ -51,9 +51,8 @@ def register(request):
                 context['error'] = 'Passwords do not match.'
             else:
                 try:
-                    # Validate the password
+                    validate_username(username)
                     validate_password(userPass)
-                    # Save user registration data to OASuser table
                     OASuser.objects.create(username=username, userPass=make_password(userPass))
                     return redirect('register_pi', username=username)
                 except ValidationError as e:
@@ -107,7 +106,7 @@ def forgot_pass(request):
                 request.session['reset_user_id'] = user.id  # Store user ID in session
                 return redirect('reset_pass')
             except OASuser.DoesNotExist:
-                error = "Username and email do not match"
+                error = "Username and email do not match."
                 return render(request, 'forgot_pass.html', {'form': form, 'error': error})
     else:
         form = ForgotPassForm()

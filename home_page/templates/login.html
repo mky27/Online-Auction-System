@@ -1,13 +1,32 @@
-{% extends 'base.html' %}
+{% load static %}
 
-{% block title %}Login | Bidify{% endblock %}
-{% block content %}
-<h1>Login</h1>
-<form method="post" action="{% url 'login' %}">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit" name="login">Login</button>
-</form>
-{{ error }}
-<p><a href="{% url 'register' %}">Register</a> | <a href="{% url 'forgot_pass' %}">Forgotten Password</a></p>
-{% endblock %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login | Bidify</title>
+    <script>
+    </script>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/login.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/font.css' %}">
+</head>
+
+<body>
+    <div class="image-container">
+        <img src="{% static 'image/bidify.png' %}" alt="bidify" class="logo">
+    </div>
+
+    <div class="rounded-box">
+        <h2>Login</h2><br>
+        <form method="post" action="{% url 'login' %}">
+            {% csrf_token %}
+            {{ form }}
+            <p class="error">{{ error }}</p><br><br>
+            <button type="submit" name="login-button">Login</button>
+        </form>
+        
+        <p><a href="{% url 'register' %}" class="register">Register</a> <b>|</b> <a href="{% url 'forgot_pass' %}" class="forgot-password">Forgotten Password</a></p>
+    </div>
+</body>
+</html>

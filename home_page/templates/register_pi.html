@@ -1,14 +1,63 @@
-{% extends 'base.html' %}
+{% load static %}
 
-{% block title %}Personal Info | Bidify{% endblock %}
-{% block content %}
-<h1>Personal Information</h1>
-<table>
-<form method="post" action="{% url 'register_pi' username=username %}">
-    {% csrf_token %}
-    {{ form.as_p }}
-    {{ error }}
-    <button type="submit" name="register">Register</button>
-</form>
-</table>
-{% endblock %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Personal Information | Bidify</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/register_pi.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/font.css' %}">
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.0/themes/base/jquery-ui.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.13.0/jquery-ui.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('#id_date_of_birth').datepicker({
+                dateFormat: 'yy-mm-dd',  // Change format as per your needs
+                changeMonth: true,
+                changeYear: true,
+                yearRange: "-100:+0" // Allow selection from 100 years ago to today
+            });
+        });
+    </script>
+</head>
+
+<body>
+    <div>
+        <img src="{% static 'image/bidify.png' %}" alt="bidify" class="logo">
+    </div>
+
+    <div class="rounded-box">
+        <h2>Personal Information</h2><br>
+        <form method="post" action="{% url 'register_pi' username=username %}">
+            {% csrf_token %}
+            <div class="form-row1">
+                {{ form.fName.label_tag }}
+                {{ form.fName }}
+                <span class="tab"></span>
+                {{ form.lName.label_tag }}
+                {{ form.lName }}
+            </div><br><br>
+            <div class="form-row2">
+                {{ form.date_of_birth.label_tag }}
+                {{ form.date_of_birth }}
+                <span class="tab"></span>
+                {{ form.gender.label_tag }}
+                {{ form.gender }}
+                <span class="tab"></span>
+                {{ form.phoneNo.label_tag }}
+                {{ form.phoneNo }}
+            </div><br><br>
+            <div class="form-row3">
+                {{ form.email.label_tag }}
+                {{ form.email }}
+                <span class="tab"></span><span class="tab"></span>
+                {{ form.address.label_tag }}
+                {{ form.address }}
+            </div><br><br>
+            <button type="submit" name="register">Register</button>
+        </form>
+    </div>
+</body>
+</html>

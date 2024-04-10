@@ -2,7 +2,7 @@
 
 .logo {
     position: absolute;
-    top: 15%;
+    top: 17%;
     left: 50%;
     transform: translate(-50%, -50%);
     width: 250px;
@@ -11,39 +11,38 @@
 
 .rounded-box {
     width: 900px;
-    margin: auto;
     background-color: #ffffff;
     border-radius: 20px;
     padding: 20px;
-    position: relative;
-    top: 50%;
+    text-align: center;
+    top: 28%;
     border: 3px solid #252525;
     font-size: 13px;
-    text-align: center;
+    position: fixed;
 }
 
-form {
-    text-align: right;
-    width: 650px;
+body {
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center; /* Center horizontally */
+    align-items: center; /* Center vertically */
+    height: 90vh; /* Full viewport height */
+    background-color: #efefef;
 }
 
-.register-input {
+form input {
     width: 35%;
     padding: 10px;
-    margin: 13px;
+    margin: 13px auto;
     border-radius: 10px;
     border: 1px solid #252525;
     text-align: center;
     height: 13px;
 }
 
-.next-button {
-    text-align: right;
-    width: 550px;
-}
-
-button {
-    width: 33%;
+form button[type="submit"] {
+    width: 20%;
     padding: 10px;
     margin: 20px auto;
     border: none;
@@ -53,11 +52,15 @@ button {
     cursor: pointer;
 }
 
-button:hover {
+form button[type="submit"]:hover {
     background-color: #3c3c3c;
 }
 
-.tab {
-    display: inline-block;
-    margin-left: 5em;
+.error {
+    color: red;
+}
+
+.form {
+    width: 600px;
+    text-align: right;
 }

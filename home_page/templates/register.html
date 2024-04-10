@@ -1,12 +1,32 @@
-{% extends 'base.html' %}
+{% load static %}
 
-{% block title %}Register | Bidify{% endblock %}
-{% block content %}
-<h1>Register</h1>
-<form method="post" action="{% url 'register' %}">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit" name="next">Next</button>
-</form>
-{{ error }}
-{% endblock %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register | Bidify</title>
+    <script>
+    </script>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/register.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/font.css' %}">
+</head>
+
+<body>
+    <div>
+        <img src="{% static 'image/bidify.png' %}" alt="bidify" class="logo">
+    </div>
+
+    <div class="rounded-box">
+        <h2>Register</h2><br>
+            <form action="{% url 'register' %}" method="post">
+                {% csrf_token %}
+                <div class="form">
+                    {{ form.as_p }}
+                </div>
+                <p class="error">{{ error }}</p><br>
+                <button type="submit" name="next">Next</button>
+            </form>        
+    </div>
+</body>
+</html>

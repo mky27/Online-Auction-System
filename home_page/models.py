@@ -4,7 +4,7 @@ from django.contrib.auth.hashers import check_password as check_password_hash
 from django.contrib.auth.hashers import make_password
 
 class OASuser(models.Model):
-    username = models.CharField(max_length=15, unique=True)
+    username = models.CharField(max_length=20, unique=True)
     userPass = models.CharField(max_length=255)
     fName = models.CharField(max_length=50)
     lName = models.CharField(max_length=50)

@@ -10,7 +10,7 @@
 }
 
 .rounded-box {
-    width: 300px;
+    width: 370px;
     background-color: #ffffff;
     border-radius: 20px;
     padding: 20px;
@@ -19,20 +19,6 @@
     border: 3px solid #252525;
     font-size: 13px;
     position: fixed;
-}
-
-.forgot-password,
-.register {
-    font-size: 13px;
-    margin-top: 20px;
-    text-decoration: none; /*link without underline */
-    color: black;
-    display: inline-block;
-}
-
-.forgot-password:hover,
-.register:hover{
-    color: #5e5e5e;
 }
 
 body {
@@ -45,8 +31,13 @@ body {
     background-color: #efefef;
 }
 
+.form {
+    text-align: right;
+    width: 93%;
+}
+
 form input {
-    width: 63%;
+    width: 200px;
     padding: 10px;
     margin: 13px auto;
     border-radius: 10px;
