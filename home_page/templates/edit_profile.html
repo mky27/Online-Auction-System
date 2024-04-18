@@ -1,0 +1,19 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Profile | Bidify</title>
+</head>
+<body>
+    <div class="image-container">
+        <p><a href="{% url 'home_page' %}">Back</a></p>
+        <img src="{% static 'image/bidify.png' %}" alt="bidify">
+    </div>
+    <hr>
+    {% block content %}
+    {% endblock %}
+</body> 
+</html>

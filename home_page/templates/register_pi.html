@@ -14,7 +14,7 @@
     <script>
         $(document).ready(function() {
             $('#id_date_of_birth').datepicker({
-                dateFormat: 'yy-mm-dd',  // Change format as per your needs
+                dateFormat: 'yy-mm-dd',
                 changeMonth: true,
                 changeYear: true,
                 yearRange: "-100:+0" // Allow selection from 100 years ago to today
@@ -24,9 +24,7 @@
 </head>
 
 <body>
-    <div>
-        <img src="{% static 'image/bidify.png' %}" alt="bidify" class="logo">
-    </div>
+    <img src="{% static 'image/bidify.png' %}" alt="bidify" class="logo">
 
     <div class="rounded-box">
         <h2>Personal Information</h2><br>

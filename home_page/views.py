@@ -4,7 +4,7 @@ from django.shortcuts import redirect, render
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.password_validation import validate_password
-from .forms import UserRegistrationForm, PersonalInfoForm, LoginForm, ForgotPassForm, ResetPassForm, validate_username
+from .forms import UserRegistrationForm, PersonalInfoForm, LoginForm, ForgotPassForm, ResetPassForm, EditProfileForm, validate_username
 from .models import OASuser
 
 # Create your views here.
@@ -134,7 +134,7 @@ def reset_pass(request):
                         user.set_password(userPass)
                         user.save()
                         del request.session['reset_user_id']
-                        return redirect('login')  # Redirect to login page after password reset
+                        return redirect('login')
                     else:
                         context['form'] = form
                         context['error'] = "User ID not found in session."
@@ -150,3 +150,24 @@ def reset_pass(request):
         form = ResetPassForm()
         context['form'] = form
     return render(request, 'reset_pass.html', context)
+
+def edit_profile(request):
+    context = {}
+    if request.method == 'POST':
+        form = EditProfileForm(request.POST)
+        if form.is_valid():
+            fName = form.cleaned_data['fName']
+            lName = form.cleaned_data['lName']
+            date_of_birth = form.cleaned_data['date_of_birth']
+            gender = form.cleaned_data['gender']
+            phoneNo = form.cleaned_data['phoneNo']
+            email = form.cleaned_data['email']
+            address = form.cleaned_data['address']
+            try:
+                user = OASuser.objects.get(email=email)
+                request.session['reset_user_id'] = user.id  # Store user ID in session
+                return redirect('reset_pass')
+            except OASuser.DoesNotExist:
+                error = "Username and email do not match."
+                return render(request, 'forgot_pass.html', {'form': form, 'error': error})
+
