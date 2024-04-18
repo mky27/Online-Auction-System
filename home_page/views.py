@@ -4,6 +4,7 @@ from django.shortcuts import redirect, render
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.password_validation import validate_password
+from django.contrib.auth.decorators import login_required
 from .forms import UserRegistrationForm, PersonalInfoForm, LoginForm, ForgotPassForm, ResetPassForm, EditProfileForm, validate_username
 from .models import OASuser
 
@@ -151,23 +152,32 @@ def reset_pass(request):
         context['form'] = form
     return render(request, 'reset_pass.html', context)
 
+
+@login_required
 def edit_profile(request):
-    context = {}
+    user = request.user
     if request.method == 'POST':
         form = EditProfileForm(request.POST)
         if form.is_valid():
-            fName = form.cleaned_data['fName']
-            lName = form.cleaned_data['lName']
-            date_of_birth = form.cleaned_data['date_of_birth']
-            gender = form.cleaned_data['gender']
-            phoneNo = form.cleaned_data['phoneNo']
-            email = form.cleaned_data['email']
-            address = form.cleaned_data['address']
-            try:
-                user = OASuser.objects.get(email=email)
-                request.session['reset_user_id'] = user.id  # Store user ID in session
-                return redirect('reset_pass')
-            except OASuser.DoesNotExist:
-                error = "Username and email do not match."
-                return render(request, 'forgot_pass.html', {'form': form, 'error': error})
-
+            user.fName = form.cleaned_data['fName']
+            user.lName = form.cleaned_data['lName']
+            user.date_of_birth = form.cleaned_data['date_of_birth']
+            user.gender = form.cleaned_data['gender']
+            user.phoneNo = form.cleaned_data['phoneNo']
+            user.email = form.cleaned_data['email']
+            user.address = form.cleaned_data['address']
+            user.save()
+            return redirect('home_page')
+    else:
+        # Populate the form with user's current data
+        initial_data = {
+            'fName': user.fName,
+            'lName': user.lName,
+            'date_of_birth': user.date_of_birth,
+            'gender': user.gender,
+            'phoneNo': user.phoneNo,
+            'email': user.email,
+            'address': user.address
+        }
+        form = EditProfileForm(initial=initial_data)
+    return render(request, 'edit_profile.html', {'form': form})

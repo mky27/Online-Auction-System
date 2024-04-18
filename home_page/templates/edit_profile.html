@@ -6,14 +6,27 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Edit Profile | Bidify</title>
+    <script>
+        $(document).ready(function() {
+            $('#id_date_of_birth').datepicker({
+                dateFormat: 'yy-mm-dd',
+                changeMonth: true,
+                changeYear: true,
+                yearRange: "-100:+0" // Allow selection from 100 years ago to today
+            });
+        });
+    </script>
 </head>
 <body>
     <div class="image-container">
-        <p><a href="{% url 'home_page' %}">Back</a></p>
+        <p><a href="{% url 'home_page' %}"> &lt; Back</a></p>
         <img src="{% static 'image/bidify.png' %}" alt="bidify">
     </div>
     <hr>
-    {% block content %}
-    {% endblock %}
+    <form method="post" action="{% url 'edit_profile' %}">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Save</button>
+    </form>
 </body> 
 </html>
