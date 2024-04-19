@@ -5,8 +5,8 @@ from django.contrib.auth.hashers import make_password
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.password_validation import validate_password
 from django.contrib.auth.decorators import login_required
-from .forms import UserRegistrationForm, PersonalInfoForm, LoginForm, ForgotPassForm, ResetPassForm, EditProfileForm, validate_username
-from .models import OASuser
+from .forms import UserRegistrationForm, PersonalInfoForm, LoginForm, ForgotPassForm, ResetPassForm, EditProfileForm, CreateAuctionForm, validate_username
+from .models import OASuser, OASauction
 
 # Create your views here.
 
@@ -181,3 +181,28 @@ def edit_profile(request):
         }
         form = EditProfileForm(initial=initial_data)
     return render(request, 'edit_profile.html', {'form': form})
+
+@login_required
+def create_auction(request):
+    if request.method == 'POST':
+        form = CreateAuctionForm(request.POST, request.FILES)
+        if form.is_valid():
+            seller = request.user
+            item_name = form.cleaned_data['item_name']
+            item_desc = form.cleaned_data['item_desc']
+            item_cat = form.cleaned_data['item_cat']
+            start_bid = form.cleaned_data['start_bid']
+            auction_end_time = form.cleaned_data['auction_end_time']
+            picture1 = form.cleaned_data['picture1']
+            picture2 = form.cleaned_data['picture2']
+            picture3 = form.cleaned_data['picture3']
+            picture4 = form.cleaned_data['picture4']
+            
+            auction = OASauction(seller=seller, item_name=item_name, item_desc=item_desc, item_cat=item_cat,
+                                 start_bid=start_bid, auction_end_time=auction_end_time,
+                                 picture1=picture1, picture2=picture2, picture3=picture3, picture4=picture4)
+            auction.save()
+            return redirect('home_page')  
+    else:
+        form = CreateAuctionForm()
+    return render(request, 'create_auction.html', {'form': form})
