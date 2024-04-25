@@ -1,13 +1,14 @@
 from django.db import IntegrityError
 from django.core.exceptions import ValidationError
 from django.utils import timezone
-from django.shortcuts import redirect, render
+from django.shortcuts import redirect, render, get_object_or_404
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.password_validation import validate_password
 from django.contrib.auth.decorators import login_required
-from .forms import UserRegistrationForm, PersonalInfoForm, LoginForm, ForgotPassForm, ResetPassForm, EditProfileForm, CreateAuctionForm, validate_username
+from .forms import UserRegistrationForm, PersonalInfoForm, LoginForm, ForgotPassForm, ResetPassForm, EditProfileForm, CreateAuctionForm, PlaceBidForm, validate_username
 from .models import OASuser, OASauction
+from decimal import Decimal
 
 # Create your views here.
 
@@ -35,6 +36,7 @@ def log_in(request):
     return render(request, 'login.html', context)
 
 
+@login_required
 def log_out(request):
     logout(request)
     return redirect('home_page')  
@@ -208,3 +210,40 @@ def create_auction(request):
     else:
         form = CreateAuctionForm()
     return render(request, 'create_auction.html', {'form': form})
+
+
+@login_required
+def auction_details(request, auction_id):
+    auction = get_object_or_404(OASauction, pk=auction_id)
+    time_left = auction.auction_end_time - timezone.now()
+    seller_username = auction.seller.username
+    context = {
+        'auction': auction,
+        'time_left': time_left,
+        'seller_username': seller_username
+    }
+    return render(request, 'auction_details.html', context)
+
+
+@login_required
+def place_bid(request, auction_id):
+    auction = get_object_or_404(OASauction, pk=auction_id)
+    error_message = None
+    success_message = None
+    
+    if request.method == 'POST':
+        form = PlaceBidForm(request.POST)
+        if form.is_valid():
+            bid_amount = form.cleaned_data['bid_amount']
+            bid_increase = Decimal('0.1')
+            if bid_amount >= auction.current_bid + bid_increase:  
+                auction.current_bid = bid_amount
+                auction.current_bidder = request.user
+                auction.save()
+                success_message = 'Your bid has been placed successfully.'
+            else:
+                error_message = 'Your bid must be at least 0.10 higher than the current bid.'
+    else:
+        form = PlaceBidForm()
+    
+    return render(request, 'auction_details.html', {'form': form, 'auction': auction, 'error_message': error_message, 'success_message': success_message})

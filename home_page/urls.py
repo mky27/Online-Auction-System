@@ -13,4 +13,6 @@ urlpatterns = [
     path('reset_pass/', views.reset_pass, name='reset_pass'),
     path('edit_profile/', views.edit_profile, name='edit_profile'),
     path('create_auction/', views.create_auction, name='create_auction'),
+    path('auction_details/<int:auction_id>/', views.auction_details, name='auction_details'),
+    path('place_bid/<int:auction_id>/', views.place_bid, name='place_bid'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

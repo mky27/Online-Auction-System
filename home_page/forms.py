@@ -72,3 +72,7 @@ class CreateAuctionForm(forms.Form):
         if auction_end_time <= timezone.now():
             raise forms.ValidationError("Auction end time must be in the future.")
         return auction_end_time
+
+
+class PlaceBidForm(forms.Form):
+    bid_amount = forms.DecimalField(label='Bid Amount', min_value=0, max_digits=10, decimal_places=2)
