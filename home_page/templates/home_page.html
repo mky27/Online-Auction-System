@@ -38,6 +38,18 @@
         <img src="{% static 'image/bidify.png' %}" alt="bidify">
     <hr>
     <h1>Home Page</h1>
+    <ul>
+        {% for auction in auctions %}
+            <li>
+                <a href="{% url 'auction_details' auction.id %}">
+                    <h2>{{ auction.item_name }}</h2>
+                    <p>{{ auction.item_desc }}</p>
+                    <p>Current Bid: RM{{ auction.current_bid }}</p>
+                    <p>End Time: {{ auction.auction_end_time }}</p>
+                </a>
+            </li>
+        {% endfor %}
+    </ul>
 
 </body> 
 </html>

@@ -1,7 +1,11 @@
 from django import forms
 from django.core.exceptions import ValidationError
 from django.core.validators import DecimalValidator
+from django.utils import timezone
 import re
+
+def my_view(request):
+    timezone.activate('UTC')
 
 def validate_username(value):
     if not re.match(r'^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,20}$', value):
@@ -50,7 +54,7 @@ class CreateAuctionForm(forms.Form):
     item_cat = forms.ChoiceField(label='Item Category ', choices=[('Category 1', 'Category 1'), ('Category 2', 'Category 2')], widget=forms.Select(attrs={}))
     start_bid = forms.DecimalField(label='Starting Bid ', max_digits=10, decimal_places=2)
     auction_end_time = forms.DateTimeField(label='End Time ', widget=forms.DateTimeInput(attrs={'type': 'datetime-local'}))
-    picture1 = forms.ImageField()
+    picture1 = forms.ImageField(required=False)
     picture2 = forms.ImageField(required=False)
     picture3 = forms.ImageField(required=False)
     picture4 = forms.ImageField(required=False)
@@ -62,3 +66,9 @@ class CreateAuctionForm(forms.Form):
         except ValidationError:
             raise ValidationError('Starting bid must be a valid decimal number.')
         return start_bid
+    
+    def clean_auction_end_time(self):
+        auction_end_time = self.cleaned_data.get('auction_end_time')
+        if auction_end_time <= timezone.now():
+            raise forms.ValidationError("Auction end time must be in the future.")
+        return auction_end_time

@@ -3,8 +3,6 @@ from django.db import models
 from django.contrib.auth.hashers import check_password as check_password_hash
 from django.contrib.auth.hashers import make_password
 from django.core.validators import MinValueValidator
-from django.utils import timezone
-from django.core.exceptions import ValidationError
 
 class OASuser(models.Model):
     username = models.CharField(max_length=20, unique=True)
@@ -40,6 +38,7 @@ class OASuser(models.Model):
         self.userPass = make_password(raw_password)
 
 class OASauction(models.Model):
+
     ITEM_CATEGORIES = [
         ('Category 1', 'Category 1'),
         ('Category 2', 'Category 2'),
@@ -55,7 +54,7 @@ class OASauction(models.Model):
     buyer = models.ForeignKey(OASuser, on_delete=models.SET_NULL, null=True, blank=True, related_name='buyer_auctions')
     auction_created_time = models.DateTimeField(auto_now_add=True)
     auction_end_time = models.DateTimeField()
-    picture1 = models.ImageField(upload_to='auction_pictures/')
+    picture1 = models.ImageField(upload_to='auction_pictures/', blank=True, null=True)
     picture2 = models.ImageField(upload_to='auction_pictures/', blank=True, null=True)
     picture3 = models.ImageField(upload_to='auction_pictures/', blank=True, null=True)
     picture4 = models.ImageField(upload_to='auction_pictures/', blank=True, null=True)
@@ -67,11 +66,6 @@ class OASauction(models.Model):
         if not self.pk:  # Only update current_bid if it's a new instance
             self.current_bid = self.start_bid
         super().save(*args, **kwargs)
-
-    def clean(self):
-        if self.auction_end_time <= timezone.now():
-            raise ValidationError('Auction end time must be in the future.')
-
 
 
     # python manage.py makemigrations

@@ -1,5 +1,6 @@
 from django.db import IntegrityError
 from django.core.exceptions import ValidationError
+from django.utils import timezone
 from django.shortcuts import redirect, render
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth import authenticate, login, logout
@@ -11,8 +12,8 @@ from .models import OASuser, OASauction
 # Create your views here.
 
 def home_page(request):
-    context = {}
-    return render(request, 'home_page.html', context)
+    auctions = OASauction.objects.all()
+    return render(request, 'home_page.html', {'auctions': auctions})
   
 def log_in(request):
     if request.method == 'POST':
@@ -192,14 +193,15 @@ def create_auction(request):
             item_desc = form.cleaned_data['item_desc']
             item_cat = form.cleaned_data['item_cat']
             start_bid = form.cleaned_data['start_bid']
+            auction_created_time = timezone.localtime(timezone.now())  
             auction_end_time = form.cleaned_data['auction_end_time']
             picture1 = form.cleaned_data['picture1']
             picture2 = form.cleaned_data['picture2']
             picture3 = form.cleaned_data['picture3']
             picture4 = form.cleaned_data['picture4']
-            
+
             auction = OASauction(seller=seller, item_name=item_name, item_desc=item_desc, item_cat=item_cat,
-                                 start_bid=start_bid, auction_end_time=auction_end_time,
+                                 start_bid=start_bid, auction_created_time=auction_created_time, auction_end_time=auction_end_time,
                                  picture1=picture1, picture2=picture2, picture3=picture3, picture4=picture4)
             auction.save()
             return redirect('home_page')  
