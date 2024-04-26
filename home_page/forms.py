@@ -51,13 +51,23 @@ class EditProfileForm(forms.Form):
 class CreateAuctionForm(forms.Form):
     item_name = forms.CharField(label='Item Name ', max_length=50, widget=forms.TextInput(attrs={'autocomplete': 'off'}))
     item_desc = forms.CharField(label='Item Description ', max_length=100, widget=forms.Textarea(attrs={}))
-    item_cat = forms.ChoiceField(label='Item Category ', choices=[('Category 1', 'Category 1'), ('Category 2', 'Category 2')], widget=forms.Select(attrs={}))
+    item_cat = forms.ChoiceField(label='Item Category ', choices=[('Apparel & Accessories', 'Apparel & Accessories'), ('Animal & Pet Supplies', 'Animal & Pet Supplies'),
+                                                                  ('Arts & Entertainment', 'Arts & Entertainment'), ('Baby & Toddler', 'Baby & Toddler'),
+                                                                  ('Camera & Optics', 'Camera & Optics'), ('Electronics', 'Electronics'), ('Food & Beverages', 'Food & Beverages'),
+                                                                  ('Furniture', 'Furniture'), ('Hardware', 'Hardware'), ('Home & Garden', 'Home & Garden'), 
+                                                                  ('Health & Beauty', 'Health & Beauty'), ('Luggage & Bags', 'Luggage & Bags'), ('Office Supplies', 'Office Supplies'),
+                                                                  ('Religious', 'Religious'), ('Sporting Goods', 'Sporting Goods'), ('Toys & Games', 'Toys & Games'),
+                                                                  ('Vehicle & Parts', 'Vehicle & Parts'), ('Others', 'Others')
+                                                                  ], widget=forms.Select(attrs={}))
     start_bid = forms.DecimalField(label='Starting Bid ', max_digits=10, decimal_places=2)
     auction_end_time = forms.DateTimeField(label='End Time ', widget=forms.DateTimeInput(attrs={'type': 'datetime-local'}))
-    picture1 = forms.ImageField(required=False)
-    picture2 = forms.ImageField(required=False)
-    picture3 = forms.ImageField(required=False)
-    picture4 = forms.ImageField(required=False)
+    picture1 = forms.ImageField()
+    picture2 = forms.ImageField()
+    picture3 = forms.ImageField()
+    picture4 = forms.ImageField()
+    picture5 = forms.ImageField(required=False)
+    picture6 = forms.ImageField(required=False)
+    picture7 = forms.ImageField(required=False)
 
     def clean_start_bid(self):
         start_bid = self.cleaned_data['start_bid']

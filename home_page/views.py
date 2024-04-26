@@ -13,8 +13,10 @@ from decimal import Decimal
 # Create your views here.
 
 def home_page(request):
-    auctions = OASauction.objects.all()
-    return render(request, 'home_page.html', {'auctions': auctions})
+    current_time = timezone.now()
+    active_auctions = OASauction.objects.filter(auction_end_time__gt=current_time)
+    return render(request, 'home_page.html', {'auctions': active_auctions})
+
   
 def log_in(request):
     if request.method == 'POST':
@@ -201,10 +203,14 @@ def create_auction(request):
             picture2 = form.cleaned_data['picture2']
             picture3 = form.cleaned_data['picture3']
             picture4 = form.cleaned_data['picture4']
+            picture5 = form.cleaned_data['picture5']
+            picture6 = form.cleaned_data['picture6']
+            picture7 = form.cleaned_data['picture7']
 
             auction = OASauction(seller=seller, item_name=item_name, item_desc=item_desc, item_cat=item_cat,
                                  start_bid=start_bid, auction_created_time=auction_created_time, auction_end_time=auction_end_time,
-                                 picture1=picture1, picture2=picture2, picture3=picture3, picture4=picture4)
+                                 picture1=picture1, picture2=picture2, picture3=picture3, picture4=picture4,
+                                 picture5=picture5, picture6=picture6, picture7=picture7,)
             auction.save()
             return redirect('home_page')  
     else:
@@ -230,6 +236,15 @@ def place_bid(request, auction_id):
     auction = get_object_or_404(OASauction, pk=auction_id)
     error_message = None
     success_message = None
+    seller_username = auction.seller.username
+
+    if auction.auction_end_time <= timezone.now():
+        error_message = "Sorry, the auction has ended. You can no longer place a bid on this item."
+        return render(request, 'auction_details.html', {'auction': auction, 'error_message': error_message, 'seller_username': seller_username})
+    
+    if request.user == auction.seller:
+        error_message = "You cannot place a bid on your own item."
+        return render(request, 'auction_details.html', {'auction': auction, 'error_message': error_message, 'seller_username': seller_username})
     
     if request.method == 'POST':
         form = PlaceBidForm(request.POST)
@@ -246,4 +261,16 @@ def place_bid(request, auction_id):
     else:
         form = PlaceBidForm()
     
-    return render(request, 'auction_details.html', {'form': form, 'auction': auction, 'error_message': error_message, 'success_message': success_message})
+    return render(request, 'auction_details.html', {'form': form, 'auction': auction, 'error_message': error_message, 
+                                                    'success_message': success_message, 'seller_username': seller_username})
+
+
+def update_auction_status(request):
+    active_auctions = OASauction.objects.filter(auction_end_time__gt=timezone.now())
+
+    for auction in active_auctions:
+        if auction.auction_end_time <= timezone.now():
+            auction.current_bidder = auction.current_bidder
+            auction.save()
+
+    return redirect('home_page')

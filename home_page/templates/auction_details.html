@@ -4,9 +4,10 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
     <title>Auction Details</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/auction_details.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/font.css' %}">
 </head>
 <body>
     {% if error_message %}
@@ -24,14 +25,11 @@
     {% endif %}
 
     <p><a href="{% url 'home_page' %}"> &lt; Back</a></p>
+    <img src="{{ auction.picture1.url }}" alt="Item Picture 1" class="item-pic">
     <h1>{{ auction.item_name }}</h1>
-    <img src="{{ auction.picture1.url }}" alt="Item Picture 1">
-    <img src="{{ auction.picture2.url }}" alt="Item Picture 2">
-    <img src="{{ auction.picture3.url }}" alt="Item Picture 3">
-    <img src="{{ auction.picture4.url }}" alt="Item Picture 4">
     <p>Description: {{ auction.item_desc }}</p>
     <p>Category: {{ auction.item_cat }}</p>
-    <p>Auction Time Left: {{ time_left }}</p>
+    <p>Auction Time Left: <span id="countdown"></span></p>
     <p>Auction End Time: {{ auction.auction_end_time }}</p>
     <p>Starting Bid: RM{{ auction.start_bid }}</p>
     <p>Current Bid: RM{{ auction.current_bid }}</p>
@@ -41,5 +39,55 @@
         <button type="submit">Place Bid</button>
     </form>
     <p>Seller: {{ seller_username }}</p>
+
+    <script>
+        // Function to calculate and update the countdown timer
+        function updateCountdown(endTime) {
+            // Get the current time
+            var now = new Date().getTime();
+
+            // Calculate the time difference between now and the end time
+            var timeDifference = endTime - now;
+
+            // Check if the auction has ended
+            if (timeDifference <= 0) {
+                document.getElementById("countdown").innerHTML = "Auction ended";
+                return;
+            }
+
+            // Calculate days, hours, minutes, and seconds
+            var days = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
+            var hours = Math.floor((timeDifference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            var minutes = Math.floor((timeDifference % (1000 * 60 * 60)) / (1000 * 60));
+            var seconds = Math.floor((timeDifference % (1000 * 60)) / 1000);
+
+            // Format the time remaining
+            var countdown = "";
+            if (days > 0) {
+                countdown += days + " day ";
+            }
+            if (hours > 0) {
+                countdown += hours + " hr ";
+            }
+            if (minutes > 0) {
+                countdown += minutes + " min ";
+            }
+            countdown += seconds + " sec";
+
+            // Update the countdown timer display
+            document.getElementById("countdown").innerHTML = countdown;
+
+            // Update the countdown every second
+            setTimeout(function() {
+                updateCountdown(endTime);
+            }, 1000);
+        }
+
+        // Parse the auction end time from Django template to JavaScript Date object
+        var auctionEndTime = new Date("{{ auction.auction_end_time|date:'Y-m-d H:i:s' }}").getTime();
+        
+        // Call the function to initialize the countdown timer
+        updateCountdown(auctionEndTime);
+    </script>
 </body>
 </html>

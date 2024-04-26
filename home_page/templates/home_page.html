@@ -8,7 +8,21 @@
     <link rel="stylesheet" type="text/css" href="{% static 'css/home_page.css' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'css/font.css' %}">
     <title>Main Page | Bidify</title>
-    
+    <script>
+        // Periodically check if auctions have ended
+        setInterval(function() {
+            fetch("{% url 'update_auction_status' %}")
+            .then(response => {
+                if (response.ok) {
+                    // Reload the page if the status update was successful
+                    window.location.reload();
+                } else {
+                    console.error("Failed to update auction status");
+                }
+            })
+            .catch(error => console.error("Error:", error));
+        }, 60000); // Check every minute
+    </script>
 </head>
 <body>
     <ul>
@@ -42,14 +56,14 @@
         {% for auction in auctions %}
             <li>
                 <a href="{% url 'auction_details' auction.id %}">
+                    <img src="{{ auction.picture1.url }}" alt="Item Picture 1" class="item-pic">
                     <h2>{{ auction.item_name }}</h2>
                     <p>{{ auction.item_desc }}</p>
                     <p>Current Bid: RM{{ auction.current_bid }}</p>
                     <p>End Time: {{ auction.auction_end_time }}</p>
                 </a>
-            </li>
+            </li><br>
         {% endfor %}
     </ul>
-
 </body> 
 </html>

@@ -38,26 +38,22 @@ class OASuser(models.Model):
         self.userPass = make_password(raw_password)
 
 class OASauction(models.Model):
-
-    ITEM_CATEGORIES = [
-        ('Category 1', 'Category 1'),
-        ('Category 2', 'Category 2'),
-    ]
-
     item_name = models.CharField(max_length=50)
     item_desc = models.TextField(max_length=100)
-    item_cat = models.CharField(max_length=50, choices=ITEM_CATEGORIES)
+    item_cat = models.CharField(max_length=50)
     start_bid = models.DecimalField(max_digits=10, decimal_places=2, validators=[MinValueValidator(0)])
     current_bid = models.DecimalField(max_digits=10, decimal_places=2, default=start_bid)
     current_bidder = models.ForeignKey(OASuser, on_delete=models.SET_NULL, null=True, blank=True, related_name='bidding_auctions')
     seller = models.ForeignKey(OASuser, on_delete=models.CASCADE, related_name='seller_auctions')
-    buyer = models.ForeignKey(OASuser, on_delete=models.SET_NULL, null=True, blank=True, related_name='buyer_auctions')
     auction_created_time = models.DateTimeField(auto_now_add=True)
     auction_end_time = models.DateTimeField()
-    picture1 = models.ImageField(upload_to='auction_pictures/', blank=True, null=True)
-    picture2 = models.ImageField(upload_to='auction_pictures/', blank=True, null=True)
-    picture3 = models.ImageField(upload_to='auction_pictures/', blank=True, null=True)
-    picture4 = models.ImageField(upload_to='auction_pictures/', blank=True, null=True)
+    picture1 = models.ImageField(upload_to='auction_pictures/')
+    picture2 = models.ImageField(upload_to='auction_pictures/')
+    picture3 = models.ImageField(upload_to='auction_pictures/')
+    picture4 = models.ImageField(upload_to='auction_pictures/')
+    picture5 = models.ImageField(upload_to='auction_pictures/', blank=True, null=True)
+    picture6 = models.ImageField(upload_to='auction_pictures/', blank=True, null=True)
+    picture7 = models.ImageField(upload_to='auction_pictures/', blank=True, null=True)
 
     def __str__(self):
         return self.item_name
@@ -66,6 +62,12 @@ class OASauction(models.Model):
         if not self.pk:  # Only update current_bid if it's a new instance
             self.current_bid = self.start_bid
         super().save(*args, **kwargs)
+
+    def update_second_highest_bid(self, bid_amount):
+        if bid_amount > self.current_bid:
+            self.second_highest_bid = self.current_bid
+            self.current_bid = bid_amount
+        self.save()
 
 
     # python manage.py makemigrations
