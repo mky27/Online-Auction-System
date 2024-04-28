@@ -292,12 +292,25 @@ def add_to_watchlist(request, auction_id):
     auction = get_object_or_404(OASauction, pk=auction_id)
     user = request.user
 
-    if is_in_watchlist(user, auction):
-        OASwatchlist.objects.filter(user=user, auction=auction).delete()
-    else:
-        OASwatchlist.objects.create(user=user, auction=auction)
+    OASwatchlist.objects.create(user=user, auction=auction)
 
     return redirect('auction_details', auction_id=auction_id)
+
+
+@login_required
+def remove_from_watchlist(request, auction_id):
+    auction = get_object_or_404(OASauction, pk=auction_id)
+    user = request.user
+
+    if request.method == 'POST':
+        action = request.POST.get('action')
+
+        if action == 'remove_watchlist':
+            OASwatchlist.objects.filter(user=user, auction=auction).delete()
+            return redirect('watchlist')
+        else:
+            OASwatchlist.objects.filter(user=user, auction=auction).delete()
+            return redirect('auction_details', auction_id=auction_id)
 
 
 def is_in_watchlist(user, auction):

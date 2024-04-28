@@ -49,7 +49,8 @@
         <li style="float:right"><a href="#">Cart</a></li>
     </ul>
         
-        <img src="{% static 'image/bidify.png' %}" alt="bidify">
+    <p><a href="{% url 'home_page' %}"> &lt; Back</a></p>
+    <img src="{% static 'image/bidify.png' %}" alt="bidify">
     <hr>
     <h1>Watchlist</h1>
     <ul>
@@ -62,7 +63,12 @@
                     <p>Current Bid: RM{{ item.auction.current_bid }}</p>
                     <p>End Time: {{ item.auction.auction_end_time }}</p>
                 </a>
-            </li><br>
+                <form method="post" action="{% url 'remove_from_watchlist' item.auction.id %}">
+                    {% csrf_token %}
+                        <button type="submit" name="action" value="remove_watchlist">Remove from Watchlist</button>
+                </form>    
+            </li>
+            <br>
         {% endfor %}
     </ul>
 </body> 

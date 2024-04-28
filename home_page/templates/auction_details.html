@@ -39,14 +39,19 @@
         <button type="submit">Place Bid</button>
     </form>
     <p>Seller: {{ seller_username }}</p>
-    <form method="post" action="{% url 'add_to_watchlist' auction.id %}">
-        {% csrf_token %}
-        {% if in_watchlist %}
+    
+    {% if in_watchlist %}
+        <form method="post" action="{% url 'remove_from_watchlist' auction.id %}">
+            {% csrf_token %}
             <button type="submit" name="action" value="remove">Remove from Watchlist</button>
-        {% else %}
+        </form>
+    {% else %}
+        <form method="post" action="{% url 'add_to_watchlist' auction.id %}">
+            {% csrf_token %}
             <button type="submit" name="action" value="add">Add to Watchlist</button>
-        {% endif %}
-    </form>    
+        </form>
+    {% endif %}
+    
 
     <script>
         // Function to calculate and update the countdown timer
