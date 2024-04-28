@@ -7,7 +7,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.password_validation import validate_password
 from django.contrib.auth.decorators import login_required
 from .forms import UserRegistrationForm, PersonalInfoForm, LoginForm, ForgotPassForm, ResetPassForm, EditProfileForm, CreateAuctionForm, PlaceBidForm, validate_username
-from .models import OASuser, OASauction
+from .models import OASuser, OASauction, OASwatchlist
 from decimal import Decimal
 
 # Create your views here.
@@ -223,10 +223,13 @@ def auction_details(request, auction_id):
     auction = get_object_or_404(OASauction, pk=auction_id)
     time_left = auction.auction_end_time - timezone.now()
     seller_username = auction.seller.username
+    in_watchlist = is_in_watchlist(request.user, auction)
+
     context = {
         'auction': auction,
         'time_left': time_left,
-        'seller_username': seller_username
+        'seller_username': seller_username,
+        'in_watchlist': in_watchlist
     }
     return render(request, 'auction_details.html', context)
 
@@ -252,6 +255,8 @@ def place_bid(request, auction_id):
             bid_amount = form.cleaned_data['bid_amount']
             bid_increase = Decimal('0.1')
             if bid_amount >= auction.current_bid + bid_increase:  
+                auction.second_highest_bid = auction.current_bid
+                auction.second_highest_bidder = auction.current_bidder
                 auction.current_bid = bid_amount
                 auction.current_bidder = request.user
                 auction.save()
@@ -274,3 +279,26 @@ def update_auction_status(request):
             auction.save()
 
     return redirect('home_page')
+
+
+@login_required
+def watchlist(request):
+    watchlist_items = OASwatchlist.objects.filter(user=request.user)
+    return render(request, 'watchlist.html', {'watchlist_items': watchlist_items})
+
+
+@login_required
+def add_to_watchlist(request, auction_id):
+    auction = get_object_or_404(OASauction, pk=auction_id)
+    user = request.user
+
+    if is_in_watchlist(user, auction):
+        OASwatchlist.objects.filter(user=user, auction=auction).delete()
+    else:
+        OASwatchlist.objects.create(user=user, auction=auction)
+
+    return redirect('auction_details', auction_id=auction_id)
+
+
+def is_in_watchlist(user, auction):
+    return OASwatchlist.objects.filter(user=user, auction=auction).exists()

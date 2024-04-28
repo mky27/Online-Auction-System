@@ -59,7 +59,7 @@ class CreateAuctionForm(forms.Form):
                                                                   ('Religious', 'Religious'), ('Sporting Goods', 'Sporting Goods'), ('Toys & Games', 'Toys & Games'),
                                                                   ('Vehicle & Parts', 'Vehicle & Parts'), ('Others', 'Others')
                                                                   ], widget=forms.Select(attrs={}))
-    start_bid = forms.DecimalField(label='Starting Bid ', max_digits=10, decimal_places=2)
+    start_bid = forms.DecimalField(label='Starting Bid ', max_digits=10, decimal_places=2, min_value=1)
     auction_end_time = forms.DateTimeField(label='End Time ', widget=forms.DateTimeInput(attrs={'type': 'datetime-local'}))
     picture1 = forms.ImageField()
     picture2 = forms.ImageField()

@@ -33,6 +33,7 @@
 </head>
 
 <body>
+    <p><a href="{% url 'home_page' %}"> &lt; Back</a></p>
     <img src="{% static 'image/bidify.png' %}" alt="bidify" class="logo">
     <form method="post" action="{% url 'create_auction' %}" enctype="multipart/form-data">
         {% csrf_token %}

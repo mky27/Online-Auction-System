@@ -7,7 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" type="text/css" href="{% static 'css/home_page.css' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'css/font.css' %}">
-    <title>Main Page | Bidify</title>
+    <title>Watchlist | Bidify</title>
     <script>
         // Periodically check if auctions have ended
         setInterval(function() {
@@ -51,16 +51,16 @@
         
         <img src="{% static 'image/bidify.png' %}" alt="bidify">
     <hr>
-    <h1>Home Page</h1>
+    <h1>Watchlist</h1>
     <ul>
-        {% for auction in auctions %}
+        {% for item in watchlist_items %}
             <li>
-                <a href="{% url 'auction_details' auction.id %}">
-                    <img src="{{ auction.picture1.url }}" alt="Item Picture 1" class="item-pic">
-                    <h2>{{ auction.item_name }}</h2>
-                    <p>{{ auction.item_desc }}</p>
-                    <p>Current Bid: RM{{ auction.current_bid }}</p>
-                    <p>End Time: {{ auction.auction_end_time }}</p>
+                <a href="{% url 'auction_details' item.auction.id %}">
+                    <img src="{{ item.auction.picture1.url }}" alt="Item Picture 1" class="item-pic">
+                    <h2>{{ item.auction.item_name }}</h2>
+                    <p>{{ item.auction.item_desc }}</p>
+                    <p>Current Bid: RM{{ item.auction.current_bid }}</p>
+                    <p>End Time: {{ item.auction.auction_end_time }}</p>
                 </a>
             </li><br>
         {% endfor %}

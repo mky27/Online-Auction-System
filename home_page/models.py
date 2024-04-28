@@ -43,7 +43,9 @@ class OASauction(models.Model):
     item_cat = models.CharField(max_length=50)
     start_bid = models.DecimalField(max_digits=10, decimal_places=2, validators=[MinValueValidator(0)])
     current_bid = models.DecimalField(max_digits=10, decimal_places=2, default=start_bid)
+    second_highest_bid = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True, validators=[MinValueValidator(0)])
     current_bidder = models.ForeignKey(OASuser, on_delete=models.SET_NULL, null=True, blank=True, related_name='bidding_auctions')
+    second_highest_bidder = models.ForeignKey(OASuser, on_delete=models.SET_NULL, null=True, blank=True)
     seller = models.ForeignKey(OASuser, on_delete=models.CASCADE, related_name='seller_auctions')
     auction_created_time = models.DateTimeField(auto_now_add=True)
     auction_end_time = models.DateTimeField()
@@ -63,11 +65,9 @@ class OASauction(models.Model):
             self.current_bid = self.start_bid
         super().save(*args, **kwargs)
 
-    def update_second_highest_bid(self, bid_amount):
-        if bid_amount > self.current_bid:
-            self.second_highest_bid = self.current_bid
-            self.current_bid = bid_amount
-        self.save()
+class OASwatchlist(models.Model):
+    user = models.ForeignKey(OASuser, on_delete=models.CASCADE)
+    auction = models.ForeignKey(OASauction, on_delete=models.CASCADE)
 
 
     # python manage.py makemigrations
