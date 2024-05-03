@@ -43,15 +43,21 @@
     {% if in_watchlist %}
         <form method="post" action="{% url 'remove_from_watchlist' auction.id %}">
             {% csrf_token %}
-            <button type="submit" name="action" value="remove">Remove from Watchlist</button>
+            <button type="submit" name="action" value="remove" id="remove-watchlist-button">Remove from Watchlist</button>
         </form>
     {% else %}
         <form method="post" action="{% url 'add_to_watchlist' auction.id %}">
             {% csrf_token %}
-            <button type="submit" name="action" value="add">Add to Watchlist</button>
+            <button type="submit" name="action" value="add" id="add-watchlist-button">Add to Watchlist</button>
         </form>
     {% endif %}
-    
+
+    {% if request.user == auction.current_bidder %}
+        <form id="withdraw-form" method="post" action="{% url 'withdraw_from_auction' auction.id %}">
+            {% csrf_token %}
+            <button type="button" id="withdraw-button">Withdraw from Auction</button>
+        </form>
+    {% endif %}
 
     <script>
         // Function to calculate and update the countdown timer
@@ -101,6 +107,44 @@
         
         // Call the function to initialize the countdown timer
         updateCountdown(auctionEndTime);
+    </script>
+
+    <script>
+        // Get the withdraw button element
+        const withdrawButton = document.getElementById('withdraw-button');
+
+        // Add event listener to the withdraw button
+        withdrawButton.addEventListener('click', function() {
+            // Show confirmation prompt
+            const confirmed = confirm('Are you sure you want to withdraw from the auction?');
+            
+            // If user confirms, submit the form
+            if (confirmed) {
+                document.getElementById('withdraw-form').submit();
+            }
+        });
+    </script>
+
+    <script>
+        // Get the withdraw button element
+        const addWatchlistButton = document.getElementById('add-watchlist-button');
+
+        // Add event listener to the withdraw button
+        addWatchlistButton.addEventListener('click', function() {
+            // Show confirmation prompt
+            const confirmed = alert('Successfully added to watchlist');
+        });
+    </script>
+
+    <script>
+        // Get the withdraw button element
+        const removeWatchlistButton = document.getElementById('remove-watchlist-button');
+
+        // Add event listener to the withdraw button
+        removeWatchlistButton.addEventListener('click', function() {
+            // Show confirmation prompt
+            const confirmed = alert('Successfully removed from watchlist');
+        });
     </script>
 </body>
 </html>

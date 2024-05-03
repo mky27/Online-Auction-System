@@ -8,21 +8,6 @@
     <link rel="stylesheet" type="text/css" href="{% static 'css/home_page.css' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'css/font.css' %}">
     <title>Main Page | Bidify</title>
-    <script>
-        // Periodically check if auctions have ended
-        setInterval(function() {
-            fetch("{% url 'update_auction_status' %}")
-            .then(response => {
-                if (response.ok) {
-                    // Reload the page if the status update was successful
-                    window.location.reload();
-                } else {
-                    console.error("Failed to update auction status");
-                }
-            })
-            .catch(error => console.error("Error:", error));
-        }, 60000); // Check every minute
-    </script>
 </head>
 <body>
     <ul>
@@ -65,5 +50,21 @@
             </li><br>
         {% endfor %}
     </ul>
+
+    <script>
+        // Periodically check if auctions have ended
+        setInterval(function() {
+            fetch("{% url 'update_auction_status' %}")
+            .then(response => {
+                if (response.ok) {
+                    // Reload the page if the status update was successful
+                    window.location.reload();
+                } else {
+                    console.error("Failed to update auction status");
+                }
+            })
+            .catch(error => console.error("Error:", error));
+        }, 60000); // Check every minute
+    </script>
 </body> 
 </html>

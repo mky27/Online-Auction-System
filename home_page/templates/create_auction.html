@@ -9,6 +9,17 @@
     <link rel="stylesheet" type="text/css" href="{% static 'css/create_auction.css' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'css/font.css' %}">
     <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.0/themes/base/jquery-ui.css">
+</head>
+
+<body>
+    <p><a href="{% url 'home_page' %}"> &lt; Back</a></p>
+    <img src="{% static 'image/bidify.png' %}" alt="bidify" class="logo">
+    <form method="post" action="{% url 'create_auction' %}" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Submit</button>
+    </form>
+
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://code.jquery.com/ui/1.13.0/jquery-ui.min.js"></script>
     <script>
@@ -30,15 +41,5 @@
             }
         });
     </script>
-</head>
-
-<body>
-    <p><a href="{% url 'home_page' %}"> &lt; Back</a></p>
-    <img src="{% static 'image/bidify.png' %}" alt="bidify" class="logo">
-    <form method="post" action="{% url 'create_auction' %}" enctype="multipart/form-data">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Submit</button>
-    </form>
 </body>
 </html>

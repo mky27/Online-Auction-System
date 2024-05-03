@@ -1,6 +1,7 @@
 from django.db import IntegrityError
 from django.core.exceptions import ValidationError
 from django.utils import timezone
+from django.contrib import messages
 from django.shortcuts import redirect, render, get_object_or_404
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth import authenticate, login, logout
@@ -315,3 +316,25 @@ def remove_from_watchlist(request, auction_id):
 
 def is_in_watchlist(user, auction):
     return OASwatchlist.objects.filter(user=user, auction=auction).exists()
+
+
+@login_required
+def withdraw_from_auction(request, auction_id):
+    auction = get_object_or_404(OASauction, pk=auction_id)
+    
+    if request.method == 'POST':
+        if auction.second_highest_bid is not None and auction.second_highest_bidder is not None:
+            auction.current_bid = auction.second_highest_bid
+            auction.current_bidder = auction.second_highest_bidder
+            auction.second_highest_bid = None
+            auction.second_highest_bidder = None
+        else:
+            auction.current_bid = auction.start_bid
+            auction.current_bidder = None
+        auction.save()
+
+        messages.success(request, 'You have successfully withdrawn from the auction.')
+        
+        return redirect('home_page') 
+    
+    return redirect('auction_details', auction_id=auction_id)

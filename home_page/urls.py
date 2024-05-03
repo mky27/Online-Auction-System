@@ -19,4 +19,5 @@ urlpatterns = [
     path('watchlist/', views.watchlist, name='watchlist'),
     path('add_to_watchlist/<int:auction_id>/', views.add_to_watchlist, name='add_to_watchlist'),
     path('remove_from_watchlist/<int:auction_id>/', views.remove_from_watchlist, name='remove_from_watchlist'),
+    path('withdraw_from_auction/<int:auction_id>/', views.withdraw_from_auction, name='withdraw_from_auction'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
