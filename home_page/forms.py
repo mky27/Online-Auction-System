@@ -83,6 +83,40 @@ class CreateAuctionForm(forms.Form):
             raise forms.ValidationError("Auction end time must be in the future.")
         return auction_end_time
 
-
 class PlaceBidForm(forms.Form):
     bid_amount = forms.DecimalField(label='Bid Amount', min_value=0, max_digits=10, decimal_places=2)
+
+class EditAuctionForm(forms.Form):
+    item_name = forms.CharField(label='Item Name ', max_length=50, widget=forms.TextInput(attrs={'autocomplete': 'off'}))
+    item_desc = forms.CharField(label='Item Description ', max_length=100, widget=forms.Textarea(attrs={}))
+    item_cat = forms.ChoiceField(label='Item Category ', choices=[('Apparel & Accessories', 'Apparel & Accessories'), ('Animal & Pet Supplies', 'Animal & Pet Supplies'),
+                                                                  ('Arts & Entertainment', 'Arts & Entertainment'), ('Baby & Toddler', 'Baby & Toddler'),
+                                                                  ('Camera & Optics', 'Camera & Optics'), ('Electronics', 'Electronics'), ('Food & Beverages', 'Food & Beverages'),
+                                                                  ('Furniture', 'Furniture'), ('Hardware', 'Hardware'), ('Home & Garden', 'Home & Garden'), 
+                                                                  ('Health & Beauty', 'Health & Beauty'), ('Luggage & Bags', 'Luggage & Bags'), ('Office Supplies', 'Office Supplies'),
+                                                                  ('Religious', 'Religious'), ('Sporting Goods', 'Sporting Goods'), ('Toys & Games', 'Toys & Games'),
+                                                                  ('Vehicle & Parts', 'Vehicle & Parts'), ('Others', 'Others')
+                                                                  ], widget=forms.Select(attrs={}))
+    start_bid = forms.DecimalField(label='Starting Bid ', max_digits=10, decimal_places=2, min_value=1)
+    auction_end_time = forms.DateTimeField(label='End Time ', widget=forms.DateTimeInput(attrs={'type': 'datetime-local'}))
+    picture1 = forms.ImageField(required=False)
+    picture2 = forms.ImageField(required=False)
+    picture3 = forms.ImageField(required=False)
+    picture4 = forms.ImageField(required=False)
+    picture5 = forms.ImageField(required=False)
+    picture6 = forms.ImageField(required=False)
+    picture7 = forms.ImageField(required=False)
+
+    def clean_start_bid(self):
+        start_bid = self.cleaned_data['start_bid']
+        try:
+            DecimalValidator(max_digits=10, decimal_places=2)(start_bid)
+        except ValidationError:
+            raise ValidationError('Starting bid must be a valid decimal number.')
+        return start_bid
+    
+    def clean_auction_end_time(self):
+        auction_end_time = self.cleaned_data.get('auction_end_time')
+        if auction_end_time <= timezone.now():
+            raise forms.ValidationError("Auction end time must be in the future.")
+        return auction_end_time

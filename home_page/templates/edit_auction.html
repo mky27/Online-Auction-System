@@ -9,14 +9,43 @@
     <link rel="stylesheet" type="text/css" href="{% static 'css/create_saved_auction.css' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'css/font.css' %}">
     <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.0/themes/base/jquery-ui.css">
+    <style>
+        .image-container {
+            width: 100%;
+            overflow: hidden;
+            white-space: nowrap;
+            transition: transform 0.5s ease;
+        }
+        
+        .image-container img {
+            width: 100%;
+            display: inline-block;
+            vertical-align: top;
+        }
+    </style>
 </head>
 
 <body>
     <p><a href="{% url 'home_page' %}"> &lt; Back</a></p>
     <img src="{% static 'image/bidify.png' %}" alt="bidify" class="logo">
+    <div class="image-container">
+        <!-- Display images here -->
+            <img src="{{ auction.picture1.url }}" alt="Picture 1">
+            <img src="{{ auction.picture2.url }}" alt="Picture 2">
+            <img src="{{ auction.picture3.url }}" alt="Picture 3">
+            <img src="{{ auction.picture4.url }}" alt="Picture 4">
+            
+    </div>
+    
+    <div class="controls">
+        <button onclick="slideLeft()">Slide Left</button>
+        <button onclick="slideRight()">Slide Right</button>
+        <button onclick="deleteImage()">Delete Image</button>
+    </div>
     <form method="post" action="{% url 'edit_auction' auction.id %}" enctype="multipart/form-data">
         {% csrf_token %}
         {{ form.as_p }}
+
         <button type="submit" name="action" value="save">Save Auction</button>
         <button type="submit" name="action" value="post">Post Auction</button>
         <button type="submit" name="action" value="delete">Delete Auction</button>
@@ -42,6 +71,26 @@
                 event.preventDefault();
             }
         });
+    </script>
+
+    <script>
+        let currentIndex = 0;
+        const images = document.querySelectorAll('.image-container img');
+        
+        function slideLeft() {
+            currentIndex = (currentIndex - 1 + images.length) % images.length;
+            updateSlider();
+        }
+        
+        function slideRight() {
+            currentIndex = (currentIndex + 1) % images.length;
+            updateSlider();
+        }
+        
+        function updateSlider() {
+            const offset = -currentIndex * 100;
+            document.querySelector('.image-container').style.transform = `translateX(${offset}%)`;
+        }
     </script>
 </body>
 </html>

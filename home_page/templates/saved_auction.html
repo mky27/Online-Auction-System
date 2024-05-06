@@ -49,7 +49,7 @@
         {% for auction in saved_auctions %}
             <li>
                 <a href="{% url 'edit_auction' auction.id %}">
-                    <img src="{{ auction.picture1.url }}" alt="Item Picture 1" class="item-pic">
+                    <img src="{{ auction.picture1.url }}" alt="Auction Picture 1" class="item-pic">
                     <h2>{{ auction.item_name }}</h2>
                     <p>{{ auction.start_bid }}</p>
                     <p>End Time: {{ auction.auction_end_time }}</p>

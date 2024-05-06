@@ -7,7 +7,7 @@ from django.contrib.auth.hashers import make_password
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.password_validation import validate_password
 from django.contrib.auth.decorators import login_required
-from .forms import UserRegistrationForm, PersonalInfoForm, LoginForm, ForgotPassForm, ResetPassForm, EditProfileForm, CreateAuctionForm, PlaceBidForm, validate_username
+from .forms import UserRegistrationForm, PersonalInfoForm, LoginForm, ForgotPassForm, ResetPassForm, EditProfileForm, CreateAuctionForm, PlaceBidForm, EditAuctionForm, validate_username
 from .models import OASuser, OASauction, OASwatchlist
 from decimal import Decimal
 
@@ -107,10 +107,9 @@ def forgot_pass(request):
         if form.is_valid():
             username = form.cleaned_data['username']
             email = form.cleaned_data['email']
-            # Check if the username and email match
             try:
                 user = OASuser.objects.get(username=username, email=email)
-                request.session['reset_user_id'] = user.id  # Store user ID in session
+                request.session['reset_user_id'] = user.id
                 return redirect('reset_pass')
             except OASuser.DoesNotExist:
                 error = "Username and email do not match."
@@ -133,7 +132,6 @@ def reset_pass(request):
                 return render(request, 'reset_pass.html', context)
             else:
                 try:
-                    # Validate the password
                     validate_password(userPass)
                     user_id = request.session.get('reset_user_id')
                     if user_id:
@@ -175,7 +173,6 @@ def edit_profile(request):
             user.save()
             return redirect('home_page')
     else:
-        # Populate the form with user's current data
         initial_data = {
             'fName': user.fName,
             'lName': user.lName,
@@ -298,11 +295,13 @@ def place_bid(request, auction_id):
 
 
 def update_auction_status(request):
-    active_auctions = OASauction.objects.filter(auction_end_time__gt=timezone.now())
+    active_auctions = OASauction.objects.filter(auction_end_time__gt=timezone.now(), is_ongoing=True)
 
     for auction in active_auctions:
         if auction.auction_end_time <= timezone.now():
             auction.current_bidder = auction.current_bidder
+            auction.is_completed = True
+            auction.is_ongoing = False
             auction.save()
 
     return redirect('home_page')
@@ -373,37 +372,79 @@ def saved_auction(request):
 
 def edit_auction(request, auction_id):
     auction = get_object_or_404(OASauction, pk=auction_id)
+
     if request.method == 'POST':
-        form = CreateAuctionForm(request.POST, request.FILES)
+        form = EditAuctionForm(request.POST, request.FILES)
         if form.is_valid():
             action = request.POST.get('action')
             if action == 'save':
+                auction.item_name = form.cleaned_data['item_name']
+                auction.item_desc = form.cleaned_data['item_desc']
+                auction.item_cat = form.cleaned_data['item_cat']
+                auction.start_bid = form.cleaned_data['start_bid']
+                auction.auction_end_time = form.cleaned_data['auction_end_time']
                 auction.is_saved = True
+
+                if 'picture1' in request.FILES:
+                    auction.picture1 = request.FILES['picture1']
+                if 'picture2' in request.FILES:
+                    auction.picture2 = request.FILES['picture2']
+                if 'picture3' in request.FILES:
+                    auction.picture3 = request.FILES['picture3']
+                if 'picture4' in request.FILES:
+                    auction.picture4 = request.FILES['picture4']
+                if 'picture5' in request.FILES:
+                    auction.picture5 = request.FILES['picture5']
+                if 'picture6' in request.FILES:
+                    auction.picture6 = request.FILES['picture6']
+                if 'picture7' in request.FILES:
+                    auction.picture7 = request.FILES['picture7']
+
+                auction.save()
+
             elif action == 'post':
+                auction.item_name = form.cleaned_data['item_name']
+                auction.item_desc = form.cleaned_data['item_desc']
+                auction.item_cat = form.cleaned_data['item_cat']
+                auction.start_bid = form.cleaned_data['start_bid']
                 auction.auction_created_time = timezone.localtime(timezone.now())
+                auction.auction_end_time = form.cleaned_data['auction_end_time']
                 auction.is_saved = False
                 auction.is_ongoing = True
+
+                if 'picture1' in request.FILES:
+                    auction.picture1 = request.FILES['picture1']
+                if 'picture2' in request.FILES:
+                    auction.picture2 = request.FILES['picture2']
+                if 'picture3' in request.FILES:
+                    auction.picture3 = request.FILES['picture3']
+                if 'picture4' in request.FILES:
+                    auction.picture4 = request.FILES['picture4']
+                if 'picture4' in request.FILES:
+                    auction.picture4 = request.FILES['picture4']
+                if 'picture5' in request.FILES:
+                    auction.picture5 = request.FILES['picture5']
+                if 'picture6' in request.FILES:
+                    auction.picture6 = request.FILES['picture6']
+                if 'picture7' in request.FILES:
+                    auction.picture7 = request.FILES['picture7']
+
+                auction.save()
+
             elif action == 'delete':
                 auction.delete()  
                 return redirect('saved_auction') 
-            auction.save()
+            
             return redirect('saved_auction')
          
     else:
-        form = CreateAuctionForm(initial={
+        form = EditAuctionForm(initial={
             'item_name': auction.item_name,
             'item_desc': auction.item_desc,
             'item_cat': auction.item_cat,
             'start_bid': auction.start_bid,
             'auction_end_time': auction.auction_end_time,
-            'picture1': auction.picture1,
-            'picture2': auction.picture2,
-            'picture3': auction.picture3,
-            'picture4': auction.picture4,
-            'picture5': auction.picture5,
-            'picture6': auction.picture6,
-            'picture7': auction.picture7,
-            # Add other fields as needed
         })
+        
     return render(request, 'edit_auction.html', {'form': form, 'auction': auction})
 
