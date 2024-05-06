@@ -47,7 +47,7 @@ class OASauction(models.Model):
     current_bidder = models.ForeignKey(OASuser, on_delete=models.SET_NULL, null=True, blank=True, related_name='bidding_auctions')
     second_highest_bidder = models.ForeignKey(OASuser, on_delete=models.SET_NULL, null=True, blank=True)
     seller = models.ForeignKey(OASuser, on_delete=models.CASCADE, related_name='seller_auctions')
-    auction_created_time = models.DateTimeField(auto_now_add=True)
+    auction_created_time = models.DateTimeField(null=True, blank=True)
     auction_end_time = models.DateTimeField()
     picture1 = models.ImageField(upload_to='auction_pictures/')
     picture2 = models.ImageField(upload_to='auction_pictures/')
@@ -56,6 +56,9 @@ class OASauction(models.Model):
     picture5 = models.ImageField(upload_to='auction_pictures/', blank=True, null=True)
     picture6 = models.ImageField(upload_to='auction_pictures/', blank=True, null=True)
     picture7 = models.ImageField(upload_to='auction_pictures/', blank=True, null=True)
+    is_saved = models.BooleanField(default=False)
+    is_ongoing = models.BooleanField(default=False)
+    is_completed = models.BooleanField(default=False)
 
     def __str__(self):
         return self.item_name
@@ -68,7 +71,6 @@ class OASauction(models.Model):
 class OASwatchlist(models.Model):
     user = models.ForeignKey(OASuser, on_delete=models.CASCADE)
     auction = models.ForeignKey(OASauction, on_delete=models.CASCADE)
-
 
     # python manage.py makemigrations
     # python manage.py migrate

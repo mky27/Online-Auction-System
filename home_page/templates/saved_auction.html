@@ -7,8 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" type="text/css" href="{% static 'css/home_page.css' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'css/font.css' %}">
-    <title>Main Page | Bidify</title>
-</head>
+    <title>Saved Auction | Bidify</title>
 <body>
     <ul>
         <li style="float:left"><a href="#"><img src="{% static 'image/profile_icon.png' %}" alt="profile" class="profile-icon"></a></li>
@@ -30,7 +29,7 @@
         <li style="float:right"><a href="#">To Deliver</a></li>
         <li style="float:right"><a href="#">To Receive</a></li>
         <li style="float:right"><a href="{% url 'watchlist' %}">Watchlist</a></li>
-        <li style="float:right"><a href="#"><img src="{% static 'image/cart_icon.png' %}" alt="cart" class="profile-icon"></a></li>
+        <li style="float:right"><a href="#">Cart</a></li>
         <li style="float:right" class="dropdown">
             <a href="javascript:void(0)" class="dropbtn">Sell</a>
             <div class="dropdown-content">
@@ -42,37 +41,24 @@
         </li>
     </ul>
         
-        <img src="{% static 'image/bidify.png' %}" alt="bidify">
+    <p><a href="{% url 'home_page' %}"> &lt; Back</a></p>
+    <img src="{% static 'image/bidify.png' %}" alt="bidify">
     <hr>
-    <h1>Home Page</h1>
+    <h1>Your Saved Auction</h1>
     <ul>
-        {% for auction in auctions %}
+        {% for auction in saved_auctions %}
             <li>
-                <a href="{% url 'auction_details' auction.id %}">
+                <a href="{% url 'edit_auction' auction.id %}">
                     <img src="{{ auction.picture1.url }}" alt="Item Picture 1" class="item-pic">
                     <h2>{{ auction.item_name }}</h2>
-                    <p>{{ auction.item_desc }}</p>
-                    <p>Current Bid: RM{{ auction.current_bid }}</p>
+                    <p>{{ auction.start_bid }}</p>
                     <p>End Time: {{ auction.auction_end_time }}</p>
                 </a>
-            </li><br>
+            </li>
+            <br>
+        {% empty %}
+            <li>No saved auctions</li>
         {% endfor %}
     </ul>
-
-    <script>
-        // Periodically check if auctions have ended
-        setInterval(function() {
-            fetch("{% url 'update_auction_status' %}")
-            .then(response => {
-                if (response.ok) {
-                    // Reload the page if the status update was successful
-                    window.location.reload();
-                } else {
-                    console.error("Failed to update auction status");
-                }
-            })
-            .catch(error => console.error("Error:", error));
-        }, 60000); // Check every minute
-    </script>
 </body> 
 </html>

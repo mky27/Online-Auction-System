@@ -15,7 +15,7 @@ from decimal import Decimal
 
 def home_page(request):
     current_time = timezone.now()
-    active_auctions = OASauction.objects.filter(auction_end_time__gt=current_time)
+    active_auctions = OASauction.objects.filter(auction_end_time__gt=current_time, is_ongoing=True)
     return render(request, 'home_page.html', {'auctions': active_auctions})
 
   
@@ -193,27 +193,53 @@ def create_auction(request):
     if request.method == 'POST':
         form = CreateAuctionForm(request.POST, request.FILES)
         if form.is_valid():
-            seller = request.user
-            item_name = form.cleaned_data['item_name']
-            item_desc = form.cleaned_data['item_desc']
-            item_cat = form.cleaned_data['item_cat']
-            start_bid = form.cleaned_data['start_bid']
-            auction_created_time = timezone.localtime(timezone.now())  
-            auction_end_time = form.cleaned_data['auction_end_time']
-            picture1 = form.cleaned_data['picture1']
-            picture2 = form.cleaned_data['picture2']
-            picture3 = form.cleaned_data['picture3']
-            picture4 = form.cleaned_data['picture4']
-            picture5 = form.cleaned_data['picture5']
-            picture6 = form.cleaned_data['picture6']
-            picture7 = form.cleaned_data['picture7']
+            action = request.POST.get('action')
+            if action == 'save':
+                seller = request.user
+                item_name = form.cleaned_data['item_name']
+                item_desc = form.cleaned_data['item_desc']
+                item_cat = form.cleaned_data['item_cat']
+                start_bid = form.cleaned_data['start_bid']
+                auction_end_time = form.cleaned_data['auction_end_time']
+                picture1 = form.cleaned_data['picture1']
+                picture2 = form.cleaned_data['picture2']
+                picture3 = form.cleaned_data['picture3']
+                picture4 = form.cleaned_data['picture4']
+                picture5 = form.cleaned_data['picture5']
+                picture6 = form.cleaned_data['picture6']
+                picture7 = form.cleaned_data['picture7']
+                is_saved = True
 
-            auction = OASauction(seller=seller, item_name=item_name, item_desc=item_desc, item_cat=item_cat,
-                                 start_bid=start_bid, auction_created_time=auction_created_time, auction_end_time=auction_end_time,
-                                 picture1=picture1, picture2=picture2, picture3=picture3, picture4=picture4,
-                                 picture5=picture5, picture6=picture6, picture7=picture7,)
-            auction.save()
-            return redirect('home_page')  
+                auction = OASauction(seller=seller, item_name=item_name, item_desc=item_desc, item_cat=item_cat,
+                                    start_bid=start_bid, auction_end_time=auction_end_time, is_saved=is_saved,
+                                    picture1=picture1, picture2=picture2, picture3=picture3, picture4=picture4,
+                                    picture5=picture5, picture6=picture6, picture7=picture7,)
+                auction.save()
+                return redirect('home_page')
+                
+            elif action == 'post':
+                seller = request.user
+                item_name = form.cleaned_data['item_name']
+                item_desc = form.cleaned_data['item_desc']
+                item_cat = form.cleaned_data['item_cat']
+                start_bid = form.cleaned_data['start_bid']
+                auction_created_time = timezone.localtime(timezone.now())  
+                auction_end_time = form.cleaned_data['auction_end_time']
+                picture1 = form.cleaned_data['picture1']
+                picture2 = form.cleaned_data['picture2']
+                picture3 = form.cleaned_data['picture3']
+                picture4 = form.cleaned_data['picture4']
+                picture5 = form.cleaned_data['picture5']
+                picture6 = form.cleaned_data['picture6']
+                picture7 = form.cleaned_data['picture7']
+                is_ongoing = True
+
+                auction = OASauction(seller=seller, item_name=item_name, item_desc=item_desc, item_cat=item_cat,
+                                    start_bid=start_bid, auction_created_time=auction_created_time, auction_end_time=auction_end_time,
+                                    picture1=picture1, picture2=picture2, picture3=picture3, picture4=picture4,
+                                    picture5=picture5, picture6=picture6, picture7=picture7, is_ongoing=is_ongoing,)
+                auction.save()
+                return redirect('home_page')
     else:
         form = CreateAuctionForm()
     return render(request, 'create_auction.html', {'form': form})
@@ -338,3 +364,46 @@ def withdraw_from_auction(request, auction_id):
         return redirect('home_page') 
     
     return redirect('auction_details', auction_id=auction_id)
+
+
+def saved_auction(request):
+    saved_auctions = OASauction.objects.filter(seller=request.user, is_saved=True)
+    return render(request, 'saved_auction.html', {'saved_auctions': saved_auctions})
+
+
+def edit_auction(request, auction_id):
+    auction = get_object_or_404(OASauction, pk=auction_id)
+    if request.method == 'POST':
+        form = CreateAuctionForm(request.POST, request.FILES)
+        if form.is_valid():
+            action = request.POST.get('action')
+            if action == 'save':
+                auction.is_saved = True
+            elif action == 'post':
+                auction.auction_created_time = timezone.localtime(timezone.now())
+                auction.is_saved = False
+                auction.is_ongoing = True
+            elif action == 'delete':
+                auction.delete()  
+                return redirect('saved_auction') 
+            auction.save()
+            return redirect('saved_auction')
+         
+    else:
+        form = CreateAuctionForm(initial={
+            'item_name': auction.item_name,
+            'item_desc': auction.item_desc,
+            'item_cat': auction.item_cat,
+            'start_bid': auction.start_bid,
+            'auction_end_time': auction.auction_end_time,
+            'picture1': auction.picture1,
+            'picture2': auction.picture2,
+            'picture3': auction.picture3,
+            'picture4': auction.picture4,
+            'picture5': auction.picture5,
+            'picture6': auction.picture6,
+            'picture7': auction.picture7,
+            # Add other fields as needed
+        })
+    return render(request, 'edit_auction.html', {'form': form, 'auction': auction})
+

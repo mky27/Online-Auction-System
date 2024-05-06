@@ -6,7 +6,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Create Auction | Bidify</title>
-    <link rel="stylesheet" type="text/css" href="{% static 'css/create_auction.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/create_saved_auction.css' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'css/font.css' %}">
     <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.0/themes/base/jquery-ui.css">
 </head>
@@ -14,13 +14,14 @@
 <body>
     <p><a href="{% url 'home_page' %}"> &lt; Back</a></p>
     <img src="{% static 'image/bidify.png' %}" alt="bidify" class="logo">
-    <form method="post" action="{% url 'create_auction' %}" enctype="multipart/form-data">
+    <form method="post" action="{% url 'edit_auction' auction.id %}" enctype="multipart/form-data">
         {% csrf_token %}
         {{ form.as_p }}
         <button type="submit" name="action" value="save">Save Auction</button>
         <button type="submit" name="action" value="post">Post Auction</button>
+        <button type="submit" name="action" value="delete">Delete Auction</button>
     </form>
-
+    
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://code.jquery.com/ui/1.13.0/jquery-ui.min.js"></script>
     <script>
