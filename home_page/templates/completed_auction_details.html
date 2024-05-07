@@ -1,0 +1,29 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
+    <title>Completed Auction Details | Bidify</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/auction_details.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/font.css' %}">
+</head>
+<body>
+    <p><a href="{% url 'home_page' %}"> &lt; Back</a></p>
+    <img src="{{ auction.picture1.url }}" alt="Item Picture 1" class="item-pic">
+    <h1>{{ auction.item_name }}</h1>
+    <p>Description: {{ auction.item_desc }}</p>
+    <p>Category: {{ auction.item_cat }}</p>
+    <p>Auction Created Time: {{ auction.auction_created_time }}</p>
+    <p>Auction End Time: {{ auction.auction_end_time }}</p>
+    <p>Starting Bid: RM{{ auction.start_bid }}</p>
+    <p>Highest Bid: RM{{ auction.current_bid }}</p>
+    <p>Highest Bidder: {% if auction.current_bidder %}{{ auction.current_bidder.username }}{% else %}No current bidder{% endif %}</p>
+    <p>Second Highest Bidder: {% if auction.second_highest_bidder %}{{ auction.second_highest_bidder.username }}{% else %}No second highest bidder{% endif %}</p>
+    <form action="" method="post">
+        {% csrf_token %}
+        <input type="submit" name="delete" value="Delete Auction">
+    </form>
+</body>
+</html>

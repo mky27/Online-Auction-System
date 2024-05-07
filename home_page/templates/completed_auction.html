@@ -7,7 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" type="text/css" href="{% static 'css/home_page.css' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'css/font.css' %}">
-    <title>Saved Auction | Bidify</title>
+    <title>Completed Auction | Bidify</title>
 <body>
     <ul>
         <li style="float:left"><a href="#"><img src="{% static 'image/profile_icon.png' %}" alt="profile" class="profile-icon"></a></li>
@@ -44,20 +44,21 @@
     <p><a href="{% url 'home_page' %}"> &lt; Back</a></p>
     <img src="{% static 'image/bidify.png' %}" alt="bidify">
     <hr>
-    <h1>Your Saved Auction</h1>
+    <h1>Your Completed Auctions</h1>
     <ul>
-        {% for auction in saved_auctions %}
+        {% for auction in completed_auctions %}
             <li>
-                <a href="{% url 'edit_auction' auction.id %}">
+                <a href="{% url 'completed_auction_details' auction.id %}">
                     <img src="{{ auction.picture1.url }}" alt="Auction Picture 1" class="item-pic">
                     <h2>{{ auction.item_name }}</h2>
-                    <p>{{ auction.start_bid }}</p>
+                    <p>Current Bid: {{ auction.current_bid }}</p>
+                    <p>Current Bidder: {% if auction.current_bidder %}{{ auction.current_bidder.username }}{% else %}No current bidder{% endif %}</p>
                     <p>End Time: {{ auction.auction_end_time }}</p>
                 </a>
             </li>
             <br>
         {% empty %}
-            <li>No saved auctions</li>
+            <li>No completed auctions</li>
         {% endfor %}
     </ul>
 </body> 

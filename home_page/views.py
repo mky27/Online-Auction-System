@@ -14,9 +14,9 @@ from decimal import Decimal
 # Create your views here.
 
 def home_page(request):
-    current_time = timezone.now()
-    active_auctions = OASauction.objects.filter(auction_end_time__gt=current_time, is_ongoing=True)
-    return render(request, 'home_page.html', {'auctions': active_auctions})
+    manual_update_auction()
+    active_auctions = OASauction.objects.filter(auction_end_time__gt=timezone.now(), is_ongoing=True)
+    return render(request, 'home_page.html', {'active_auctions': active_auctions})
 
   
 def log_in(request):
@@ -294,17 +294,21 @@ def place_bid(request, auction_id):
                                                     'success_message': success_message, 'seller_username': seller_username})
 
 
-def update_auction_status(request):
-    active_auctions = OASauction.objects.filter(auction_end_time__gt=timezone.now(), is_ongoing=True)
+def auto_update_auction(request):
+    auctions_to_update = OASauction.objects.filter(auction_end_time__lte=timezone.now(), is_ongoing=True)
+    for auction in auctions_to_update:
+        auction.is_ongoing = False
+        auction.is_completed = True
+        auction.save()
+    return render(request, 'home_page.html')
 
-    for auction in active_auctions:
-        if auction.auction_end_time <= timezone.now():
-            auction.current_bidder = auction.current_bidder
-            auction.is_completed = True
-            auction.is_ongoing = False
-            auction.save()
 
-    return redirect('home_page')
+def manual_update_auction():
+    auctions_to_update = OASauction.objects.filter(auction_end_time__lte=timezone.now(), is_ongoing=True)
+    for auction in auctions_to_update:
+        auction.is_ongoing = False
+        auction.is_completed = True
+        auction.save()
 
 
 @login_required
@@ -448,3 +452,17 @@ def edit_auction(request, auction_id):
         
     return render(request, 'edit_auction.html', {'form': form, 'auction': auction})
 
+
+def completed_auction(request):
+    completed_auctions = OASauction.objects.filter(seller=request.user, is_completed=True)
+    return render(request, 'completed_auction.html', {'completed_auctions': completed_auctions})
+
+
+def completed_auction_details(request, auction_id):
+    auction = get_object_or_404(OASauction, pk=auction_id)
+
+    if request.method == 'POST':
+        auction.delete()
+        return redirect('completed_auction')
+    
+    return render(request, 'completed_auction_details.html', {'auction': auction})
