@@ -25,4 +25,5 @@ urlpatterns = [
     path('edit_auction/<int:auction_id>/', views.edit_auction, name='edit_auction'),
     path('completed_auction/', views.completed_auction, name='completed_auction'),
     path('completed_auction_details/<int:auction_id>/', views.completed_auction_details, name='completed_auction_details'),
+    path('ongoing_auction/', views.ongoing_auction, name='ongoing_auction'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

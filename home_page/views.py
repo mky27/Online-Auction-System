@@ -255,6 +255,13 @@ def auction_details(request, auction_id):
         'seller_username': seller_username,
         'in_watchlist': in_watchlist
     }
+    
+    if request.method == 'POST':
+        action = request.POST.get('action')
+        if action == 'delete':
+            auction.delete()  
+            return redirect('ongoing_auction') 
+        
     return render(request, 'auction_details.html', context)
 
 
@@ -369,11 +376,13 @@ def withdraw_from_auction(request, auction_id):
     return redirect('auction_details', auction_id=auction_id)
 
 
+@login_required
 def saved_auction(request):
     saved_auctions = OASauction.objects.filter(seller=request.user, is_saved=True)
     return render(request, 'saved_auction.html', {'saved_auctions': saved_auctions})
 
 
+@login_required
 def edit_auction(request, auction_id):
     auction = get_object_or_404(OASauction, pk=auction_id)
 
@@ -453,11 +462,13 @@ def edit_auction(request, auction_id):
     return render(request, 'edit_auction.html', {'form': form, 'auction': auction})
 
 
+@login_required
 def completed_auction(request):
     completed_auctions = OASauction.objects.filter(seller=request.user, is_completed=True)
     return render(request, 'completed_auction.html', {'completed_auctions': completed_auctions})
 
 
+@login_required
 def completed_auction_details(request, auction_id):
     auction = get_object_or_404(OASauction, pk=auction_id)
 
@@ -466,3 +477,9 @@ def completed_auction_details(request, auction_id):
         return redirect('completed_auction')
     
     return render(request, 'completed_auction_details.html', {'auction': auction})
+
+
+@login_required
+def ongoing_auction(request):
+    ongoing_auctions = OASauction.objects.filter(seller=request.user, is_ongoing=True)
+    return render(request, 'ongoing_auction.html', {'ongoing_auctions': ongoing_auctions})

@@ -59,6 +59,12 @@
         </form>
     {% endif %}
 
+    {% if request.user == auction.seller %}
+        <form id="delete-form" method="post" action="{% url 'auction_details' auction.id %}">
+            {% csrf_token %}
+            <button type="submit" name="action" value="delete">Delete Auction</button>
+        </form>
+    {% endif %}
     <script>
         // Function to calculate and update the countdown timer
         function updateCountdown(endTime) {

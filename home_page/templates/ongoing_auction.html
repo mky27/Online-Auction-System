@@ -7,8 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" type="text/css" href="{% static 'css/home_page.css' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'css/font.css' %}">
-    <title>Main Page | Bidify</title>
-</head>
+    <title>Ongoing Auction | Bidify</title>
 <body>
     <ul>
         <li style="float:left"><a href="#"><img src="{% static 'image/profile_icon.png' %}" alt="profile" class="profile-icon"></a></li>
@@ -42,34 +41,25 @@
         </li>
     </ul>
         
-        <img src="{% static 'image/bidify.png' %}" alt="bidify">
+    <p><a href="{% url 'home_page' %}"> &lt; Back</a></p>
+    <img src="{% static 'image/bidify.png' %}" alt="bidify">
     <hr>
-    <h1>Home Page</h1>
+    <h1>Your Ongoing Auctions</h1>
     <ul>
-        {% for auction in active_auctions %}
+        {% for auction in ongoing_auctions %}
             <li>
                 <a href="{% url 'auction_details' auction.id %}">
-                    <img src="{{ auction.picture1.url }}" alt="Item Picture 1" class="item-pic">
+                    <img src="{{ auction.picture1.url }}" alt="Auction Picture 1" class="item-pic">
                     <h2>{{ auction.item_name }}</h2>
-                    <p>Current Bid: RM{{ auction.current_bid }}</p>
+                    <p>Current Bid: {{ auction.current_bid }}</p>
+                    <p>Current Bidder: {% if auction.current_bidder %}{{ auction.current_bidder.username }}{% else %}No current bidder{% endif %}</p>
                     <p>End Time: {{ auction.auction_end_time }}</p>
                 </a>
-            </li><br>
+            </li>
+            <br>
+        {% empty %}
+            <li>No ongoing auctions</li>
         {% endfor %}
     </ul>
-
-    <script>
-        setInterval(function() {
-            fetch("{% url 'auto_update_auction' %}")
-            .then(response => {
-                if (response.ok) {
-                    window.location.reload();
-                } else {
-                    console.error("Failed to update auction status");
-                }
-            })
-            .catch(error => console.error("Error:", error));
-        }, 60000); // Check every minute
-    </script>
 </body> 
 </html>
