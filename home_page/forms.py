@@ -120,3 +120,9 @@ class EditAuctionForm(forms.Form):
         if auction_end_time <= timezone.now():
             raise forms.ValidationError("Auction end time must be in the future.")
         return auction_end_time
+
+class ChangePasswordForm(forms.Form):
+    email = forms.EmailField(label='Email')
+    current_password = forms.CharField(label='Current Password', widget=forms.PasswordInput)
+    new_password = forms.CharField(label='New Password', widget=forms.PasswordInput)
+    confirm_password = forms.CharField(label='Confirm Password', widget=forms.PasswordInput)

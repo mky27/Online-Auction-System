@@ -7,7 +7,7 @@ from django.contrib.auth.hashers import make_password
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.password_validation import validate_password
 from django.contrib.auth.decorators import login_required
-from .forms import UserRegistrationForm, PersonalInfoForm, LoginForm, ForgotPassForm, ResetPassForm, EditProfileForm, CreateAuctionForm, PlaceBidForm, EditAuctionForm, validate_username
+from .forms import UserRegistrationForm, PersonalInfoForm, LoginForm, ForgotPassForm, ResetPassForm, EditProfileForm, CreateAuctionForm, PlaceBidForm, EditAuctionForm, ChangePasswordForm, validate_username
 from .models import OASuser, OASauction, OASwatchlist
 from decimal import Decimal
 
@@ -93,7 +93,7 @@ def register_pi(request, username):
             user.phoneNo = phoneNo
             user.email = email
             user.address = address
-            user.save() # Save personal information data to OASuser table
+            user.save()
             return redirect('login')
     else:
         form = PersonalInfoForm()
@@ -483,3 +483,45 @@ def completed_auction_details(request, auction_id):
 def ongoing_auction(request):
     ongoing_auctions = OASauction.objects.filter(seller=request.user, is_ongoing=True)
     return render(request, 'ongoing_auction.html', {'ongoing_auctions': ongoing_auctions})
+
+
+@login_required
+def change_pass(request):
+    context = {}
+    if request.method == 'POST':
+        form = ChangePasswordForm(request.POST)
+        if form.is_valid():
+            email = form.cleaned_data['email']
+            current_password = form.cleaned_data['current_password']
+            new_password = form.cleaned_data['new_password']
+            confirm_password = form.cleaned_data['confirm_password']
+            user = request.user
+
+            if not user.check_password(current_password):
+                context['form'] = form
+                context['error'] = "Current password is invalid."
+                return render(request, 'change_pass.html', context)
+            
+            if current_password == new_password:
+                context['form'] = form
+                context['error'] = "New password must be different from current password."
+                return render(request, 'change_pass.html', context)
+            
+            if new_password != confirm_password:
+                context['form'] = form
+                context['error'] = "New password and confirm password do not match."
+                return render(request, 'change_pass.html', context)
+            
+            try:
+                validate_password(new_password)
+                user.set_password(new_password)
+                user.save()
+                messages.success(request, 'Password changed successfully.')
+                return redirect('home_page')
+            except ValidationError as e:
+                context['form'] = form
+                context['error'] = e.messages[0]
+                return render(request, 'change_pass.html', context)
+    else:
+        form = ChangePasswordForm()
+    return render(request, 'change_pass.html', {'form': form})

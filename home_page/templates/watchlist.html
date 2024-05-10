@@ -8,21 +8,6 @@
     <link rel="stylesheet" type="text/css" href="{% static 'css/home_page.css' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'css/font.css' %}">
     <title>Watchlist | Bidify</title>
-    <script>
-        // Periodically check if auctions have ended
-        setInterval(function() {
-            fetch("{% url 'update_auction_status' %}")
-            .then(response => {
-                if (response.ok) {
-                    // Reload the page if the status update was successful
-                    window.location.reload();
-                } else {
-                    console.error("Failed to update auction status");
-                }
-            })
-            .catch(error => console.error("Error:", error));
-        }, 60000); // Check every minute
-    </script>
 </head>
 <body>
     <ul>
@@ -37,7 +22,7 @@
             <a href="javascript:void(0)" class="dropbtn">Settings</a>
             <div class="dropdown-content">
                 <a href="{% url 'edit_profile' %}">Edit Profile</a>
-                <a href="#">Change Password</a>
+                <a href="{% url 'change_pass' %}">Change Password</a>
                 <a href="#">Report</a>
                 <a href="{% url 'logout' %}">Logout</a>
             </div>
@@ -73,5 +58,19 @@
             <li>No saved watchlist</li>
         {% endfor %}
     </ul>
+
+    <script>
+        setInterval(function() {
+            fetch("{% url 'auto_update_auction' %}")
+            .then(response => {
+                if (response.ok) {
+                    window.location.reload();
+                } else {
+                    console.error("Failed to update auction status");
+                }
+            })
+            .catch(error => console.error("Error:", error));
+        }, 60000); // Check every minute
+    </script>
 </body> 
 </html>
