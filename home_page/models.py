@@ -72,6 +72,11 @@ class OASwatchlist(models.Model):
     user = models.ForeignKey(OASuser, on_delete=models.CASCADE)
     auction = models.ForeignKey(OASauction, on_delete=models.CASCADE)
 
+class OASauctionWinner(models.Model):
+    auction = models.OneToOneField(OASauction, on_delete=models.CASCADE)
+    winner = models.ForeignKey(OASuser, on_delete=models.CASCADE)
+    winning_bid = models.DecimalField(max_digits=10, decimal_places=2)
+
     # python manage.py makemigrations
     # python manage.py migrate
 

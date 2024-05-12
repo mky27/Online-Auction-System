@@ -1,5 +1,6 @@
 from django.db import IntegrityError
 from django.core.exceptions import ValidationError
+from django.http import HttpResponse
 from django.utils import timezone
 from django.contrib import messages
 from django.shortcuts import redirect, render, get_object_or_404
@@ -8,7 +9,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.password_validation import validate_password
 from django.contrib.auth.decorators import login_required
 from .forms import UserRegistrationForm, PersonalInfoForm, LoginForm, ForgotPassForm, ResetPassForm, EditProfileForm, CreateAuctionForm, PlaceBidForm, EditAuctionForm, ChangePasswordForm, validate_username
-from .models import OASuser, OASauction, OASwatchlist
+from .models import OASuser, OASauction, OASwatchlist, OASauctionWinner
 from decimal import Decimal
 
 # Create your views here.
@@ -28,10 +29,8 @@ def log_in(request):
             user = authenticate(request, username=username, userPass=userPass)
             if user is not None:
                 login(request, user)
-                # Redirect to a success page
                 return redirect('home_page')
             else:
-                # Invalid login
                 context = {'form': form, 'error' : "Invalid username or password."}
     else:
         form = LoginForm()
@@ -307,8 +306,17 @@ def auto_update_auction(request):
         auction.is_ongoing = False
         auction.is_completed = True
         auction.save()
-    return render(request, 'home_page.html')
 
+        highest_bid = auction.current_bid
+        highest_bidder = auction.current_bidder
+        if highest_bidder:
+            OASauctionWinner.objects.create(
+                auction=auction,
+                winner=highest_bidder,
+                winning_bid=highest_bid
+            )
+
+    return HttpResponse()
 
 def manual_update_auction():
     auctions_to_update = OASauction.objects.filter(auction_end_time__lte=timezone.now(), is_ongoing=True)
@@ -316,6 +324,15 @@ def manual_update_auction():
         auction.is_ongoing = False
         auction.is_completed = True
         auction.save()
+
+        highest_bid = auction.current_bid
+        highest_bidder = auction.current_bidder
+        if highest_bidder:
+            OASauctionWinner.objects.create(
+                auction=auction,
+                winner=highest_bidder,
+                winning_bid=highest_bid
+            )
 
 
 @login_required
@@ -525,3 +542,20 @@ def change_pass(request):
     else:
         form = ChangePasswordForm()
     return render(request, 'change_pass.html', {'form': form})
+
+
+@login_required
+def cart(request):
+    won_auctions = OASauctionWinner.objects.filter(winner=request.user)
+    return render(request, 'cart.html', {'won_auctions': won_auctions})
+
+
+@login_required
+def cart_auction_details(request, auction_id):
+    auction = get_object_or_404(OASauctionWinner, pk=auction_id)
+
+    if request.method == 'POST':
+        auction.delete()
+        return redirect('cart_auction_details')
+    
+    return render(request, 'cart_auction_details.html', {'auction': auction})

@@ -7,7 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" type="text/css" href="{% static 'css/home_page.css' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'css/font.css' %}">
-    <title>Watchlist | Bidify</title>
+    <title>Cart | Bidify</title>
 </head>
 <body>
     <ul>
@@ -45,40 +45,21 @@
     <p><a href="{% url 'home_page' %}" class="back-button"> &lt; Back</a></p>
     <a href="{% url 'home_page' %}"><img src="{% static 'image/bidify.png' %}" alt="bidify"></a>
     <hr>
-    <h1>Watchlist</h1>
+    <h1>Cart</h1>
     <ul>
-        {% for item in watchlist_items %}
+        {% for auction in won_auctions %}
             <li>
-                <a href="{% url 'auction_details' item.auction.id %}">
-                    <img src="{{ item.auction.picture1.url }}" alt="Item Picture 1" class="item-pic">
-                    <h2>{{ item.auction.item_name }}</h2>
-                    <p>{{ item.auction.item_desc }}</p>
-                    <p>Current Bid: RM{{ item.auction.current_bid }}</p>
-                    <p>End Time: {{ item.auction.auction_end_time }}</p>
+                <a href="{% url 'cart_auction_details' auction.auction.id %}">
+                    <img src="{{ auction.auction.picture1.url }}" alt="Item Picture 1" class="item-pic">
+                    <h2>{{ auction.auction.item_name }}</h2>
+                    <p>Bid Price: RM{{ auction.auction.current_bid }}</p>
+                    <p>Seller: {{ auction.auction.seller.fname }}{{ auction.auction.seller.lName }}</p>
                 </a>
-                <form method="post" action="{% url 'remove_from_watchlist' item.auction.id %}">
-                    {% csrf_token %}
-                        <button type="submit" name="action" value="remove_watchlist">Remove from Watchlist</button>
-                </form>    
             </li>
             <br>
         {% empty %}
-            <li>No saved watchlist</li>
+            <li>No won auctions.</li>
         {% endfor %}
     </ul>
-
-    <script>
-        setInterval(function() {
-            fetch("{% url 'auto_update_auction' %}")
-            .then(response => {
-                if (response.ok) {
-                    window.location.reload();
-                } else {
-                    console.error("Failed to update auction status");
-                }
-            })
-            .catch(error => console.error("Error:", error));
-        }, 60000); // Check every minute
-    </script>
 </body> 
 </html>
