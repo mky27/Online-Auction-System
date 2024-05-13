@@ -10,13 +10,13 @@
     <link rel="stylesheet" type="text/css" href="{% static 'css/font.css' %}">
 </head>
 <body>
-    <p><a href="{% url 'home_page' %}"> &lt; Back</a></p>
-    <img src="{{ auction.picture1.url }}" alt="Item Picture 1" class="item-pic">
-    <h1>{{ auction.item_name }}</h1>
-    <p>Description: {{ auction.item_desc }}</p>
-    <p>Category: {{ auction.item_cat }}</p>
-    <p>Bid Price: RM{{ auction.current_bid }}</p>
-    <p>Seller: {{ auction.seller.fname }}{{ auction.seller.lName }}</p>
+    <p><a href="{% url 'cart' %}"> &lt; Back</a></p>
+    <img src="{{ auction_winner.auction.picture1.url }}" alt="Item Picture 1" class="item-pic">
+    <h1>{{ auction_winner.auction.item_name }}</h1>
+    <p>Description: {{ auction_winner.auction.item_desc }}</p>
+    <p>Category: {{ auction_winner.auction.item_cat }}</p>
+    <p>Bid Price: RM{{ auction_winner.auction.current_bid }}</p>
+    <p>Seller: {{ auction_winner.auction.seller.fname }}{{ auction_winner.auction.seller.lName }}</p>
     <form action="" method="post">
         {% csrf_token %}
         <input type="submit" name="checkout" value="Checkout">

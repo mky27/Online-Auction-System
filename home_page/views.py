@@ -12,7 +12,6 @@ from .forms import UserRegistrationForm, PersonalInfoForm, LoginForm, ForgotPass
 from .models import OASuser, OASauction, OASwatchlist, OASauctionWinner
 from decimal import Decimal
 
-# Create your views here.
 
 def home_page(request):
     manual_update_auction()
@@ -552,10 +551,6 @@ def cart(request):
 
 @login_required
 def cart_auction_details(request, auction_id):
-    auction = get_object_or_404(OASauctionWinner, pk=auction_id)
-
-    if request.method == 'POST':
-        auction.delete()
-        return redirect('cart_auction_details')
+    auction_winner = get_object_or_404(OASauctionWinner, auction_id=auction_id)
     
-    return render(request, 'cart_auction_details.html', {'auction': auction})
+    return render(request, 'cart_auction_details.html', {'auction_winner': auction_winner})
