@@ -42,10 +42,33 @@
         </li>
     </ul>
         
-        <img src="{% static 'image/bidify.png' %}" alt="bidify">
+        <div class="header-content">
+            <img src="{% static 'image/bidify.png' %}" alt="Bidify Logo" class="logo">
+        </div>
+        <form method="GET" action="{% url 'home_page' %}">
+            <input type="text" name="q" placeholder="Search for anything" value="{{ query }}">
+            <select name="category">
+                <option value="">All Categories</option>
+                {% for category in categories %}
+                    <option value="{{ category }}" {% if selected_category == category %}selected{% endif %}>{{ category }}</option>
+                {% endfor %}
+            </select>
+            <button type="submit">Search</button>
+            {% if query or selected_category %}
+                <a href="{% url 'home_page' %}"><button type="button">Clear Results</button></a>
+            {% endif %}
+        </form>
     <hr>
-    <h1>Home Page</h1>
-    <ul>
+
+    {% if query or selected_category %}
+        {% if not active_auctions %}
+            <h2>No results found for "{{ query }}", "{{ selected_category }}".</h2>
+        {% else %}
+            <h2>Search Results:</h2>
+        {% endif %}
+    {% endif %}
+    
+    <ul class="auction-list">
         {% for auction in active_auctions %}
             <li>
                 <a href="{% url 'auction_details' auction.id %}">
@@ -54,7 +77,7 @@
                     <p>Current Bid: RM{{ auction.current_bid }}</p>
                     <p>End Time: {{ auction.auction_end_time }}</p>
                 </a>
-            </li><br>
+            </li>
         {% endfor %}
     </ul>
 

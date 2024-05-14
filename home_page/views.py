@@ -1,4 +1,5 @@
 from django.db import IntegrityError
+from django.db.models import Q
 from django.core.exceptions import ValidationError
 from django.http import HttpResponse
 from django.utils import timezone
@@ -15,8 +16,34 @@ from decimal import Decimal
 
 def home_page(request):
     manual_update_auction()
-    active_auctions = OASauction.objects.filter(auction_end_time__gt=timezone.now(), is_ongoing=True)
-    return render(request, 'home_page.html', {'active_auctions': active_auctions})
+
+    query = request.GET.get('q', '')
+    selected_category = request.GET.get('category', '')
+
+    active_auctions = OASauction.objects.filter(
+        is_ongoing=True, 
+        auction_end_time__gt=timezone.now()
+    )
+
+    if query:
+        active_auctions = active_auctions.filter(item_name__icontains=query)
+    
+    if selected_category:
+        active_auctions = active_auctions.filter(item_cat=selected_category)
+
+    context = {
+        'active_auctions': active_auctions,
+        'query': query,
+        'selected_category': selected_category,
+        'categories': [
+            'Apparel & Accessories', 'Animal & Pet Supplies', 'Arts & Entertainment', 'Baby & Toddler',
+            'Camera & Optics', 'Electronics', 'Food & Beverages', 'Furniture', 'Hardware', 
+            'Home & Garden', 'Health & Beauty', 'Luggage & Bags', 'Office Supplies', 'Religious', 
+            'Sporting Goods', 'Toys & Games', 'Vehicle & Parts', 'Others'
+        ],
+    }
+
+    return render(request, 'home_page.html', context)
 
   
 def log_in(request):
