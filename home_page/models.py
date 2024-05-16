@@ -84,6 +84,8 @@ class OASauctionWinner(models.Model):
     is_checkout = models.BooleanField(default=False)
     is_delivered = models.BooleanField(default=False)
     is_received = models.BooleanField(default=False)
+    checkout_deadline = models.DateTimeField(null=True, blank=True)
+
 
     # python manage.py makemigrations
     # python manage.py migrate

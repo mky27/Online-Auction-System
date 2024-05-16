@@ -1,5 +1,5 @@
+from datetime import timedelta
 from django.db import IntegrityError
-from django.db.models import Q
 from django.core.exceptions import ValidationError
 from django.http import HttpResponse
 from django.utils import timezone
@@ -341,10 +341,12 @@ def auto_update_auction(request):
             OASauctionWinner.objects.create(
                 auction=auction,
                 winner=highest_bidder,
-                winning_bid=highest_bid
+                winning_bid=highest_bid,
+                checkout_deadline=timezone.now() + timedelta(days=7)
             )
 
     return HttpResponse()
+
 
 def manual_update_auction():
     auctions_to_update = OASauction.objects.filter(auction_end_time__lte=timezone.now(), is_ongoing=True)
@@ -359,7 +361,8 @@ def manual_update_auction():
             OASauctionWinner.objects.create(
                 auction=auction,
                 winner=highest_bidder,
-                winning_bid=highest_bid
+                winning_bid=highest_bid,
+                checkout_deadline=timezone.now() + timedelta(days=7)
             )
 
 
@@ -574,7 +577,7 @@ def change_pass(request):
 
 @login_required
 def cart(request):
-    won_auctions = OASauctionWinner.objects.filter(winner=request.user)
+    won_auctions = OASauctionWinner.objects.filter(winner=request.user, is_checkout=False)
     return render(request, 'cart.html', {'won_auctions': won_auctions})
 
 
@@ -588,10 +591,12 @@ def cart_auction_details(request, auction_id):
 @login_required
 def checkout(request, auction_winner_id):
     auction_winner = get_object_or_404(OASauctionWinner, id=auction_winner_id)
-    buyer = auction_winner.winner
 
+    if auction_winner.checkout_deadline < timezone.now():
+        return redirect('cart_auction_details', auction_id=auction_winner.auction.id)
+
+    buyer = auction_winner.winner
     if request.method == 'POST':
-        print("0")
         form = CheckoutForm(request.POST)
         if form.is_valid():
             auction_winner.buyer_name = form.cleaned_data['buyer_name']
@@ -599,7 +604,6 @@ def checkout(request, auction_winner_id):
             auction_winner.buyer_address = form.cleaned_data['buyer_address']
             auction_winner.is_checkout = True
             auction_winner.save()
-            print("1")
             return redirect('home_page')
     else:
         initial_data = {
@@ -607,7 +611,11 @@ def checkout(request, auction_winner_id):
             'buyer_phone': buyer.phoneNo,
             'buyer_address': buyer.address,
         }
-        print("2")
         form = CheckoutForm(initial=initial_data)
-    print("3")
+
     return render(request, 'checkout.html', {'auction_winner': auction_winner, 'form': form})
+
+def remove_from_cart(request, auction_winner_id):
+    auction_winner = get_object_or_404(OASauctionWinner, id=auction_winner_id)
+    auction_winner.delete()
+    return redirect('cart')
