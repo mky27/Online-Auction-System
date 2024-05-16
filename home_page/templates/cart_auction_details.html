@@ -16,9 +16,9 @@
     <p>Description: {{ auction_winner.auction.item_desc }}</p>
     <p>Category: {{ auction_winner.auction.item_cat }}</p>
     <p>Bid Price: RM{{ auction_winner.winning_bid }}</p>
-    <p>Seller: {{ auction_winner.auction.seller.fname }}{{ auction_winner.auction.seller.lName }}</p>
+    <p>Seller: {{ auction_winner.auction.seller.fName }}{{ auction_winner.auction.seller.lName }}</p>
     <p>Checkout Deadline: {{ auction_winner.checkout_deadline }}</p>
-    {% if auction_winner.checkout_deadline < timezone.now %}
+    {% if deadline_passed %}
         <p style="color: red;">The checkout deadline has passed. You cannot checkout this item.</p>
         <form action="{% url 'remove_from_cart' auction_winner.id %}" method="post">
             {% csrf_token %}

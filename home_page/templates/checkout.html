@@ -14,7 +14,7 @@
     <img src="{{ auction_winner.auction.picture1.url }}" alt="Item Picture 1" class="item-pic">
     <h2>{{ auction_winner.auction.item_name }}</h2>
     <p>Price: RM{{ auction_winner.winning_bid }}</p>
-    <p>Seller: {{ auction_winner.auction.seller.fname }} {{ auction_winner.auction.seller.lName }}</p>
+    <p>Seller: {{ auction_winner.auction.seller.fName }} {{ auction_winner.auction.seller.lName }}</p>
 
     <form method="post" action="">
         {% csrf_token %}

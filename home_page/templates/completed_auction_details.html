@@ -19,7 +19,7 @@
     <p>Auction End Time: {{ auction.auction_end_time }}</p>
     <p>Starting Bid: RM{{ auction.start_bid }}</p>
     <p>Highest Bid: RM{{ auction.current_bid }}</p>
-    <p>Highest Bidder: {% if auction.current_bidder %}{{ auction.current_bidder.username }}{% else %}No current bidder{% endif %}</p>
+    <p>Winner: {% if auction.current_bidder %}{{ auction.current_bidder.username }}{% else %}No winner{% endif %}</p>
     <p>Second Highest Bidder: {% if auction.second_highest_bidder %}{{ auction.second_highest_bidder.username }}{% else %}No second highest bidder{% endif %}</p>
     <form action="" method="post">
         {% csrf_token %}

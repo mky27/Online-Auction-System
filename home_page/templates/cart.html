@@ -55,11 +55,7 @@
                     <p>Bid Price: RM{{ auction.winning_bid }}</p>
                     <p>Seller: {{ auction.auction.seller.fName }}</p>
                     <p>Checkout Deadline: {{ auction.checkout_deadline }}</p>
-                </a>
-                <form action="{% url 'checkout' auction.id %}">
-                    {% csrf_token %}
-                    <button type="submit" name="checkout" value="Checkout">Checkout</button>
-                </form>
+                </a>        
             </li>
             <br>
         {% empty %}

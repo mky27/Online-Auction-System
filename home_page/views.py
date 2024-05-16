@@ -578,24 +578,27 @@ def change_pass(request):
 @login_required
 def cart(request):
     won_auctions = OASauctionWinner.objects.filter(winner=request.user, is_checkout=False)
+
     return render(request, 'cart.html', {'won_auctions': won_auctions})
 
 
 @login_required
 def cart_auction_details(request, auction_id):
     auction_winner = get_object_or_404(OASauctionWinner, auction_id=auction_id)
+    deadline_passed = auction_winner.checkout_deadline < timezone.now()
     
-    return render(request, 'cart_auction_details.html', {'auction_winner': auction_winner})
+    return render(request, 'cart_auction_details.html', {'auction_winner': auction_winner, 'deadline_passed': deadline_passed})
 
 
 @login_required
 def checkout(request, auction_winner_id):
     auction_winner = get_object_or_404(OASauctionWinner, id=auction_winner_id)
-
-    if auction_winner.checkout_deadline < timezone.now():
-        return redirect('cart_auction_details', auction_id=auction_winner.auction.id)
-
     buyer = auction_winner.winner
+
+    deadline_passed = auction_winner.checkout_deadline < timezone.now()
+    
+    if deadline_passed:
+        return redirect('cart')
     if request.method == 'POST':
         form = CheckoutForm(request.POST)
         if form.is_valid():
