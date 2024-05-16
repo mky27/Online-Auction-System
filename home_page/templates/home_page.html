@@ -13,7 +13,7 @@
     <ul>
         <li style="float:left"><a href="#"><img src="{% static 'image/profile_icon.png' %}" alt="profile" class="profile-icon"></a></li>
         {% if user.is_authenticated %}
-            <li style="float:left"><a href="#">Welcome, {{user.username}}</a></li>
+            <li style="float:left">Welcome, {{user.username}}</li>
         {% else %}
             <li style="float:left">Welcome, guest</li>
             <li style="float:left"><a href="{% url 'login' %}">Login or Register</a></li>

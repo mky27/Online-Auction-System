@@ -125,3 +125,8 @@ class ChangePasswordForm(forms.Form):
     current_password = forms.CharField(label='Current Password', widget=forms.PasswordInput)
     new_password = forms.CharField(label='New Password', widget=forms.PasswordInput)
     confirm_password = forms.CharField(label='Confirm Password', widget=forms.PasswordInput)
+
+class CheckoutForm(forms.Form):
+    buyer_name = forms.CharField(max_length=100, required=True ,label='Buyer Name')
+    buyer_phone = forms.CharField(max_length=15, required=True, label='Buyer Contact No')
+    buyer_address = forms.CharField(widget=forms.Textarea, required=True, label='Shipping Address')

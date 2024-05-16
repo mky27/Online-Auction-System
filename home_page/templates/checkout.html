@@ -1,0 +1,25 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout | Bidify</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/auction_details.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/font.css' %}">
+</head>
+<body>
+    <h1>Checkout</h1>
+    <img src="{{ auction_winner.auction.picture1.url }}" alt="Item Picture 1" class="item-pic">
+    <h2>{{ auction_winner.auction.item_name }}</h2>
+    <p>Price: RM{{ auction_winner.winning_bid }}</p>
+    <p>Seller: {{ auction_winner.auction.seller.fname }} {{ auction_winner.auction.seller.lName }}</p>
+
+    <form method="post" action="">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Make Payment</button>
+    </form>
+</body>
+</html>

@@ -17,6 +17,7 @@ class OASuser(models.Model):
     last_login = models.DateTimeField(auto_now=True)
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
+    ratings = models.DecimalField(max_digits=65, decimal_places=1, blank=True, null=True)
  
     def __str__(self):
         return self.username
@@ -49,6 +50,7 @@ class OASauction(models.Model):
     seller = models.ForeignKey(OASuser, on_delete=models.CASCADE, related_name='seller_auctions')
     auction_created_time = models.DateTimeField(null=True, blank=True)
     auction_end_time = models.DateTimeField()
+    comment = models.TextField(blank=True, null=True)
     picture1 = models.ImageField(upload_to='auction_pictures/', blank=True, null=True)
     picture2 = models.ImageField(upload_to='auction_pictures/', blank=True, null=True)
     picture3 = models.ImageField(upload_to='auction_pictures/', blank=True, null=True)
@@ -64,7 +66,7 @@ class OASauction(models.Model):
         return self.item_name
     
     def save(self, *args, **kwargs):
-        if not self.pk:  # Only update current_bid if it's a new instance
+        if not self.pk:
             self.current_bid = self.start_bid
         super().save(*args, **kwargs)
 
@@ -76,6 +78,12 @@ class OASauctionWinner(models.Model):
     auction = models.OneToOneField(OASauction, on_delete=models.CASCADE)
     winner = models.ForeignKey(OASuser, on_delete=models.CASCADE)
     winning_bid = models.DecimalField(max_digits=10, decimal_places=2)
+    buyer_name = models.CharField(max_length=100, blank=True, null=True)
+    buyer_phone = models.CharField(max_length=15, blank=True, null=True)
+    buyer_address = models.TextField(blank=True, null=True)
+    is_checkout = models.BooleanField(default=False)
+    is_delivered = models.BooleanField(default=False)
+    is_received = models.BooleanField(default=False)
 
     # python manage.py makemigrations
     # python manage.py migrate

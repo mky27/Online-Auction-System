@@ -9,7 +9,7 @@ from django.contrib.auth.hashers import make_password
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.password_validation import validate_password
 from django.contrib.auth.decorators import login_required
-from .forms import UserRegistrationForm, PersonalInfoForm, LoginForm, ForgotPassForm, ResetPassForm, EditProfileForm, CreateAuctionForm, PlaceBidForm, EditAuctionForm, ChangePasswordForm, validate_username
+from .forms import UserRegistrationForm, PersonalInfoForm, LoginForm, ForgotPassForm, ResetPassForm, EditProfileForm, CreateAuctionForm, PlaceBidForm, EditAuctionForm, ChangePasswordForm, CheckoutForm, validate_username
 from .models import OASuser, OASauction, OASwatchlist, OASauctionWinner
 from decimal import Decimal
 
@@ -208,6 +208,7 @@ def edit_profile(request):
             'address': user.address
         }
         form = EditProfileForm(initial=initial_data)
+
     return render(request, 'edit_profile.html', {'form': form})
 
 @login_required
@@ -264,6 +265,7 @@ def create_auction(request):
                 return redirect('home_page')
     else:
         form = CreateAuctionForm()
+
     return render(request, 'create_auction.html', {'form': form})
 
 
@@ -581,3 +583,31 @@ def cart_auction_details(request, auction_id):
     auction_winner = get_object_or_404(OASauctionWinner, auction_id=auction_id)
     
     return render(request, 'cart_auction_details.html', {'auction_winner': auction_winner})
+
+
+@login_required
+def checkout(request, auction_winner_id):
+    auction_winner = get_object_or_404(OASauctionWinner, id=auction_winner_id)
+    buyer = auction_winner.winner
+
+    if request.method == 'POST':
+        print("0")
+        form = CheckoutForm(request.POST)
+        if form.is_valid():
+            auction_winner.buyer_name = form.cleaned_data['buyer_name']
+            auction_winner.buyer_phone = form.cleaned_data['buyer_phone']
+            auction_winner.buyer_address = form.cleaned_data['buyer_address']
+            auction_winner.is_checkout = True
+            auction_winner.save()
+            print("1")
+            return redirect('home_page')
+    else:
+        initial_data = {
+            'buyer_name': f"{buyer.fName} {buyer.lName}",
+            'buyer_phone': buyer.phoneNo,
+            'buyer_address': buyer.address,
+        }
+        print("2")
+        form = CheckoutForm(initial=initial_data)
+    print("3")
+    return render(request, 'checkout.html', {'auction_winner': auction_winner, 'form': form})
