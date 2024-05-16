@@ -1,7 +1,8 @@
+import json
 from datetime import timedelta
 from django.db import IntegrityError
 from django.core.exceptions import ValidationError
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.utils import timezone
 from django.contrib import messages
 from django.shortcuts import redirect, render, get_object_or_404
@@ -9,8 +10,10 @@ from django.contrib.auth.hashers import make_password
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.password_validation import validate_password
 from django.contrib.auth.decorators import login_required
+from django.views.decorators.csrf import csrf_exempt
+import requests
 from .forms import UserRegistrationForm, PersonalInfoForm, LoginForm, ForgotPassForm, ResetPassForm, EditProfileForm, CreateAuctionForm, PlaceBidForm, EditAuctionForm, ChangePasswordForm, CheckoutForm, validate_username
-from .models import OASuser, OASauction, OASwatchlist, OASauctionWinner
+from .models import OASuser, OASauction, OASwatchlist, OASauctionWinner, OAStransaction
 from decimal import Decimal
 
 
@@ -618,7 +621,46 @@ def checkout(request, auction_winner_id):
 
     return render(request, 'checkout.html', {'auction_winner': auction_winner, 'form': form})
 
+
 def remove_from_cart(request, auction_winner_id):
     auction_winner = get_object_or_404(OASauctionWinner, id=auction_winner_id)
     auction_winner.delete()
+
     return redirect('cart')
+
+
+@login_required
+def get_wallet_balance(request):
+    user_balance = request.user.balance
+    
+    return JsonResponse({'balance': user_balance})
+
+
+@login_required
+def wallet(request):
+    transactions = OAStransaction.objects.filter(main_user=request.user).order_by('-timestamp')
+    
+    return render(request, 'wallet.html', {'transactions': transactions})
+
+
+@login_required
+def reload_wallet(request):
+    if request.method == 'POST':
+        amount = request.POST.get('amount')
+        try:
+            amount = Decimal(amount)
+            request.user.balance += amount
+            request.user.save()
+
+            OAStransaction.objects.create(
+                main_user=request.user,
+                second_user=request.user,  
+                transaction_type='RELOAD',
+                amount=amount,
+                timestamp=timezone.now()
+            )
+
+            return redirect('wallet')
+        except ValueError:
+            pass  
+    return redirect('wallet')

@@ -18,6 +18,8 @@ class OASuser(models.Model):
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
     ratings = models.DecimalField(max_digits=65, decimal_places=1, blank=True, null=True)
+    balance = models.DecimalField(max_digits=65, decimal_places=2, default=0)
+
  
     def __str__(self):
         return self.username
@@ -26,9 +28,6 @@ class OASuser(models.Model):
         return check_password_hash(raw_password, self.userPass)
 
     def get_username(self):
-        """
-        Return the username of the user.
-        """
         return self.username
 
     @property
@@ -85,6 +84,13 @@ class OASauctionWinner(models.Model):
     is_delivered = models.BooleanField(default=False)
     is_received = models.BooleanField(default=False)
     checkout_deadline = models.DateTimeField(null=True, blank=True)
+
+class OAStransaction(models.Model):
+    main_user = models.ForeignKey(OASuser, on_delete=models.CASCADE, related_name='transactions_as_main')
+    second_user = models.ForeignKey(OASuser, on_delete=models.CASCADE, related_name='transactions_as_second')
+    transaction_type = models.CharField(max_length=10)
+    amount = models.DecimalField(max_digits=10, decimal_places=2)
+    timestamp = models.DateTimeField(auto_now_add=True)
 
 
     # python manage.py makemigrations

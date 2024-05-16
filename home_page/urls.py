@@ -31,4 +31,7 @@ urlpatterns = [
     path('cart_auction_details/<int:auction_id>/', views.cart_auction_details, name='cart_auction_details'),
     path('checkout/<int:auction_winner_id>/', views.checkout, name='checkout'),
     path('remove_from_cart/<int:auction_winner_id>/', views.remove_from_cart, name='remove_from_cart'),
+    path('get_wallet_balance/', views.get_wallet_balance, name='get_wallet_balance'),
+    path('wallet/', views.wallet, name='wallet'),
+    path('reload_wallet/', views.reload_wallet, name='reload_wallet'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -27,6 +27,7 @@
                 <a href="{% url 'logout' %}">Logout</a>
             </div>
         </li>
+        <li style="float:right"><a href="{% url 'wallet' %}">Wallet</a><span id="wallet-balance"></span></li>
         <li style="float:right"><a href="#">To Deliver</a></li>
         <li style="float:right"><a href="#">To Receive</a></li>
         <li style="float:right"><a href="{% url 'watchlist' %}">Watchlist</a></li>
@@ -93,6 +94,23 @@
             })
             .catch(error => console.error("Error:", error));
         }, 60000); // Check every minute
+    </script>
+
+    <script>
+        fetch("{% url 'get_wallet_balance' %}")
+            .then(response => {
+                if (response.ok) {
+                    return response.json();
+                } else {
+                    throw new Error('Failed to fetch wallet balance');
+                }
+            })
+            .then(data => {
+                document.getElementById('wallet-balance').textContent = `RM${data.balance}`;
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
     </script>
 </body> 
 </html>
