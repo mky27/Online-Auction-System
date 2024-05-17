@@ -16,10 +16,13 @@
     <p>Price: RM{{ auction_winner.winning_bid }}</p>
     <p>Seller: {{ auction_winner.auction.seller.fName }} {{ auction_winner.auction.seller.lName }}</p>
 
-    <form method="post" action="{% url 'make_payment' %}">
+    <form action="{% url 'checkout' auction_winner.id %}" method="post">
         {% csrf_token %}
         {{ form.as_p }}
-        <button type="submit">Make Payment</button>
+        <button type="submit" name="checkout">Make Payment</button>
     </form>
-</body>
+
+    <div id="error-message" style="color: red;"></div>
+     
+    </body>
 </html>

@@ -1,4 +1,3 @@
-import json
 from datetime import timedelta
 from django.db import IntegrityError
 from django.core.exceptions import ValidationError
@@ -10,8 +9,6 @@ from django.contrib.auth.hashers import make_password
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.password_validation import validate_password
 from django.contrib.auth.decorators import login_required
-from django.views.decorators.csrf import csrf_exempt
-import requests
 from .forms import UserRegistrationForm, PersonalInfoForm, LoginForm, ForgotPassForm, ResetPassForm, EditProfileForm, CreateAuctionForm, PlaceBidForm, EditAuctionForm, ChangePasswordForm, CheckoutForm, validate_username
 from .models import OASuser, OASauction, OASwatchlist, OASauctionWinner, OAStransaction
 from decimal import Decimal
@@ -602,14 +599,43 @@ def checkout(request, auction_winner_id):
     
     if deadline_passed:
         return redirect('cart')
+    
     if request.method == 'POST':
         form = CheckoutForm(request.POST)
         if form.is_valid():
+            auction_winner_id = request.POST.get('auction_winner_id')
+            winning_bid = auction_winner.winning_bid
+            winning_bid_decimal = Decimal(winning_bid)
+            
+            if request.user.balance < winning_bid_decimal:
+                print("3")
+                return JsonResponse({'error': 'Insufficient balance'}, status=400)
+            
+            request.user.balance -= winning_bid_decimal
+            request.user.save()
+
+            OAStransaction.objects.create(
+                main_user=request.user,
+                second_user=auction_winner.auction.seller,
+                transaction_type='PAYMENT',
+                amount=winning_bid_decimal,
+                timestamp=timezone.now()
+            )
+
+            OAStransaction.objects.create(
+                main_user=auction_winner.auction.seller,
+                second_user=request.user,
+                transaction_type='RECEIVE',
+                amount=winning_bid_decimal,
+                timestamp=timezone.now()
+            )
+            
             auction_winner.buyer_name = form.cleaned_data['buyer_name']
             auction_winner.buyer_phone = form.cleaned_data['buyer_phone']
             auction_winner.buyer_address = form.cleaned_data['buyer_address']
             auction_winner.is_checkout = True
             auction_winner.save()
+            print("2")
             return redirect('home_page')
     else:
         initial_data = {
@@ -618,7 +644,7 @@ def checkout(request, auction_winner_id):
             'buyer_address': buyer.address,
         }
         form = CheckoutForm(initial=initial_data)
-
+    print("1")
     return render(request, 'checkout.html', {'auction_winner': auction_winner, 'form': form})
 
 
@@ -664,3 +690,44 @@ def reload_wallet(request):
         except ValueError:
             pass  
     return redirect('wallet')
+
+
+@login_required
+def make_payment(request):
+    if request.method == 'POST':
+        try:
+            auction_winner_id = request.POST.get('auction_winner_id')
+            auction_winner = OASauctionWinner.objects.get(id=auction_winner_id)
+            winning_bid = auction_winner.winning_bid
+            winning_bid_decimal = Decimal(winning_bid)
+            
+            if request.user.balance < winning_bid_decimal:
+                return JsonResponse({'error': 'Insufficient balance'}, status=400)
+            
+            request.user.balance -= winning_bid_decimal
+            request.user.save()
+
+            OAStransaction.objects.create(
+                main_user=request.user,
+                second_user=auction_winner.auction.seller,
+                transaction_type='PAYMENT',
+                amount=winning_bid_decimal,
+                timestamp=timezone.now()
+            )
+
+            OAStransaction.objects.create(
+                main_user=auction_winner.auction.seller,
+                second_user=request.user,
+                transaction_type='RECEIVE',
+                amount=winning_bid_decimal,
+                timestamp=timezone.now()
+            )
+
+            return JsonResponse({'success': 'Payment successful'})
+
+        except OASauctionWinner.DoesNotExist:
+            return JsonResponse({'error': 'Auction winner not found'}, status=404)
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=500)
+
+    return JsonResponse({'error': 'Invalid request'}, status=400)
