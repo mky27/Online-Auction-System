@@ -59,7 +59,7 @@
                 <form method="post" action="{% url 'remove_from_watchlist' item.auction.id %}">
                     {% csrf_token %}
                         <button type="submit" name="action" value="remove_watchlist">Remove from Watchlist</button>
-                </form>    
+                </form>
             </li>
             <br>
         {% empty %}

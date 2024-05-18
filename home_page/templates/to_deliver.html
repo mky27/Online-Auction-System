@@ -1,0 +1,42 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
+    <title>To Deliver | Bidify</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/home_page.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/font.css' %}">
+</head>
+<body>
+    <p><a href="{% url 'home_page' %}" class="back-button"> &lt; Back</a></p>
+    <a href="{% url 'home_page' %}"><img src="{% static 'image/bidify.png' %}" alt="bidify"></a>
+    <h1>To Deliver</h1>
+    <ul>
+        {% for auction_winner in items_to_deliver %}
+            <li>
+                <a href="{% url 'deliver_auction_details' auction_winner.id %}">
+                    <img src="{{ auction_winner.auction.picture1.url }}" alt="Item Picture 1" class="item-pic">
+                    <h2>{{ auction_winner.auction.item_name }}</h2>
+                    <p>Winning Bid: RM{{ auction_winner.winning_bid }}</p>
+                    {% if auction_winner.is_checkout %}
+                        <p>Buyer: {{ auction_winner.buyer_name }}</p>
+                        <p>Buyer Address: {{ auction_winner.buyer_address }}</p>
+                        <p>Buyer Phone: {{ auction_winner.buyer_phone }}</p>
+                        <p>Checkout Deadline: {{ auction_winner.checkout_deadline }}</p>
+                        <p>Buyer made payment successfully.</p>
+                    {% elif auction_winner.deadline_passed and not auction_winner.is_checkout %}
+                        <p>Buyer has not make payment before {{ auction_winner.checkout_deadline }}.</p>
+                    {% elif auction_winner.is_checkout == False %}
+                        <p>Awaiting for buyer make payment.</p>
+                    {% endif %}
+                </a>
+            </li>
+            <br>
+        {% empty %}
+            <li>No items to deliver.</li>
+        {% endfor %}
+    </ul>
+</body>
+</html>

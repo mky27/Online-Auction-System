@@ -51,7 +51,7 @@
                 <a href="{% url 'completed_auction_details' auction.id %}">
                     <img src="{{ auction.picture1.url }}" alt="Auction Picture 1" class="item-pic">
                     <h2>{{ auction.item_name }}</h2>
-                    <p>Highest Bid: {{ auction.current_bid }}</p>
+                    <p>Winning Bid: {{ auction.current_bid }}</p>
                     <p>Winner: {% if auction.current_bidder %}{{ auction.current_bidder.username }}{% else %}No winner{% endif %}</p>
                     <p>End Time: {{ auction.auction_end_time }}</p>
                 </a>

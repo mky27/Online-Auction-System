@@ -1,0 +1,70 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
+    <title>Auction Details | Bidify</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/auction_details.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/font.css' %}">
+</head>
+<body>
+    <p><a href="{% url 'to_deliver' %}"> &lt; Back</a></p>
+    <img src="{{ auction_winner.auction.picture1.url }}" alt="Item Picture 1" class="item-pic">
+    <h1>{{ auction_winner.auction.item_name }}</h1>
+    <p>Description: {{ auction_winner.auction.item_desc }}</p>
+    <p>Category: {{ auction_winner.auction.item_cat }}</p>
+    <p>Price Amount: RM{{ auction_winner.winning_bid }}</p>
+    <p>Seller: {{ auction_winner.auction.seller.fName }} {{ auction_winner.auction.seller.lName }}</p>
+    <p>Checkout Deadline: {{ auction_winner.checkout_deadline }}</p>
+    <p>Buyer: {{ auction_winner.buyer_name }}</p>
+    <p>Buyer Address: {{ auction_winner.buyer_address }}</p>
+    <p>Buyer Phone: {{ auction_winner.buyer_phone }}</p>
+    
+    {% if auction_winner.is_checkout %}
+        <p style="color: red;">Buyer made payment successfully.</p>
+        <form id="delivery-form" action="{% url 'deliver_auction_details' auction_winner.id %}" method="post">
+            {% csrf_token %}
+            <input type="submit" name="out_for_delivery" value="Out for Delivery" id="out-for-delivery-button">
+        </form>
+    {% elif deadline_passed and not auction_winner.is_checkout %}
+        <p style="color: red;">The checkout deadline has passed. Buyer has not made payment before {{ auction_winner.checkout_deadline }}.</p>
+        <form id="remove-form" action="{% url 'deliver_auction_details' auction_winner.id %}" method="post">
+            {% csrf_token %}
+            <input type="submit" name="remove" value="Remove Auction">
+        </form>
+    {% else %}
+        <p style="color: red;">Awaiting for buyer make payment.</p>
+    {% endif %}
+
+    <script>
+        const deliveryForm = document.getElementById('delivery-form');
+        
+        // Add event listener to the out-for-delivery button
+        deliveryForm.addEventListener('submit', function(event) {
+            // Show confirmation prompt
+            const confirmed = confirm('Is this item out for delivery?');
+            
+            // If user cancels, prevent the form submission
+            if (!confirmed) {
+                event.preventDefault();
+            }
+        });
+    </script>
+
+    <script>
+        const remove = document.getElementById('remove-form');
+
+        remove.addEventListener('submit', function(event) {
+            // Show confirmation prompt
+            const confirmed = confirm('Do you confirm to remove auction?');
+            
+            // If user cancels, prevent the form submission
+            if (!confirmed) {
+                event.preventDefault();
+            }
+        });
+    </script>
+</body>
+</html>

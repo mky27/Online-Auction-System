@@ -34,4 +34,7 @@ urlpatterns = [
     path('get_wallet_balance/', views.get_wallet_balance, name='get_wallet_balance'),
     path('wallet/', views.wallet, name='wallet'),
     path('reload_wallet/', views.reload_wallet, name='reload_wallet'),
+    path('to_deliver/', views.to_deliver, name='to_deliver'),
+    path('deliver_auction_details/<int:auction_winner_id>/', views.deliver_auction_detail, name='deliver_auction_details'),
+
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

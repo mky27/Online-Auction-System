@@ -405,7 +405,7 @@ def is_in_watchlist(user, auction):
 @login_required
 def withdraw_from_auction(request, auction_id):
     auction = get_object_or_404(OASauction, pk=auction_id)
-    
+
     if request.method == 'POST':
         if auction.second_highest_bid is not None and auction.second_highest_bidder is not None:
             auction.current_bid = auction.second_highest_bid
@@ -513,18 +513,22 @@ def edit_auction(request, auction_id):
 @login_required
 def completed_auction(request):
     completed_auctions = OASauction.objects.filter(seller=request.user, is_completed=True)
+    
     return render(request, 'completed_auction.html', {'completed_auctions': completed_auctions})
 
 
 @login_required
 def completed_auction_details(request, auction_id):
     auction = get_object_or_404(OASauction, pk=auction_id)
+    auction_winner = get_object_or_404(OASauctionWinner, auction_id=auction_id)
+
+    deadline_passed = auction_winner.checkout_deadline < timezone.now()
 
     if request.method == 'POST':
         auction.delete()
         return redirect('completed_auction')
     
-    return render(request, 'completed_auction_details.html', {'auction': auction})
+    return render(request, 'completed_auction_details.html', {'auction': auction, 'deadline_passed': deadline_passed})
 
 
 @login_required
@@ -608,7 +612,6 @@ def checkout(request, auction_winner_id):
             winning_bid_decimal = Decimal(winning_bid)
             
             if request.user.balance < winning_bid_decimal:
-                print("3")
                 return JsonResponse({'error': 'Insufficient balance'}, status=400)
             
             request.user.balance -= winning_bid_decimal
@@ -635,7 +638,6 @@ def checkout(request, auction_winner_id):
             auction_winner.buyer_address = form.cleaned_data['buyer_address']
             auction_winner.is_checkout = True
             auction_winner.save()
-            print("2")
             return redirect('home_page')
     else:
         initial_data = {
@@ -644,7 +646,7 @@ def checkout(request, auction_winner_id):
             'buyer_address': buyer.address,
         }
         form = CheckoutForm(initial=initial_data)
-    print("1")
+        
     return render(request, 'checkout.html', {'auction_winner': auction_winner, 'form': form})
 
 
@@ -693,41 +695,32 @@ def reload_wallet(request):
 
 
 @login_required
-def make_payment(request):
+def to_deliver(request):
+    seller = request.user
+    items_to_deliver = OASauctionWinner.objects.filter(auction__seller=seller, is_delivered=False)
+
+    for auction_winner in items_to_deliver:
+        auction_winner.deadline_passed = auction_winner.checkout_deadline < timezone.now()
+
+    return render(request, 'to_deliver.html', {'items_to_deliver': items_to_deliver})
+
+
+@login_required
+def deliver_auction_detail(request, auction_winner_id):
+    auction_winner = get_object_or_404(OASauctionWinner, id=auction_winner_id)
+
     if request.method == 'POST':
-        try:
-            auction_winner_id = request.POST.get('auction_winner_id')
-            auction_winner = OASauctionWinner.objects.get(id=auction_winner_id)
-            winning_bid = auction_winner.winning_bid
-            winning_bid_decimal = Decimal(winning_bid)
-            
-            if request.user.balance < winning_bid_decimal:
-                return JsonResponse({'error': 'Insufficient balance'}, status=400)
-            
-            request.user.balance -= winning_bid_decimal
-            request.user.save()
+        if 'out_for_delivery' in request.POST:
+            auction_winner.is_delivered = True
+            auction_winner.save()
+            return redirect('to_deliver')
+        elif 'remove' in request.POST:
+            auction_winner.delete()
+            return redirect('to_deliver')
 
-            OAStransaction.objects.create(
-                main_user=request.user,
-                second_user=auction_winner.auction.seller,
-                transaction_type='PAYMENT',
-                amount=winning_bid_decimal,
-                timestamp=timezone.now()
-            )
+    deadline_passed = auction_winner.checkout_deadline < timezone.now()
 
-            OAStransaction.objects.create(
-                main_user=auction_winner.auction.seller,
-                second_user=request.user,
-                transaction_type='RECEIVE',
-                amount=winning_bid_decimal,
-                timestamp=timezone.now()
-            )
-
-            return JsonResponse({'success': 'Payment successful'})
-
-        except OASauctionWinner.DoesNotExist:
-            return JsonResponse({'error': 'Auction winner not found'}, status=404)
-        except Exception as e:
-            return JsonResponse({'error': str(e)}, status=500)
-
-    return JsonResponse({'error': 'Invalid request'}, status=400)
+    return render(request, 'deliver_auction_details.html', {
+        'auction_winner': auction_winner,
+        'deadline_passed': deadline_passed
+    })

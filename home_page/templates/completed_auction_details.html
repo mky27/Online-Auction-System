@@ -18,12 +18,16 @@
     <p>Auction Created Time: {{ auction.auction_created_time }}</p>
     <p>Auction End Time: {{ auction.auction_end_time }}</p>
     <p>Starting Bid: RM{{ auction.start_bid }}</p>
-    <p>Highest Bid: RM{{ auction.current_bid }}</p>
-    <p>Winner: {% if auction.current_bidder %}{{ auction.current_bidder.username }}{% else %}No winner{% endif %}</p>
-    <p>Second Highest Bidder: {% if auction.second_highest_bidder %}{{ auction.second_highest_bidder.username }}{% else %}No second highest bidder{% endif %}</p>
+    <p>Winning Bid: {% if auction_winner.winning_bid %}RM{{ auction_winner.winning_bid }}{% else %}No Winner{% endif %}</p>
+    <p>Winner Username: {% if auction_winner.buyer_name %}{{ auction.current_bidder.username }}{% else %}No winner{% endif %}</p>
+    <p>Winner Name: {% if auction_winner.buyer_name %}{{ auction_winner.buyer_name }}{% else %}No winner{% endif %}</p>
+    <p>Winner Address: {% if auction_winner.buyer_address %}{{ auction_winner.buyer_address }}{% else %}No winner{% endif %}</p>
+    <p>Winner Phone No: {% if auction_winner.buyer_phone %}{{ auction_winner.buyer_phone }}{% else %}No winner{% endif %}</p>
+    {% if deadline_passed %}
     <form action="" method="post">
         {% csrf_token %}
         <input type="submit" name="delete" value="Delete Auction">
     </form>
+    {% endif %}
 </body>
 </html>
