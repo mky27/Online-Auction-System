@@ -16,8 +16,7 @@ class OASuser(models.Model):
     address = models.TextField()
     last_login = models.DateTimeField(auto_now=True)
     is_active = models.BooleanField(default=True)
-    is_staff = models.BooleanField(default=False)
-    ratings = models.DecimalField(max_digits=65, decimal_places=1, blank=True, null=True)
+    is_admin = models.BooleanField(default=False)
     balance = models.DecimalField(max_digits=65, decimal_places=2, default=0)
 
  

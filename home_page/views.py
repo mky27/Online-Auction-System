@@ -8,7 +8,7 @@ from django.shortcuts import redirect, render, get_object_or_404
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.password_validation import validate_password
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, user_passes_test
 from .forms import UserRegistrationForm, PersonalInfoForm, LoginForm, ForgotPassForm, ResetPassForm, EditProfileForm, CreateAuctionForm, PlaceBidForm, EditAuctionForm, ChangePasswordForm, CheckoutForm, ReceiveForm, validate_username
 from .models import OASuser, OASauction, OASwatchlist, OASauctionWinner, OAStransaction
 from decimal import Decimal
@@ -43,6 +43,9 @@ def home_page(request):
         ],
     }
 
+    if request.user.is_authenticated and request.user.is_admin:
+        return render(request, 'admin_home.html', context)
+    
     return render(request, 'home_page.html', context)
 
   
@@ -55,7 +58,10 @@ def log_in(request):
             user = authenticate(request, username=username, userPass=userPass)
             if user is not None:
                 login(request, user)
-                return redirect('home_page')
+                if user.is_admin:
+                    return redirect('admin_home')
+                else:
+                    return redirect('home_page')
             else:
                 context = {'form': form, 'error' : "Invalid username or password."}
     else:
@@ -344,6 +350,8 @@ def auto_update_auction(request):
             checkout_deadline=timezone.now() + timedelta(days=7)
         )
 
+        OASwatchlist.objects.filter(auction=auction).delete()
+
     return HttpResponse()
 
 
@@ -362,6 +370,8 @@ def manual_update_auction():
             winning_bid=highest_bid,
             checkout_deadline=timezone.now() + timedelta(days=7)
         )
+
+        OASwatchlist.objects.filter(auction=auction).delete()
 
 
 @login_required
@@ -623,14 +633,6 @@ def checkout(request, auction_winner_id):
                 amount=winning_bid_decimal,
                 timestamp=timezone.now()
             )
-
-            OAStransaction.objects.create(
-                main_user=auction_winner.auction.seller,
-                second_user=request.user,
-                transaction_type='RECEIVE',
-                amount=winning_bid_decimal,
-                timestamp=timezone.now()
-            )
             
             auction_winner.buyer_name = form.cleaned_data['buyer_name']
             auction_winner.buyer_phone = form.cleaned_data['buyer_phone']
@@ -750,3 +752,92 @@ def receive_auction_details(request, auction_winner_id):
         form = ReceiveForm()
 
     return render(request, 'receive_auction_details.html', {'auction_winner': auction_winner, 'form': form})
+
+
+@user_passes_test(lambda u: u.is_admin)
+def manage_user(request):
+    query = request.GET.get('q', '')
+
+    users = OASuser.objects.filter(is_admin=False)
+
+    if query:
+        users = users.filter(username__icontains=query)
+
+    context = {
+        'users': users,
+        'query': query,
+    }
+    return render(request, 'manage_user.html', context)
+
+
+@user_passes_test(lambda u: u.is_admin)
+def delete_user(request, user_id):
+    user = get_object_or_404(OASuser, id=user_id)
+    
+    if request.method == 'POST':
+        user.delete()
+        messages.success(request, 'User deleted successfully.')
+        return redirect('manage_user')
+
+
+@user_passes_test(lambda u: u.is_admin)
+def view_user_profile(request, user_id):
+    user = get_object_or_404(OASuser, id=user_id)
+    context = {'user': user}
+    return render(request, 'view_user_profile.html', context)
+
+
+@user_passes_test(lambda u: u.is_admin)
+def manage_trans(request):
+    transactions = OAStransaction.objects.filter(transaction_type='PAYMENT', approved=False, rejected=False)
+
+    context = {
+        'transactions': transactions,
+    }
+    return render(request, 'manage_trans.html', context)
+
+
+@user_passes_test(lambda u: u.is_admin)
+def approve_trans(request, transaction_id):
+    transaction = get_object_or_404(OAStransaction, id=transaction_id)
+    
+    if request.method == 'POST':
+        amount = Decimal(transaction.amount)
+        transaction.approved = True
+        transaction.second_user.balance += amount
+        transaction.save()
+        transaction.second_user.save()
+
+        OAStransaction.objects.create(
+                main_user=transaction.second_user,
+                second_user=transaction.main_user,
+                transaction_type='RECEIVE',
+                amount=amount,
+                timestamp=timezone.now()
+            )
+        
+        messages.success(request, 'Transaction approved successfully.')
+        return redirect('manage_trans')
+    
+
+@user_passes_test(lambda u: u.is_admin)
+def decline_trans(request, transaction_id):
+    transaction = get_object_or_404(OAStransaction, id=transaction_id)
+    
+    if request.method == 'POST':
+        amount = Decimal(transaction.amount)
+        transaction.rejected = True
+        transaction.main_user.balance += amount
+        transaction.save()
+        transaction.main_user.save()
+
+        OAStransaction.objects.create(
+                main_user=transaction.main_user,
+                second_user=transaction.main_user,
+                transaction_type='REFUND',
+                amount=amount,
+                timestamp=timezone.now()
+            )
+        
+        messages.success(request, 'Transaction declined successfully.')
+        return redirect('manage_trans')

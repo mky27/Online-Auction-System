@@ -37,11 +37,13 @@
                         <td>RM{{ transaction.amount }}</td>
                         <td>
                             {% if transaction.transaction_type == 'PAYMENT' %}
-                                To: {{ transaction.second_user.username }}
+                                Transfer To: {{ transaction.second_user.username }}
                             {% elif transaction.transaction_type == 'RECEIVE' %}
-                                From: {{ transaction.second_user.username }}
+                                Receive From: {{ transaction.second_user.username }}
                             {% elif transaction.transaction_type == 'RELOAD' %}
-                                Reload
+                                Reload wallet
+                            {% elif transaction.transaction_type == 'REFUND' %}
+                                Transaction declined by admin
                             {% endif %}
                         </td>
                     </tr>
