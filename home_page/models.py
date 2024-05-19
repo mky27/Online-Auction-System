@@ -76,8 +76,8 @@ class OASwatchlist(models.Model):
 
 class OASauctionWinner(models.Model):
     auction = models.OneToOneField(OASauction, on_delete=models.CASCADE)
-    winner = models.ForeignKey(OASuser, on_delete=models.CASCADE)
-    winning_bid = models.DecimalField(max_digits=10, decimal_places=2)
+    winner = models.ForeignKey(OASuser, on_delete=models.CASCADE, blank=True, null=True)
+    winning_bid = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
     buyer_name = models.CharField(max_length=100, blank=True, null=True)
     buyer_phone = models.CharField(max_length=15, blank=True, null=True)
     buyer_address = models.TextField(blank=True, null=True)

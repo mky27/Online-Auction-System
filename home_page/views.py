@@ -337,13 +337,12 @@ def auto_update_auction(request):
 
         highest_bid = auction.current_bid
         highest_bidder = auction.current_bidder
-        if highest_bidder:
-            OASauctionWinner.objects.create(
-                auction=auction,
-                winner=highest_bidder,
-                winning_bid=highest_bid,
-                checkout_deadline=timezone.now() + timedelta(days=7)
-            )
+        OASauctionWinner.objects.create(
+            auction=auction,
+            winner=highest_bidder,
+            winning_bid=highest_bid,
+            checkout_deadline=timezone.now() + timedelta(days=7)
+        )
 
     return HttpResponse()
 
@@ -357,13 +356,12 @@ def manual_update_auction():
 
         highest_bid = auction.current_bid
         highest_bidder = auction.current_bidder
-        if highest_bidder:
-            OASauctionWinner.objects.create(
-                auction=auction,
-                winner=highest_bidder,
-                winning_bid=highest_bid,
-                checkout_deadline=timezone.now() + timedelta(days=7)
-            )
+        OASauctionWinner.objects.create(
+            auction=auction,
+            winner=highest_bidder,
+            winning_bid=highest_bid,
+            checkout_deadline=timezone.now() + timedelta(days=7)
+        )
 
 
 @login_required
@@ -528,7 +526,7 @@ def completed_auction_details(request, auction_id):
         auction.delete()
         return redirect('completed_auction')
     
-    return render(request, 'completed_auction_details.html', {'auction': auction, 'deadline_passed': deadline_passed})
+    return render(request, 'completed_auction_details.html', {'auction': auction, 'deadline_passed': deadline_passed, 'auction_winner': auction_winner})
 
 
 @login_required
