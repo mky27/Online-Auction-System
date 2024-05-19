@@ -10,6 +10,7 @@
     <link rel="stylesheet" type="text/css" href="{% static 'css/font.css' %}">
 </head>
 <body>
+    <p><a href="{% url 'cart_auction_details' auction_winner.auction.id %}"> &lt; Back</a></p>
     <h1>Checkout</h1>
     <img src="{{ auction_winner.auction.picture1.url }}" alt="Item Picture 1" class="item-pic">
     <h2>{{ auction_winner.auction.item_name }}</h2>
@@ -21,8 +22,6 @@
         {{ form.as_p }}
         <button type="submit" name="checkout">Make Payment</button>
     </form>
-
-    <div id="error-message" style="color: red;"></div>
-     
-    </body>
+    <p class="error">{{ error }}</p>
+</body>
 </html>

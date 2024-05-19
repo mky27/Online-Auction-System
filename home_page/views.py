@@ -9,7 +9,7 @@ from django.contrib.auth.hashers import make_password
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.password_validation import validate_password
 from django.contrib.auth.decorators import login_required
-from .forms import UserRegistrationForm, PersonalInfoForm, LoginForm, ForgotPassForm, ResetPassForm, EditProfileForm, CreateAuctionForm, PlaceBidForm, EditAuctionForm, ChangePasswordForm, CheckoutForm, validate_username
+from .forms import UserRegistrationForm, PersonalInfoForm, LoginForm, ForgotPassForm, ResetPassForm, EditProfileForm, CreateAuctionForm, PlaceBidForm, EditAuctionForm, ChangePasswordForm, CheckoutForm, ReceiveForm, validate_username
 from .models import OASuser, OASauction, OASwatchlist, OASauctionWinner, OAStransaction
 from decimal import Decimal
 
@@ -543,7 +543,6 @@ def change_pass(request):
     if request.method == 'POST':
         form = ChangePasswordForm(request.POST)
         if form.is_valid():
-            email = form.cleaned_data['email']
             current_password = form.cleaned_data['current_password']
             new_password = form.cleaned_data['new_password']
             confirm_password = form.cleaned_data['confirm_password']
@@ -596,6 +595,7 @@ def cart_auction_details(request, auction_id):
 
 @login_required
 def checkout(request, auction_winner_id):
+    context = {}
     auction_winner = get_object_or_404(OASauctionWinner, id=auction_winner_id)
     buyer = auction_winner.winner
 
@@ -612,7 +612,8 @@ def checkout(request, auction_winner_id):
             winning_bid_decimal = Decimal(winning_bid)
             
             if request.user.balance < winning_bid_decimal:
-                return JsonResponse({'error': 'Insufficient balance'}, status=400)
+                error = "Wallet balance insufficient."
+                return render(request, 'checkout.html', {'auction_winner': auction_winner, 'form': form, 'error': error})
             
             request.user.balance -= winning_bid_decimal
             request.user.save()
@@ -646,7 +647,7 @@ def checkout(request, auction_winner_id):
             'buyer_address': buyer.address,
         }
         form = CheckoutForm(initial=initial_data)
-        
+
     return render(request, 'checkout.html', {'auction_winner': auction_winner, 'form': form})
 
 
@@ -724,3 +725,30 @@ def deliver_auction_detail(request, auction_winner_id):
         'auction_winner': auction_winner,
         'deadline_passed': deadline_passed
     })
+
+
+@login_required
+def to_receive(request):
+    user = request.user
+    items_to_receive = OASauctionWinner.objects.filter(winner=user, is_checkout=True, is_received=False)
+    return render(request, 'to_receive.html', {'items_to_receive': items_to_receive})
+
+
+@login_required
+def receive_auction_details(request, auction_winner_id):
+    auction_winner = get_object_or_404(OASauctionWinner, id=auction_winner_id)
+    auction = get_object_or_404(OASauction, pk=auction_winner.auction_id)
+
+    if request.method == 'POST':
+        form = ReceiveForm(request.POST)
+        if form.is_valid():
+            auction.comment = form.cleaned_data['comment']
+            auction.ratings = form.cleaned_data['ratings']
+            auction_winner.is_received = True
+            auction.save()
+            auction_winner.save()
+            return redirect('to_receive')
+    else:
+        form = ReceiveForm()
+
+    return render(request, 'receive_auction_details.html', {'auction_winner': auction_winner, 'form': form})

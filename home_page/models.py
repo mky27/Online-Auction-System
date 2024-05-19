@@ -50,6 +50,7 @@ class OASauction(models.Model):
     auction_created_time = models.DateTimeField(null=True, blank=True)
     auction_end_time = models.DateTimeField()
     comment = models.TextField(blank=True, null=True)
+    ratings = models.IntegerField(null=True, blank=True)  
     picture1 = models.ImageField(upload_to='auction_pictures/', blank=True, null=True)
     picture2 = models.ImageField(upload_to='auction_pictures/', blank=True, null=True)
     picture3 = models.ImageField(upload_to='auction_pictures/', blank=True, null=True)

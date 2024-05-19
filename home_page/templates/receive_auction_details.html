@@ -1,0 +1,56 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
+    <title>Auction Details | Bidify</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/auction_details.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/font.css' %}">
+</head>
+<body>
+    <p><a href="{% url 'to_receive' %}"> &lt; Back</a></p>
+    <img src="{{ auction_winner.auction.picture1.url }}" alt="Item Picture 1" class="item-pic">
+    <h1>{{ auction_winner.auction.item_name }}</h1>
+    <p>Description: {{ auction_winner.auction.item_desc }}</p>
+    <p>Category: {{ auction_winner.auction.item_cat }}</p>
+    <p>Price Amount: RM{{ auction_winner.winning_bid }}</p>
+    <p>Seller: {{ auction_winner.auction.seller.fName }} {{ auction_winner.auction.seller.lName }}</p>
+    <h3>Shipping Info</h3>
+    <p>Your Name: {{ auction_winner.buyer_name }}</p>
+    <p>Your Address: {{ auction_winner.buyer_address }}</p>
+    <p>Your Phone: {{ auction_winner.buyer_phone }}</p>
+    <h3>Shipping condition:</h3>
+    {% if auction_winner.is_delivered %}
+        <p>Your item is out of delivery.</p>
+    {% else %}
+        <p>Seller is preparing to ship your item.</p>
+    {% endif %}
+
+    {% if auction_winner.is_delivered %}
+        <form id="receive-form" action="{% url 'receive_auction_details' auction_winner.id %}" method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <input type="submit" name="item_received" value="Item Received">
+        </form>
+    {% else %}
+        <p style="color: red;">The item has not been delivered yet.</p>
+    {% endif %}
+
+    <script>
+        const receiveForm = document.getElementById('receive-form');
+        
+        // Add event listener to the out-for-receive button
+        receiveForm.addEventListener('submit', function(event) {
+            // Show confirmation prompt
+            const confirmed = confirm('Is this item received?');
+            
+            // If user cancels, prevent the form submission
+            if (!confirmed) {
+                event.preventDefault();
+            }
+        });
+    </script>
+</body>
+</html>

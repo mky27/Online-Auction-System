@@ -130,3 +130,7 @@ class CheckoutForm(forms.Form):
     buyer_name = forms.CharField(max_length=100, required=True ,label='Buyer Name')
     buyer_phone = forms.CharField(max_length=15, required=True, label='Buyer Contact No')
     buyer_address = forms.CharField(widget=forms.Textarea, required=True, label='Shipping Address')
+
+class ReceiveForm(forms.Form):
+    comment = forms.CharField(label='Comment ', widget=forms.Textarea(attrs={'class': 'comment-field', 'autocomplete': 'off'}))
+    ratings = forms.IntegerField(widget=forms.NumberInput(attrs={'class': 'rating-field'}), label='Ratings ', min_value=1, max_value=5, required=True)

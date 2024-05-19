@@ -36,5 +36,6 @@ urlpatterns = [
     path('reload_wallet/', views.reload_wallet, name='reload_wallet'),
     path('to_deliver/', views.to_deliver, name='to_deliver'),
     path('deliver_auction_details/<int:auction_winner_id>/', views.deliver_auction_detail, name='deliver_auction_details'),
-
+    path('to_receive/', views.to_receive, name='to_receive'),
+    path('receive_auction_details/<int:auction_winner_id>/', views.receive_auction_details, name='receive_auction_details'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

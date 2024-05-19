@@ -12,14 +12,14 @@
 <body>
     <p><a href="{% url 'home_page' %}" class="back-button"> &lt; Back</a></p>
     <a href="{% url 'home_page' %}"><img src="{% static 'image/bidify.png' %}" alt="bidify"></a>
-    <h1>To Deliver</h1>
+    <h1>Items to Deliver</h1>
     <ul>
         {% for auction_winner in items_to_deliver %}
             <li>
                 <a href="{% url 'deliver_auction_details' auction_winner.id %}">
                     <img src="{{ auction_winner.auction.picture1.url }}" alt="Item Picture 1" class="item-pic">
                     <h2>{{ auction_winner.auction.item_name }}</h2>
-                    <p>Winning Bid: RM{{ auction_winner.winning_bid }}</p>
+                    <p>Price: RM{{ auction_winner.winning_bid }}</p>
                     {% if auction_winner.is_checkout %}
                         <p>Buyer: {{ auction_winner.buyer_name }}</p>
                         <p>Buyer Address: {{ auction_winner.buyer_address }}</p>

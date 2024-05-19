@@ -1,0 +1,39 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>To Receive | Bidify</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/home_page.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/font.css' %}">
+</head>
+<body>
+    <p><a href="{% url 'home_page' %}" class="back-button"> &lt; Back</a></p>
+    <a href="{% url 'home_page' %}"><img src="{% static 'image/bidify.png' %}" alt="bidify"></a>
+    <h1>Items to Receive</h1>
+    <ul>
+        {% for auction_winner in items_to_receive %}
+            <li>
+                <a href="{% url 'receive_auction_details' auction_winner.id %}">
+                    <img src="{{ auction_winner.auction.picture1.url }}" alt="Item Picture" class="item-pic">
+                    <h2>{{ auction_winner.auction.item_name }}</h2>
+                    <p>Price: RM{{ auction_winner.winning_bid }}</p>
+                    <h3>Shipping Info</h3>
+                    <p>Your Name: {{ auction_winner.buyer_name }}</p>
+                    <p>Your Address: {{ auction_winner.buyer_address }}</p>
+                    <p>Your Phone: {{ auction_winner.buyer_phone }}</p>
+                    {% if auction_winner.is_delivered %}
+                        <p>Your item is out of delivery.</p>
+                    {% else %}
+                        <p>Seller is preparing to ship your item.</p>
+                    {% endif %}
+                </a>
+            </li>
+        {% empty %}
+            <li>No items to receive.</li>
+        {% endfor %}
+    </ul>
+</body>
+</html>
