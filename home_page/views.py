@@ -756,6 +756,7 @@ def receive_auction_details(request, auction_winner_id):
 @login_required
 def report(request):
     user = request.user
+
     if request.method == 'POST':
         form = ReportForm(request.POST)
         if form.is_valid():
@@ -774,6 +775,7 @@ def report(request):
 
 def view_profile(request):
     user = request.user
+
     if not user.is_authenticated:
         return redirect('login')
     
@@ -875,3 +877,44 @@ def decline_trans(request, transaction_id):
         
         messages.success(request, 'Transaction declined successfully.')
         return redirect('manage_trans')
+    
+
+@user_passes_test(lambda u: u.is_admin)
+def manage_report(request):
+    query = request.GET.get('q', '')
+    selected_category = request.GET.get('category', '')
+
+    reports = OASreport.objects.all()
+
+    if query:
+        reports = reports.filter(title__icontains=query)
+
+    if selected_category:
+        reports = reports.filter(category=selected_category)
+
+    context = {
+        'reports': reports,
+        'query': query,
+        'selected_category': selected_category,
+        'categories': [
+            'Fraud & Scam', 'Bugs Report', 'Other'
+        ],
+    }
+    return render(request, 'manage_report.html', context)
+
+
+@user_passes_test(lambda u: u.is_admin)
+def delete_report(request, report_id):
+    report = get_object_or_404(OASreport, id=report_id)
+    
+    if request.method == 'POST':
+        report.delete()
+        messages.success(request, 'Report deleted successfully.')
+        return redirect('manage_report')
+    
+
+@user_passes_test(lambda u: u.is_admin)
+def view_report(request, report_id):
+    report = get_object_or_404(OASreport, id=report_id)
+    context = {'report': report}
+    return render(request, 'view_report.html', context)

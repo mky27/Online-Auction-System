@@ -47,4 +47,7 @@ urlpatterns = [
     path('manage_trans/', views.manage_trans, name='manage_trans'),
     path('approve_trans/<int:transaction_id>/', views.approve_trans, name='approve_trans'),
     path('decline_trans/<int:transaction_id>/', views.decline_trans, name='decline_trans'),
+    path('manage_report/', views.manage_report, name='manage_report'),
+    path('delete_report/<int:report_id>/', views.delete_report, name='delete_report'),
+    path('view_report/<int:report_id>/', views.view_report, name='view_report'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

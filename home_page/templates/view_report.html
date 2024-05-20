@@ -1,0 +1,36 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Report | Admin</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/manage_user.css' %}">
+</head>
+<body>
+    <p><a href="{% url 'manage_report' %}"> &lt; Back</a></p>
+    <h1>Report Details</h1>
+    <p>Title: {{ report.title }}</p>
+    <p>User: {{ report.user.username }}</p>
+    <p>Category: {{ report.category }}</p>
+    <p>Submitted At: {{ report.created_at }}</p>
+    <p>Content: {{ report.content }}</p>
+    <form method="post" action="{% url 'delete_report' report.id %}" style="display:inline;">
+        {% csrf_token %}
+        <button type="submit" class="delete-button" data-report-id="{{ report.id }}">Delete</button>
+    </form>
+
+    <script>
+        document.querySelectorAll('.delete-button').forEach(function(button) {
+            button.addEventListener('click', function(event) {
+                const confirmed = confirm('Are you sure you want to delete this report?');
+                
+                if (!confirmed) {
+                    event.preventDefault();
+                }
+            });
+        });
+    </script>
+</body>
+</html>
