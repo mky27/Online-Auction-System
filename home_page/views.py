@@ -772,6 +772,22 @@ def report(request):
     return render(request, 'report.html', {'form': form, 'user': user})
 
 
+def view_profile(request):
+    user = request.user
+    if not user.is_authenticated:
+        return redirect('login')
+    
+    ongoing_auctions = OASauction.objects.filter(seller=user, is_ongoing=True)
+    completed_auctions = OASauction.objects.filter(seller=user, is_completed=True)
+
+    context = {
+        'user': user,
+        'ongoing_auctions': ongoing_auctions,
+        'completed_auctions': completed_auctions
+    }
+    return render(request, 'view_profile.html', context)
+
+
 @user_passes_test(lambda u: u.is_admin)
 def manage_user(request):
     query = request.GET.get('q', '')

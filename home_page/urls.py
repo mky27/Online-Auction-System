@@ -39,6 +39,7 @@ urlpatterns = [
     path('to_receive/', views.to_receive, name='to_receive'),
     path('receive_auction_details/<int:auction_winner_id>/', views.receive_auction_details, name='receive_auction_details'),
     path('report/', views.report, name='report'),
+    path('view_profile/', views.view_profile, name='view_profile'),
     path('admin_home/', views.home_page, name='admin_home'),
     path('manage_user/', views.manage_user, name='manage_user'),
     path('delete_user/<int:user_id>/', views.delete_user, name='delete_user'),

@@ -1,0 +1,50 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile | Bidify</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/home_page.css' %}">
+</head>
+<body>
+    <p><a href="{% url 'home_page' %}"> &lt; Back</a></p>
+    <h1>{{ user.username }}'s Profile</h1>
+    <p>First Name: {{ user.fName }}</p>
+    <p>Last Name: {{ user.lName }}</p>
+    <p>Email: {{ user.email }}</p>
+    <hr>
+    <h2>Ongoing Auctions</h2>
+    {% if ongoing_auctions %}
+        <ul>
+            {% for auction in ongoing_auctions %}
+                <li>
+                    <a href="{% url 'auction_details' auction.id %}">
+                        <img src="{{ auction.picture1.url }}" alt="Item Picture 1" class="item-pic">
+                        <p>{{ auction.item_name }}</p>                    
+                    </a>
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>No ongoing auctions.</p>
+    {% endif %}
+
+    <h2>Completed Auctions</h2>
+    {% if completed_auctions %}
+        <ul>
+            {% for auction in completed_auctions %}
+                <li>
+                    <a href="{% url 'completed_auction_details' auction.id %}">
+                        <img src="{{ auction.picture1.url }}" alt="Item Picture 1" class="item-pic">
+                        <p>{{ auction.item_name }}</p>
+                    </a>
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>No completed auctions.</p>
+    {% endif %}
+</body>
+</html>

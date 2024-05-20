@@ -24,7 +24,7 @@
     </div>
     {% endif %}
 
-    <p><a href="{% url 'home_page' %}"> &lt; Back</a></p>
+    <p><a href="javascript:void(0);" onclick="goBack()"> &lt; Back</a></p>
     <img src="{{ auction.picture1.url }}" alt="Item Picture 1" class="item-pic">
     <h1>{{ auction.item_name }}</h1>
     <p>Description: {{ auction.item_desc }}</p>
@@ -65,6 +65,13 @@
             <button type="submit" name="action" value="delete">Delete Auction</button>
         </form>
     {% endif %}
+
+    <script>
+        function goBack() {
+            window.history.back();
+        }
+    </script>
+    
     <script>
         // Function to calculate and update the countdown timer
         function updateCountdown(endTime) {

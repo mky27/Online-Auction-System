@@ -10,7 +10,7 @@
     <link rel="stylesheet" type="text/css" href="{% static 'css/font.css' %}">
 </head>
 <body>
-    <p><a href="{% url 'home_page' %}"> &lt; Back</a></p>
+    <p><a href="javascript:void(0);" onclick="goBack()"> &lt; Back</a></p>
     <img src="{{ auction.picture1.url }}" alt="Item Picture 1" class="item-pic">
     <h1>{{ auction.item_name }}</h1>
     <p>Description: {{ auction.item_desc }}</p>
@@ -34,5 +34,11 @@
             <input type="submit" name="delete" value="Delete Auction">
         </form>
     {% endif %}
+
+    <script>
+        function goBack() {
+            window.history.back();
+        }
+    </script>
 </body>
 </html>
