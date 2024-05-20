@@ -132,5 +132,10 @@ class CheckoutForm(forms.Form):
     buyer_address = forms.CharField(widget=forms.Textarea, required=True, label='Shipping Address')
 
 class ReceiveForm(forms.Form):
-    comment = forms.CharField(label='Comment ', widget=forms.Textarea(attrs={'class': 'comment-field', 'autocomplete': 'off'}))
-    ratings = forms.IntegerField(widget=forms.NumberInput(attrs={'class': 'rating-field'}), label='Ratings ', min_value=1, max_value=5, required=True)
+    comment = forms.CharField(label='Comment ', required=True, widget=forms.Textarea(attrs={'class': 'comment-field', 'autocomplete': 'off'}))
+    ratings = forms.IntegerField(label='Ratings ', min_value=1, max_value=5, required=True, widget=forms.NumberInput(attrs={'class': 'rating-field'}))
+
+class ReportForm(forms.Form):
+    category = forms.ChoiceField(label='Report Category ', required=True, choices=[('Fraud & Scam', 'Fraud & Scam'), ('Bugs Report', 'Bugs Report'),('Other', 'Other'),], widget=forms.Select(attrs={}))
+    title = forms.CharField(label='Report Title ', required=True, max_length=50, widget=forms.TextInput(attrs={'class': 'title-field', 'autocomplete': 'off'}))
+    content = forms.CharField(label='Report Content ', required=True, widget=forms.Textarea(attrs={'class': 'content-field', 'autocomplete': 'off'}))

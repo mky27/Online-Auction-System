@@ -94,6 +94,17 @@ class OAStransaction(models.Model):
     approved = models.BooleanField(default=False)
     rejected = models.BooleanField(default=False)
 
+class OASreport(models.Model):
+    user = models.ForeignKey(OASuser, on_delete=models.CASCADE)
+    category = models.CharField(max_length=50)
+    title = models.CharField(max_length=100)
+    content = models.TextField()
+    created_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.title
+
+
 
     # python manage.py makemigrations
     # python manage.py migrate

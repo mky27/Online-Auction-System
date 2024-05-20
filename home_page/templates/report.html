@@ -1,0 +1,36 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/report.css' %}">
+    <title>Report | Bidify</title>
+</head>
+<body>
+    <div class="image-container">
+        <p><a href="{% url 'home_page' %}"> &lt; Back</a></p>
+        <img src="{% static 'image/bidify.png' %}" alt="bidify">
+    </div>
+    <hr>
+    <h1>Report</h1>
+    <form method="post" action="{% url 'report' %}">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="report-button">Submit</button>
+    </form>
+
+    <script>
+        document.querySelectorAll('.report-button').forEach(function(button) {
+            button.addEventListener('click', function(event) {
+                const confirmed = confirm('Confirm submit this report?');
+                
+                if (!confirmed) {
+                    event.preventDefault();
+                }
+            });
+        });
+    </script>
+</body> 
+</html>

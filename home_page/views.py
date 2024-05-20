@@ -9,8 +9,8 @@ from django.contrib.auth.hashers import make_password
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.password_validation import validate_password
 from django.contrib.auth.decorators import login_required, user_passes_test
-from .forms import UserRegistrationForm, PersonalInfoForm, LoginForm, ForgotPassForm, ResetPassForm, EditProfileForm, CreateAuctionForm, PlaceBidForm, EditAuctionForm, ChangePasswordForm, CheckoutForm, ReceiveForm, validate_username
-from .models import OASuser, OASauction, OASwatchlist, OASauctionWinner, OAStransaction
+from .forms import UserRegistrationForm, PersonalInfoForm, LoginForm, ForgotPassForm, ResetPassForm, EditProfileForm, CreateAuctionForm, PlaceBidForm, EditAuctionForm, ChangePasswordForm, CheckoutForm, ReceiveForm, ReportForm, validate_username
+from .models import OASuser, OASauction, OASwatchlist, OASauctionWinner, OAStransaction, OASreport
 from decimal import Decimal
 
 
@@ -603,7 +603,6 @@ def cart_auction_details(request, auction_id):
 
 @login_required
 def checkout(request, auction_winner_id):
-    context = {}
     auction_winner = get_object_or_404(OASauctionWinner, id=auction_winner_id)
     buyer = auction_winner.winner
 
@@ -752,6 +751,25 @@ def receive_auction_details(request, auction_winner_id):
         form = ReceiveForm()
 
     return render(request, 'receive_auction_details.html', {'auction_winner': auction_winner, 'form': form})
+
+
+@login_required
+def report(request):
+    user = request.user
+    if request.method == 'POST':
+        form = ReportForm(request.POST)
+        if form.is_valid():
+            OASreport.objects.create(
+                user = request.user,
+                category = form.cleaned_data['category'],
+                title = form.cleaned_data['title'],
+                content = form.cleaned_data['content'],
+                created_at = timezone.now()
+            )
+            return redirect('home_page')
+    else:
+        form = ReportForm()
+    return render(request, 'report.html', {'form': form, 'user': user})
 
 
 @user_passes_test(lambda u: u.is_admin)
