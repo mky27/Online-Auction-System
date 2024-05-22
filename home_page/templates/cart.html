@@ -10,27 +10,24 @@
     <title>Cart | Bidify</title>
 </head>
 <body>
-    <ul>
-        <li style="float:left"><a href="#"><img src="{% static 'image/profile_icon.png' %}" alt="profile" class="profile-icon"></a></li>
-        {% if user.is_authenticated %}
-            <li style="float:left"><a href="#">Welcome, {{user.username}}</a></li>
-        {% else %}
-            <li style="float:left">Welcome, guest</li>
-            <li style="float:left"><a href="{% url 'login' %}">Login or Register</a></li>
-        {% endif %}
+    <ul class="navbar">
+        <li style="float:left"><a href="{% url 'home_page' %}"> &lt; Back</a></li>
+        <li style="float:left"><a href="{% url 'view_profile' %}"><img src="{% static 'image/profile_icon.png' %}" class="profile-icon"></a></li>
         <li style="float:left" class="dropdown">
-            <a href="javascript:void(0)" class="dropbtn">Settings</a>
+            <a href="javascript:void(0)" class="dropbtn"><img src="{% static 'image/settings_icon.png' %}" class="settings-icon">
+                &nbsp;Settings
+            </a>
             <div class="dropdown-content">
                 <a href="{% url 'edit_profile' %}">Edit Profile</a>
                 <a href="{% url 'change_pass' %}">Change Password</a>
-                <a href="#">Report</a>
+                <a href="{% url 'report' %}">Report</a>
                 <a href="{% url 'logout' %}">Logout</a>
             </div>
         </li>
-        <li style="float:right"><a href="#">To Deliver</a></li>
-        <li style="float:right"><a href="#">To Receive</a></li>
-        <li style="float:right"><a href="{% url 'watchlist' %}">Watchlist</a></li>
-        <li style="float:right"><a href="{% url 'cart' %}"><img src="{% static 'image/cart_icon.png' %}" alt="cart" class="profile-icon"></a></li>
+        <li style="float:right"><a href="{% url 'wallet' %}"><img src="{% static 'image/wallet_icon.png' %}" class="wallet-icon">  RM{{ user.balance }}</a></li>
+        <li style="float:right"><a href="{% url 'watchlist' %}"><img src="{% static 'image/watchlist_icon.png' %}" class="cart-icon">  Watchlist</a></li>
+        <li style="float:right"><a href="{% url 'to_receive' %}">To Receive</a></li>
+        <li style="float:right"><a href="{% url 'to_deliver' %}">To Deliver</a></li>
         <li style="float:right" class="dropdown">
             <a href="javascript:void(0)" class="dropbtn">Sell</a>
             <div class="dropdown-content">
@@ -42,25 +39,45 @@
         </li>
     </ul>
         
-    <p><a href="{% url 'home_page' %}" class="back-button"> &lt; Back</a></p>
-    <a href="{% url 'home_page' %}"><img src="{% static 'image/bidify.png' %}" alt="bidify"></a>
+    <div class="header-content">
+        <img src="{% static 'image/bidify.png' %}" alt="Bidify Logo" class="logo">
+    </div>
     <hr>
-    <h1>Cart</h1>
-    <ul>
+    <h1 style="color: #2f3651;">Cart</h1>
+    <ul class="auction-list">
         {% for auction in won_auctions %}
             <li>
                 <a href="{% url 'cart_auction_details' auction.auction.id %}">
-                    <img src="{{ auction.auction.picture1.url }}" alt="Item Picture 1" class="item-pic">
-                    <h2>{{ auction.auction.item_name }}</h2>
-                    <p>Bid Price: RM{{ auction.winning_bid }}</p>
-                    <p>Seller: {{ auction.auction.seller.fName }}</p>
-                    <p>Checkout Deadline: {{ auction.checkout_deadline }}</p>
-                </a>        
+                    <img src="{{ auction.auction.picture1.url }}" class="item-pic">
+                    <h2>{{ auction.auction.item_name }}</h2><br>
+                    <p class="auction-desc">Price: <b>RM {{ auction.winning_bid }}</b></p>
+                    <p class="auction-desc">Seller: <b>{{ auction.auction.seller.username }}</b></p>
+                    <p class="auction-desc">Checkout Deadline: <b>{{ auction.checkout_deadline|date:"d M Y, h:iA"}}</b></p>
+                </a>
             </li>
-            <br>
-        {% empty %}
-            <li>No won auctions.</li>
         {% endfor %}
     </ul>
+
+    <img onclick="topFunction()" id="backToTopBtn" title="Back to Top" src="{% static 'image/back_to_top_icon.png' %}" class="back-to-top-icon">
+
+    <script src="{% static 'js/back_to_top.js' %}"></script>
+
+    <script>
+        fetch("{% url 'get_wallet_balance' %}")
+            .then(response => {
+                if (response.ok) {
+                    return response.json();
+                } else {
+                    throw new Error('Failed to fetch wallet balance');
+                }
+            })
+            .then(data => {
+                document.getElementById('wallet-balance').textContent = `RM${data.balance}`;
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+    </script>
+
 </body> 
 </html>

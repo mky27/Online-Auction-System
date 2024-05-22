@@ -59,11 +59,12 @@ input[type="number"] {
     font-weight: bold;
 }
 
-.bid-section {
+.btn-section {
     margin-top: 20px;
+    text-align: center;
 }
 
-.place-bid-btn, .add-watchlist-btn, .delete-btn{
+.place-bid-btn, .add-watchlist-btn, .delete-btn, .remove-from-cart-btn, .checkout-btn {
     background-color: #8ebbff;
     color: black;
     border-radius: 12px;
@@ -74,6 +75,12 @@ input[type="number"] {
     margin: 10px;
 }
 
+.place-bid-btn:hover, .add-watchlist-btn:hover, .delete-btn:hover, .remove-from-cart-btn:hover, .checkout-btn:hover {
+    background-color: #bdd7ff;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    transition: box-shadow 0.2s ease;
+}
+
 .error-message {
     text-align: center;
     color: red;
@@ -82,4 +89,33 @@ input[type="number"] {
 .success-message {
     text-align: center;
     color: green;
+}
+
+h1 {
+    text-align: center;
+}
+
+.form-group {
+    text-align: left;
+}
+
+.name-field, .phoneNo-field{
+    width: 70%;
+    padding: 5px;
+    margin-bottom: 7px;
+    border-radius: 3px;
+    border: 1px solid #252525;
+    text-align: left;
+    height: 35px;
+}
+
+.address-field {
+    width: 70%;
+    height: 100px;
+    padding: 5px;
+    margin-bottom: 7px;
+    border-radius: 3px;
+    border: 1px solid #252525;
+    text-align: left;
+    resize: none;
 }

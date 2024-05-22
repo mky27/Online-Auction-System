@@ -129,6 +129,8 @@ button[type="submit"], button[type="button"] {
 
 button[type="submit"]:hover, button[type="button"]:hover {
     background-color: #444755;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    transition: box-shadow 0.2s ease;
 }
 
 .item-pic {

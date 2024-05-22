@@ -622,14 +622,34 @@ def cart(request):
 def cart_auction_details(request, auction_id):
     auction_winner = get_object_or_404(OASauctionWinner, auction_id=auction_id)
     deadline_passed = auction_winner.checkout_deadline < timezone.now()
+    pictures = [
+        auction_winner.auction.picture1.url if auction_winner.auction.picture1 else None,
+        auction_winner.auction.picture2.url if auction_winner.auction.picture2 else None,
+        auction_winner.auction.picture3.url if auction_winner.auction.picture3 else None,
+        auction_winner.auction.picture4.url if auction_winner.auction.picture4 else None,
+        auction_winner.auction.picture5.url if auction_winner.auction.picture5 else None,
+        auction_winner.auction.picture6.url if auction_winner.auction.picture6 else None,
+        auction_winner.auction.picture7.url if auction_winner.auction.picture7 else None,
+    ]
+    pictures = [pic for pic in pictures if pic] 
     
-    return render(request, 'cart_auction_details.html', {'auction_winner': auction_winner, 'deadline_passed': deadline_passed})
+    return render(request, 'cart_auction_details.html', {'auction_winner': auction_winner, 'deadline_passed': deadline_passed, 'pictures': pictures})
 
 
 @login_required
 def checkout(request, auction_winner_id):
     auction_winner = get_object_or_404(OASauctionWinner, id=auction_winner_id)
     buyer = auction_winner.winner
+    pictures = [
+        auction_winner.auction.picture1.url if auction_winner.auction.picture1 else None,
+        auction_winner.auction.picture2.url if auction_winner.auction.picture2 else None,
+        auction_winner.auction.picture3.url if auction_winner.auction.picture3 else None,
+        auction_winner.auction.picture4.url if auction_winner.auction.picture4 else None,
+        auction_winner.auction.picture5.url if auction_winner.auction.picture5 else None,
+        auction_winner.auction.picture6.url if auction_winner.auction.picture6 else None,
+        auction_winner.auction.picture7.url if auction_winner.auction.picture7 else None,
+    ]
+    pictures = [pic for pic in pictures if pic] 
 
     deadline_passed = auction_winner.checkout_deadline < timezone.now()
     
@@ -645,7 +665,7 @@ def checkout(request, auction_winner_id):
             
             if request.user.balance < winning_bid_decimal:
                 error = "Wallet balance insufficient."
-                return render(request, 'checkout.html', {'auction_winner': auction_winner, 'form': form, 'error': error})
+                return render(request, 'checkout.html', {'auction_winner': auction_winner, 'form': form, 'error': error, 'pictures': pictures})
             
             request.user.balance -= winning_bid_decimal
             request.user.save()
@@ -672,7 +692,7 @@ def checkout(request, auction_winner_id):
         }
         form = CheckoutForm(initial=initial_data)
 
-    return render(request, 'checkout.html', {'auction_winner': auction_winner, 'form': form})
+    return render(request, 'checkout.html', {'auction_winner': auction_winner, 'form': form, 'pictures': pictures})
 
 
 def remove_from_cart(request, auction_winner_id):

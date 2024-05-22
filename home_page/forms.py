@@ -127,9 +127,9 @@ class ChangePasswordForm(forms.Form):
     confirm_password = forms.CharField(label='Confirm Password', widget=forms.PasswordInput)
 
 class CheckoutForm(forms.Form):
-    buyer_name = forms.CharField(max_length=100, required=True ,label='Buyer Name')
-    buyer_phone = forms.CharField(max_length=15, required=True, label='Buyer Contact No')
-    buyer_address = forms.CharField(widget=forms.Textarea, required=True, label='Shipping Address')
+    buyer_name = forms.CharField(max_length=100, required=True ,label='Buyer Name', widget=forms.TextInput(attrs={'class': 'name-field'}))
+    buyer_phone = forms.CharField(max_length=15, required=True, label='Buyer Phone Number', widget=forms.TextInput(attrs={'class': 'phoneNo-field'}))
+    buyer_address = forms.CharField(required=True, label='Buyer Shipping Address', widget=forms.Textarea(attrs={'class': 'address-field'}))
 
 class ReceiveForm(forms.Form):
     comment = forms.CharField(label='Comment ', required=True, widget=forms.Textarea(attrs={'class': 'comment-field', 'autocomplete': 'off'}))

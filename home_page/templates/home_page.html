@@ -50,41 +50,41 @@
         </li>
     </ul>
         
-        <div class="header-content">
-            <img src="{% static 'image/bidify.png' %}" alt="Bidify Logo" class="logo">
-        </div>
-        <form method="GET" action="{% url 'home_page' %}">
-            <input type="text" name="q" placeholder="Search for anything" value="{{ query }}">
-            <select name="category">
-                <option value="">All Categories</option>
-                {% for category in categories %}
-                    <option value="{{ category }}" {% if selected_category == category %}selected{% endif %}>{{ category }}</option>
-                {% endfor %}
-            </select>
-            <button type="submit">Search</button>
-            {% if query or selected_category %}
-                <a href="{% url 'home_page' %}"><button type="button">Clear Results</button></a>
-            {% endif %}
-        </form>
+    <div class="header-content">
+        <img src="{% static 'image/bidify.png' %}" alt="Bidify Logo" class="logo">
+    </div>
+    <form method="GET" action="{% url 'home_page' %}">
+        <input type="text" name="q" placeholder="Search for anything" value="{{ query }}">
+        <select name="category">
+            <option value="">All Categories</option>
+            {% for category in categories %}
+                <option value="{{ category }}" {% if selected_category == category %}selected{% endif %}>{{ category }}</option>
+            {% endfor %}
+        </select>
+        <button type="submit">Search</button>
+        {% if query or selected_category %}
+            <a href="{% url 'home_page' %}"><button type="button">Clear Results</button></a>
+        {% endif %}
+    </form>
     <hr>
 
     {% if query and selected_category %}
         {% if not active_auctions %}
-            <h2>No results found for "{{ query }}", "{{ selected_category }}".</h2>
+            <h2 style="color: #2f3651; padding-left: 20px;">No results found for "<b>{{ query }}</b>", "<b>{{ selected_category }}</b>".</h2>
         {% else %}
-            <h2>Search Results:</h2>
+            <h2 style="color: #2f3651; padding-left: 20px;">Search Results:</h2>
         {% endif %}
     {% elif query %}
         {% if not active_auctions %}
-            <h2>No results found for "{{ query }}".</h2>
+            <h2 style="color: #2f3651; padding-left: 20px;">No results found for "<b>{{ query }}</b>".</h2>
         {% else %}
-            <h2>Search Results:</h2>
+            <h2 style="color: #2f3651; padding-left: 20px;">Search Results:</h2>
         {% endif %}
     {% elif selected_category %}
         {% if not active_auctions %}
-            <h2>No results found for "{{ selected_category }}".</h2>
+            <h2 style="color: #2f3651; padding-left: 20px;">No results found for "<b>{{ selected_category }}</b>".</h2>
         {% else %}
-            <h2>Search Results:</h2>
+            <h2 style="color: #2f3651; padding-left: 20px;">Search Results:</h2>
         {% endif %}
     {% endif %}
 
@@ -93,10 +93,10 @@
             <li>
                 <a href="{% url 'auction_details' auction.id %}">
                     <img src="{{ auction.picture1.url }}" class="item-pic">
-                    <h2>{{ auction.item_name }}</h2>
-                    <p class="auction-desc">Current Bid: RM{{ auction.current_bid }}</p>
-                    <p class="auction-desc">End Date: {{ auction.auction_end_time|date:"d M Y" }}</p>
-                    <p class="auction-desc">End Time: {{ auction.auction_end_time|date:"h:iA" }}</p>
+                    <h2>{{ auction.item_name }}</h2><br>
+                    <p class="auction-desc">Current Bid: <b>RM{{ auction.current_bid }}</b></p>
+                    <p class="auction-desc">End Date: <b>{{ auction.auction_end_time|date:"d M Y" }}</b></p>
+                    <p class="auction-desc">End Time: <b>{{ auction.auction_end_time|date:"h:iA" }}</b></p>
                 </a>
             </li>
         {% endfor %}
