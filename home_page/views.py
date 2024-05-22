@@ -303,7 +303,7 @@ def auction_details(request, auction_id):
     if request.method == 'POST':
         action = request.POST.get('action')
         if action == 'delete':
-            #auction.delete()
+            auction.delete()
             print("delete")
             return redirect('ongoing_auction') 
         
@@ -765,7 +765,7 @@ def deliver_auction_detail(request, auction_winner_id):
     pictures = [pic for pic in pictures if pic] 
 
     if request.method == 'POST':
-        if 'out_for_delivery' in request.POST:
+        if 'out_of_delivery' in request.POST:
             auction_winner.is_delivered = True
             auction_winner.save()
             return redirect('to_deliver')
