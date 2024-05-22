@@ -1,4 +1,85 @@
-.item-pic {
-    width: 150px;
-    height: 100px;
+ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+}
+
+.navbar {
+    background-color: #24293E;
+}
+
+li a {
+    display: inline-block;
+    color: white;
+    text-decoration: none;
+    font-size: 15px;
+    padding-right: 20px;
+    padding-left: 20px;
+    justify-content: right;
+}
+
+li a:hover {
+    color: #8ebbff;
+    text-decoration: none;
+}
+
+li.dropdown {
+    display: inline-block;
+}
+
+.bidify-white-icon {
+    width: 55px;
+    height: 55px;
+}
+
+.wallet-icon, .cart-icon, .settings-icon, .watchlist-icon {
+    width: 20px;
+    height: 20px;
+}
+
+.carousel-inner img {
+    width: 100%;
+    height: auto;
+    border: 1px solid #24293E;
+}
+
+.auction-details {
+    padding-left: 5%;
+    padding-right: 5%;
+    padding-top: 2%;
+    padding-bottom: 2%;
+    width: 100%;
+}
+
+input[type="number"] {
+    width: 55%;
+}
+
+.countdown {
+    font-weight: bold;
+}
+
+.bid-section {
+    margin-top: 20px;
+}
+
+.place-bid-btn, .add-watchlist-btn, .delete-btn{
+    background-color: #8ebbff;
+    color: black;
+    border-radius: 12px;
+    cursor: pointer;
+    border: 1px solid #252525;
+    width: 35%;
+    padding: 5px;
+    margin: 10px;
+}
+
+.error-message {
+    text-align: center;
+    color: red;
+}
+
+.success-message {
+    text-align: center;
+    color: green;
 }

@@ -281,18 +281,30 @@ def auction_details(request, auction_id):
     time_left = auction.auction_end_time - timezone.now()
     seller_username = auction.seller.username
     in_watchlist = is_in_watchlist(request.user, auction)
+    pictures = [
+        auction.picture1.url if auction.picture1 else None,
+        auction.picture2.url if auction.picture2 else None,
+        auction.picture3.url if auction.picture3 else None,
+        auction.picture4.url if auction.picture4 else None,
+        auction.picture5.url if auction.picture5 else None,
+        auction.picture6.url if auction.picture6 else None,
+        auction.picture7.url if auction.picture7 else None,
+    ]
+    pictures = [pic for pic in pictures if pic] 
 
     context = {
         'auction': auction,
         'time_left': time_left,
         'seller_username': seller_username,
-        'in_watchlist': in_watchlist
+        'in_watchlist': in_watchlist,
+        'pictures': pictures
     }
     
     if request.method == 'POST':
         action = request.POST.get('action')
         if action == 'delete':
-            auction.delete()  
+            #auction.delete()
+            print("delete")
             return redirect('ongoing_auction') 
         
     return render(request, 'auction_details.html', context)
@@ -304,14 +316,26 @@ def place_bid(request, auction_id):
     error_message = None
     success_message = None
     seller_username = auction.seller.username
+    pictures = [
+        auction.picture1.url if auction.picture1 else None,
+        auction.picture2.url if auction.picture2 else None,
+        auction.picture3.url if auction.picture3 else None,
+        auction.picture4.url if auction.picture4 else None,
+        auction.picture5.url if auction.picture5 else None,
+        auction.picture6.url if auction.picture6 else None,
+        auction.picture7.url if auction.picture7 else None,
+    ]
+    pictures = [pic for pic in pictures if pic] 
 
     if auction.auction_end_time <= timezone.now():
         error_message = "Sorry, the auction has ended. You can no longer place a bid on this item."
-        return render(request, 'auction_details.html', {'auction': auction, 'error_message': error_message, 'seller_username': seller_username})
+        return render(request, 'auction_details.html', {'auction': auction, 'error_message': error_message, 
+                                                        'seller_username': seller_username, 'pictures': pictures})
     
     if request.user == auction.seller:
         error_message = "You cannot place a bid on your own item."
-        return render(request, 'auction_details.html', {'auction': auction, 'error_message': error_message, 'seller_username': seller_username})
+        return render(request, 'auction_details.html', {'auction': auction, 'error_message': error_message, 
+                                                        'seller_username': seller_username, 'pictures': pictures})
     
     if request.method == 'POST':
         form = PlaceBidForm(request.POST)
@@ -331,7 +355,8 @@ def place_bid(request, auction_id):
         form = PlaceBidForm()
     
     return render(request, 'auction_details.html', {'form': form, 'auction': auction, 'error_message': error_message, 
-                                                    'success_message': success_message, 'seller_username': seller_username})
+                                                    'success_message': success_message, 'seller_username': seller_username,
+                                                    'pictures': pictures})
 
 
 def auto_update_auction(request):

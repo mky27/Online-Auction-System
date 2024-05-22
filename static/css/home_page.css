@@ -1,4 +1,3 @@
-
 body {
     font-family: 'Arial', sans-serif;
     margin: 0;
@@ -11,8 +10,17 @@ body {
 }
 
 .logo {
-    width: 250px;
-    height: 250px;
+    width: 150px;
+    height: 150px;
+}
+
+.category-form {
+    width: 10%;
+    border-radius: 5px;
+    border: 1px solid #858585;
+    text-align: center;
+    height: 32px;
+    cursor: pointer;
 }
 
 ul {
@@ -20,23 +28,25 @@ ul {
     margin: 0;
     padding: 0;
     overflow: hidden;
-    background-color: #333;
 }
 
-li {
-    float: left;
+.navbar {
+    background-color: #24293E;
 }
 
-li a, .dropbtn {
+li a, .dropbtn, .welcome-message {
     display: inline-block;
     color: white;
     text-align: center;
     padding: 14px 16px;
     text-decoration: none;
+    font-size: 15px;
+    padding-right: 20px;
+    padding-left: 20px;
 }
 
-li a:hover, .dropdown:hover .dropbtn {
-    background-color: #111;
+li a:hover, .dropbtn:hover {
+    color: #8ebbff;
 }
 
 li.dropdown {
@@ -46,14 +56,14 @@ li.dropdown {
 .dropdown-content {
     display: none;
     position: absolute;
-    background-color: #f9f9f9;
+    background-color: #24293E;
     min-width: 160px;
     box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
     z-index: 1;
 }
 
 .dropdown-content a {
-    color: black;
+    color: white;
     padding: 12px 16px;
     text-decoration: none;
     display: block;
@@ -61,7 +71,7 @@ li.dropdown {
 }
 
 .dropdown-content a:hover {
-    background-color: #f1f1f1;
+    background-color: #2f3651;
 }
 
 .dropdown:hover .dropdown-content {
@@ -69,15 +79,14 @@ li.dropdown {
 }
 
 .profile-icon {
-    width: 30px;
-    height: 30px;
+    width: 15px;
+    height: 15px;
     border-radius: 50%;
 }
 
-.item-pic {
-    width: 150px;
-    height: 150px;
-    object-fit: cover;
+.wallet-icon, .cart-icon, .settings-icon, .watchlist-icon {
+    width: 15px;
+    height: 15px;
 }
 
 h1 {
@@ -90,43 +99,68 @@ form {
 }
 
 input[type="text"] {
-    width: 60%;
+    width: 45%;
     padding: 10px;
+    border-radius: 10px;
+    border: 1px solid #252525;
+    text-align: left;
+    height: 13px;
+    margin-bottom: 1%;
+}
+
+select[name="category"] {
+    border: 1px solid #252525;
+    border-radius: 10px;
+    cursor: pointer;
+    width: 12%;
+    height: 35px;
     margin-right: 10px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
+    padding-left: 10px;
 }
 
 button[type="submit"], button[type="button"] {
     padding: 10px 20px;
-    background-color: #333;
+    background-color: #2f3651;
     color: white;
     border: none;
-    border-radius: 4px;
+    border-radius: 13px;
     cursor: pointer;
 }
 
 button[type="submit"]:hover, button[type="button"]:hover {
-    background-color: #111;
+    background-color: #444755;
+}
+
+.item-pic {
+    width: 200px;
+    height: 150px;
+    object-fit: cover;
+    border-radius: 3px;
 }
 
 ul.auction-list {
     display: flex;
     flex-wrap: wrap;
-    justify-content: center;
-    padding: 0;
+    justify-content: left;
+    padding-left: 3%;
+    padding-right: 3%;
+    padding-top: 1%;
+    padding-bottom: 1%;
 }
 
 ul.auction-list li {
-    list-style: none;
-    margin: 15px;
-    padding: 10px;
-    border: 1px solid #ddd;
+    margin: 6px;
+    padding: 3px;
+    border: 1px solid #b9b9b9;
     border-radius: 4px;
     text-align: center;
-    width: 200px;
+    width: 250px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     transition: box-shadow 0.3s ease;
+}
+
+p.auction-desc {
+    text-align: left;
 }
 
 ul.auction-list li:hover {
@@ -146,4 +180,18 @@ ul.auction-list li h2 {
 ul.auction-list li p {
     margin: 5px 0;
     color: #666;
+}
+
+#backToTopBtn {
+    position: fixed; 
+    bottom: 20px; 
+    right: 30px;
+    z-index: 99;
+    cursor: pointer;
+    padding: 15px;
+}
+
+.back-to-top-icon {
+    height: 50px;
+    width: 50px;
 }

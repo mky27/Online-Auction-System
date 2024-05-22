@@ -84,7 +84,7 @@ class CreateAuctionForm(forms.Form):
         return auction_end_time
 
 class PlaceBidForm(forms.Form):
-    bid_amount = forms.DecimalField(label='Bid Amount', min_value=0, max_digits=10, decimal_places=2)
+    bid_amount = forms.DecimalField(label='Bid Amount', min_value=0, max_digits=10, decimal_places=2, required=True)
 
 class EditAuctionForm(forms.Form):
     item_name = forms.CharField(label='Item Name ', max_length=50, widget=forms.TextInput(attrs={'autocomplete': 'off'}))

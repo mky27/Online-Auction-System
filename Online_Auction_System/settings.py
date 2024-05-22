@@ -138,3 +138,6 @@ AUTHENTICATION_BACKENDS = [
 ]
 
 MEDIA_URL = '/media/'
+
+LOGIN_URL = '/login/'  # URL to redirect to for login
+LOGIN_REDIRECT_URL = '/home_page/'  # URL to redirect to after login

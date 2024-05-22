@@ -10,16 +10,21 @@
     <title>Main Page | Bidify</title>
 </head>
 <body>
-    <ul>
-        <li style="float:left"><a href="{% url 'view_profile' %}"><img src="{% static 'image/profile_icon.png' %}" alt="profile" class="profile-icon"></a></li>
+    <ul class="navbar">
         {% if user.is_authenticated %}
-            <li style="float:left">Welcome, {{ user.username }}</li>
+            <li style="float:left"><a href="{% url 'view_profile' %}"><img src="{% static 'image/profile_icon.png' %}" class="profile-icon">
+            &nbsp;&nbsp;Welcome, {{ user.username }}
+            </a></li>
         {% else %}
-            <li style="float:left">Welcome, guest</li>
+            <li style="float:left"><a href="{% url 'view_profile' %}"><img src="{% static 'image/profile_icon.png' %}" class="profile-icon">
+            &nbsp;&nbsp;Welcome, guest
+            </a></li>
             <li style="float:left"><a href="{% url 'login' %}">Login or Register</a></li>
         {% endif %}
         <li style="float:left" class="dropdown">
-            <a href="javascript:void(0)" class="dropbtn">Settings</a>
+            <a href="javascript:void(0)" class="dropbtn"><img src="{% static 'image/settings_icon.png' %}" class="settings-icon">
+                &nbsp;Settings
+            </a>
             <div class="dropdown-content">
                 <a href="{% url 'edit_profile' %}">Edit Profile</a>
                 <a href="{% url 'change_pass' %}">Change Password</a>
@@ -27,11 +32,13 @@
                 <a href="{% url 'logout' %}">Logout</a>
             </div>
         </li>
-        <li style="float:right"><a href="{% url 'wallet' %}">Wallet</a><span id="wallet-balance"></span></li>
+        {% if user.is_authenticated %}
+            <li style="float:right"><a href="{% url 'wallet' %}"><img src="{% static 'image/wallet_icon.png' %}" class="wallet-icon">  RM{{ user.balance }}</a></li>
+        {% endif %}
+        <li style="float:right"><a href="{% url 'cart' %}"><img src="{% static 'image/cart_icon.png' %}" class="cart-icon">  Cart</a></li>
+        <li style="float:right"><a href="{% url 'watchlist' %}"><img src="{% static 'image/watchlist_icon.png' %}" class="watchlist-icon">  Watchlist</a></li>
         <li style="float:right"><a href="{% url 'to_receive' %}">To Receive</a></li>
         <li style="float:right"><a href="{% url 'to_deliver' %}">To Deliver</a></li>
-        <li style="float:right"><a href="{% url 'watchlist' %}">Watchlist</a></li>
-        <li style="float:right"><a href="{% url 'cart' %}"><img src="{% static 'image/cart_icon.png' %}" alt="cart" class="profile-icon"></a></li>
         <li style="float:right" class="dropdown">
             <a href="javascript:void(0)" class="dropbtn">Sell</a>
             <div class="dropdown-content">
@@ -61,26 +68,43 @@
         </form>
     <hr>
 
-    {% if query or selected_category %}
+    {% if query and selected_category %}
         {% if not active_auctions %}
             <h2>No results found for "{{ query }}", "{{ selected_category }}".</h2>
         {% else %}
             <h2>Search Results:</h2>
         {% endif %}
+    {% elif query %}
+        {% if not active_auctions %}
+            <h2>No results found for "{{ query }}".</h2>
+        {% else %}
+            <h2>Search Results:</h2>
+        {% endif %}
+    {% elif selected_category %}
+        {% if not active_auctions %}
+            <h2>No results found for "{{ selected_category }}".</h2>
+        {% else %}
+            <h2>Search Results:</h2>
+        {% endif %}
     {% endif %}
-    
+
     <ul class="auction-list">
         {% for auction in active_auctions %}
             <li>
                 <a href="{% url 'auction_details' auction.id %}">
-                    <img src="{{ auction.picture1.url }}" alt="Item Picture 1" class="item-pic">
+                    <img src="{{ auction.picture1.url }}" class="item-pic">
                     <h2>{{ auction.item_name }}</h2>
-                    <p>Current Bid: RM{{ auction.current_bid }}</p>
-                    <p>End Time: {{ auction.auction_end_time }}</p>
+                    <p class="auction-desc">Current Bid: RM{{ auction.current_bid }}</p>
+                    <p class="auction-desc">End Date: {{ auction.auction_end_time|date:"d M Y" }}</p>
+                    <p class="auction-desc">End Time: {{ auction.auction_end_time|date:"h:iA" }}</p>
                 </a>
             </li>
         {% endfor %}
     </ul>
+
+    <img onclick="topFunction()" id="backToTopBtn" title="Back to Top" src="{% static 'image/back_to_top_icon.png' %}" class="back-to-top-icon">
+
+    <script src="{% static 'js/back_to_top.js' %}"></script>
 
     <script>
         setInterval(function() {
@@ -93,7 +117,7 @@
                 }
             })
             .catch(error => console.error("Error:", error));
-        }, 60000); // Check every minute
+        }, 60000);
     </script>
 
     <script>

@@ -9,18 +9,6 @@
     <link rel="stylesheet" type="text/css" href="{% static 'css/register_pi.css' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'css/font.css' %}">
     <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.0/themes/base/jquery-ui.css">
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://code.jquery.com/ui/1.13.0/jquery-ui.min.js"></script>
-    <script>
-        $(document).ready(function() {
-            $('#id_date_of_birth').datepicker({
-                dateFormat: 'yy-mm-dd',
-                changeMonth: true,
-                changeYear: true,
-                yearRange: "-100:+0" // Allow selection from 100 years ago to today
-            });
-        });
-    </script>
 </head>
 
 <body>
@@ -57,5 +45,18 @@
             <button type="submit" name="register">Register</button>
         </form>
     </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.13.0/jquery-ui.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('#id_date_of_birth').datepicker({
+                dateFormat: 'yy-mm-dd',
+                changeMonth: true,
+                changeYear: true,
+                yearRange: "-100:+0" // Allow selection from 100 years ago to today
+            });
+        });
+    </script>
 </body>
 </html>
