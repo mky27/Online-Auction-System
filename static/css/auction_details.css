@@ -64,7 +64,8 @@ input[type="number"] {
     text-align: center;
 }
 
-.place-bid-btn, .add-watchlist-btn, .delete-btn, .remove-from-cart-btn, .checkout-btn {
+.place-bid-btn, .add-watchlist-btn, .delete-btn, .remove-from-cart-btn, .checkout-btn,
+.item-received-btn, .out-of-delivery-btn, .remove-btn {
     background-color: #8ebbff;
     color: black;
     border-radius: 12px;
@@ -75,7 +76,8 @@ input[type="number"] {
     margin: 10px;
 }
 
-.place-bid-btn:hover, .add-watchlist-btn:hover, .delete-btn:hover, .remove-from-cart-btn:hover, .checkout-btn:hover {
+.place-bid-btn:hover, .add-watchlist-btn:hover, .delete-btn:hover, .remove-from-cart-btn:hover, .checkout-btn:hover,
+.item-received-btn:hover, .out-of-delivery-btn:hover, .remove-btn:hover {
     background-color: #bdd7ff;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     transition: box-shadow 0.2s ease;
@@ -109,7 +111,7 @@ h1 {
     height: 35px;
 }
 
-.address-field {
+.address-field, .comment-field {
     width: 70%;
     height: 100px;
     padding: 5px;
@@ -118,4 +120,10 @@ h1 {
     border: 1px solid #252525;
     text-align: left;
     resize: none;
+}
+
+.rating-field {
+    margin-bottom: 20px;
+    border-radius: 3px;
+    border: 1px solid #252525;
 }

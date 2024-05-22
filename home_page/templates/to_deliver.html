@@ -4,39 +4,99 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
-    <title>To Deliver | Bidify</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" type="text/css" href="{% static 'css/home_page.css' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'css/font.css' %}">
+    <title>To Deliver | Bidify</title>
 </head>
 <body>
-    <p><a href="{% url 'home_page' %}" class="back-button"> &lt; Back</a></p>
-    <a href="{% url 'home_page' %}"><img src="{% static 'image/bidify.png' %}" alt="bidify"></a>
-    <h1>Items to Deliver</h1>
-    <ul>
-        {% for auction_winner in items_to_deliver %}
+
+    <ul class="navbar">
+        <li style="float:left"><a href="{% url 'home_page' %}"> &lt; Back</a></li>
+        <li style="float:left"><a href="{% url 'view_profile' %}"><img src="{% static 'image/profile_icon.png' %}" class="profile-icon"></a></li>
+        <li style="float:left" class="dropdown">
+            <a href="javascript:void(0)" class="dropbtn"><img src="{% static 'image/settings_icon.png' %}" class="settings-icon">
+                &nbsp;Settings
+            </a>
+            <div class="dropdown-content">
+                <a href="{% url 'edit_profile' %}">Edit Profile</a>
+                <a href="{% url 'change_pass' %}">Change Password</a>
+                <a href="{% url 'report' %}">Report</a>
+                <a href="{% url 'logout' %}" class="logout-btn">Logout</a>
+            </div>
+        </li>
+        <li style="float:right"><a href="{% url 'wallet' %}"><img src="{% static 'image/wallet_icon.png' %}" class="wallet-icon">  RM{{ user.balance }}</a></li>
+        <li style="float:right"><a href="{% url 'cart' %}"><img src="{% static 'image/cart_icon.png' %}" class="cart-icon">  Cart</a></li>
+        <li style="float:right"><a href="{% url 'watchlist' %}"><img src="{% static 'image/watchlist_icon.png' %}" class="cart-icon">  Watchlist</a></li>
+        <li style="float:right"><a href="{% url 'to_receive' %}">To Receive</a></li>
+        <li style="float:right" class="dropdown">
+            <a href="javascript:void(0)" class="dropbtn">Sell</a>
+            <div class="dropdown-content">
+                <a href="{% url 'create_auction' %}">Create Auction</a>
+                <a href="{% url 'saved_auction' %}">Saved Auction</a>
+                <a href="{% url 'ongoing_auction' %}">Ongoing Auction</a>
+                <a href="{% url 'completed_auction' %}">Completed Auction</a>
+            </div>
+        </li>
+    </ul>
+
+    <div class="header-content">
+        <img src="{% static 'image/bidify.png' %}" alt="Bidify Logo" class="logo">
+    </div>
+    <hr>
+    <h1 style="color: #2f3651;">Items to Deliver</h1>
+    <ul class="auction-list">
+        {% for item in items_to_deliver %}
             <li>
-                <a href="{% url 'deliver_auction_details' auction_winner.id %}">
-                    <img src="{{ auction_winner.auction.picture1.url }}" alt="Item Picture 1" class="item-pic">
-                    <h2>{{ auction_winner.auction.item_name }}</h2>
-                    <p>Price: RM{{ auction_winner.winning_bid }}</p>
-                    {% if auction_winner.is_checkout %}
-                        <p>Buyer: {{ auction_winner.buyer_name }}</p>
-                        <p>Buyer Address: {{ auction_winner.buyer_address }}</p>
-                        <p>Buyer Phone: {{ auction_winner.buyer_phone }}</p>
-                        <p>Checkout Deadline: {{ auction_winner.checkout_deadline }}</p>
-                        <p>Buyer made payment successfully.</p>
-                    {% elif auction_winner.deadline_passed and not auction_winner.is_checkout %}
-                        <p>Buyer has not make payment before {{ auction_winner.checkout_deadline }}.</p>
-                    {% elif auction_winner.is_checkout == False %}
-                        <p>Awaiting for buyer make payment.</p>
+                <a href="{% url 'deliver_auction_details' item.id %}">
+                    <img src="{{ item.auction.picture1.url }}" class="item-pic">
+                    <h2>{{ item.auction.item_name }}</h2><br>
+                    <p class="auction-desc">Price: <b>RM {{ item.winning_bid }}</b></p>
+                    <p class="auction-desc">Buyer: <b>{{ item.winner.username }}</b></p><hr>
+                    {% if item.is_checkout %}
+                        <p class="auction-desc" style="color: green; text-align: center;">Buyer has made payment successfully.</p>
+                    {% elif item.deadline_passed and not item.is_checkout %}
+                        <p class="auction-desc" style="color: red; text-align: center;">Buyer has not make payment before {{ item.checkout_deadline|date:"d M Y, h:iA" }}.</p>
+                    {% elif item.is_checkout == False %}
+                        <p class="auction-desc" style="text-align: center;">Waiting for buyer to make payment.</p>
                     {% endif %}
+
                 </a>
             </li>
-            <br>
-        {% empty %}
-            <li>No items to deliver.</li>
         {% endfor %}
     </ul>
+
+    <img onclick="topFunction()" id="backToTopBtn" title="Back to Top" src="{% static 'image/back_to_top_icon.png' %}" class="back-to-top-icon">
+
+    <script src="{% static 'js/back_to_top.js' %}"></script>
+
+    <script>
+        fetch("{% url 'get_wallet_balance' %}")
+            .then(response => {
+                if (response.ok) {
+                    return response.json();
+                } else {
+                    throw new Error('Failed to fetch wallet balance');
+                }
+            })
+            .then(data => {
+                document.getElementById('wallet-balance').textContent = `RM${data.balance}`;
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+    </script>
+
+    <script>
+        document.querySelectorAll('.logout-btn').forEach(function(button) {
+                button.addEventListener('click', function(event) {
+                    const confirmed = confirm('Logout from your account?');
+                    
+                    if (!confirmed) {
+                        event.preventDefault();
+                    }
+                });
+            });
+    </script>
 </body>
 </html>

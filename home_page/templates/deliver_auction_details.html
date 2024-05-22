@@ -8,62 +8,109 @@
     <title>Auction Details | Bidify</title>
     <link rel="stylesheet" type="text/css" href="{% static 'css/auction_details.css' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'css/font.css' %}">
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
-    <p><a href="{% url 'to_deliver' %}"> &lt; Back</a></p>
-    <img src="{{ auction_winner.auction.picture1.url }}" alt="Item Picture 1" class="item-pic">
-    <h1>{{ auction_winner.auction.item_name }}</h1>
-    <p>Description: {{ auction_winner.auction.item_desc }}</p>
-    <p>Category: {{ auction_winner.auction.item_cat }}</p>
-    <p>Price Amount: RM{{ auction_winner.winning_bid }}</p>
-    <p>Checkout Deadline: {{ auction_winner.checkout_deadline }}</p>
-    <p>Buyer: {{ auction_winner.buyer_name }}</p>
-    <p>Buyer Address: {{ auction_winner.buyer_address }}</p>
-    <p>Buyer Phone: {{ auction_winner.buyer_phone }}</p>
-    
-    {% if auction_winner.is_checkout %}
-        <p style="color: red;">Buyer made payment successfully.</p>
-        <form id="delivery-form" action="{% url 'deliver_auction_details' auction_winner.id %}" method="post">
-            {% csrf_token %}
-            <input type="submit" name="out_for_delivery" value="Out for Delivery" id="out-for-delivery-button">
-        </form>
-    {% elif deadline_passed and not auction_winner.is_checkout %}
-        <p style="color: red;">The checkout deadline has passed. Buyer has not made payment before {{ auction_winner.checkout_deadline }}.</p>
-        <form id="remove-form" action="{% url 'deliver_auction_details' auction_winner.id %}" method="post">
-            {% csrf_token %}
-            <input type="submit" name="remove" value="Remove Auction">
-        </form>
-    {% else %}
-        <p style="color: red;">Awaiting for buyer make payment.</p>
-    {% endif %}
+    <ul class="navbar">
+        <li><a href="javascript:history.back()"> &lt; Back</a></li>
+        <li><a href="{% url 'home_page' %}"><img src="{% static 'image/bidify_white.png' %}" class="bidify-white-icon"></a></li>
+        <li><a href="{% url 'watchlist' %}"><img src="{% static 'image/watchlist_icon.png' %}" class="watchlist-icon">  Watchlist</a></li>
+        <li><a href="{% url 'cart' %}"><img src="{% static 'image/cart_icon.png' %}" class="cart-icon">  Cart</a></li>
+        <li><a href="{% url 'wallet' %}"><img src="{% static 'image/wallet_icon.png' %}" class="wallet-icon">  RM{{ user.balance }}</a></li>
+    </ul>
 
+    <div class="auction-details">
+        <div class="row">
+            <div class="col-md-6">
+                <div id="itemCarousel" class="carousel slide" data-ride="carousel">
+                    <div class="carousel-inner">
+                        {% for picture in pictures %}
+                            <div class="carousel-item {% if forloop.first %}active{% endif %}">
+                                <img src="{{ picture }}" alt="Item Picture {{ forloop.counter }}">
+                            </div>
+                        {% endfor %}
+                    </div>
+                    <a class="carousel-control-prev" href="#itemCarousel" role="button" data-slide="prev">
+                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                        <span class="sr-only">Previous</span>
+                    </a>
+                    <a class="carousel-control-next" href="#itemCarousel" role="button" data-slide="next">
+                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                        <span class="sr-only">Next</span>
+                    </a>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <h2 style="color: #2f3651;"><b>{{ auction_winner.auction.item_name }}</b></h2>
+                <p class="category">{{ auction_winner.auction.item_cat }}</p>
+                <hr>
+                <p class="description">{{ auction_winner.auction.item_desc }}</p>
+                <hr>
+                <h5 style="color: #2f3651;">Item Info</h5>
+                <p>Buyer: <b>{{ auction_winner.winner.fName }} {{ auction_winner.winner.lName }}</b></p>
+                <p>Price Amount: <b>RM {{ auction_winner.winning_bid }}</b></p>
+                <p>Checkout Deadline: <b>{{ auction_winner.checkout_deadline|date:"d M Y, h:iA" }}</b></p>
+                <hr>
+                <h5 style="color: #2f3651;">Shipping Info</h5>
+                <p>Name: <b>{{ auction_winner.buyer_name }}</b></p>
+                <p>Phone: <b>{{ auction_winner.buyer_phone }}</b></p>
+                <p>Address: <b>{{ auction_winner.buyer_address }}</b></p>
+                <div class="btn-section">
+                    {% if auction_winner.is_checkout %}
+                        <hr>
+                        <p style="color: green;">Buyer has made payment successfully.</p>
+                        <form action="{% url 'deliver_auction_details' auction_winner.id %}" method="post">
+                            {% csrf_token %}
+                            <input type="submit" name="out_of_delivery" value="Out of Delivery" class="out-of-delivery-btn">
+                        </form>
+                    {% elif deadline_passed and not auction_winner.is_checkout %}
+                        <hr>
+                        <p style="color: red;">Buyer has not make payment before {{ auction_winner.checkout_deadline|date:"d M Y, h:iA" }}.</p>
+                        <form action="{% url 'deliver_auction_details' auction_winner.id %}" method="post">
+                            {% csrf_token %}
+                            <input type="submit" name="remove" value="Remove Auction" class="remove-btn">
+                        </form>
+                    {% else %}
+                        <hr>
+                        <p >Waiting for buyer to make payment.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    
     <script>
-        const deliveryForm = document.getElementById('delivery-form');
-        
-        // Add event listener to the out-for-delivery button
-        deliveryForm.addEventListener('submit', function(event) {
-            // Show confirmation prompt
-            const confirmed = confirm('Is this item out for delivery?');
-            
-            // If user cancels, prevent the form submission
-            if (!confirmed) {
-                event.preventDefault();
-            }
-        });
+        function goBack() {
+            window.history.back();
+        }
     </script>
 
     <script>
-        const remove = document.getElementById('remove-form');
+        document.querySelectorAll('.out-of-delivery-btn').forEach(function(button) {
+                button.addEventListener('click', function(event) {
+                    const confirmed = confirm('Is this item out of delivery?');
+                    
+                    if (!confirmed) {
+                        event.preventDefault();
+                    }
+                });
+            });
+    </script>
 
-        remove.addEventListener('submit', function(event) {
-            // Show confirmation prompt
-            const confirmed = confirm('Do you confirm to remove auction?');
-            
-            // If user cancels, prevent the form submission
-            if (!confirmed) {
-                event.preventDefault();
-            }
-        });
+    <script>
+        document.querySelectorAll('.remove-btn').forEach(function(button) {
+                button.addEventListener('click', function(event) {
+                    const confirmed = confirm('Remove this item from to deliver list?');
+                    
+                    if (!confirmed) {
+                        event.preventDefault();
+                    }
+                });
+            });
     </script>
 </body>
 </html>

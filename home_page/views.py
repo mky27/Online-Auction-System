@@ -753,6 +753,16 @@ def to_deliver(request):
 @login_required
 def deliver_auction_detail(request, auction_winner_id):
     auction_winner = get_object_or_404(OASauctionWinner, id=auction_winner_id)
+    pictures = [
+        auction_winner.auction.picture1.url if auction_winner.auction.picture1 else None,
+        auction_winner.auction.picture2.url if auction_winner.auction.picture2 else None,
+        auction_winner.auction.picture3.url if auction_winner.auction.picture3 else None,
+        auction_winner.auction.picture4.url if auction_winner.auction.picture4 else None,
+        auction_winner.auction.picture5.url if auction_winner.auction.picture5 else None,
+        auction_winner.auction.picture6.url if auction_winner.auction.picture6 else None,
+        auction_winner.auction.picture7.url if auction_winner.auction.picture7 else None,
+    ]
+    pictures = [pic for pic in pictures if pic] 
 
     if request.method == 'POST':
         if 'out_for_delivery' in request.POST:
@@ -767,7 +777,8 @@ def deliver_auction_detail(request, auction_winner_id):
 
     return render(request, 'deliver_auction_details.html', {
         'auction_winner': auction_winner,
-        'deadline_passed': deadline_passed
+        'deadline_passed': deadline_passed,
+        'pictures': pictures
     })
 
 
@@ -782,6 +793,16 @@ def to_receive(request):
 def receive_auction_details(request, auction_winner_id):
     auction_winner = get_object_or_404(OASauctionWinner, id=auction_winner_id)
     auction = get_object_or_404(OASauction, pk=auction_winner.auction_id)
+    pictures = [
+        auction.picture1.url if auction.picture1 else None,
+        auction.picture2.url if auction.picture2 else None,
+        auction.picture3.url if auction.picture3 else None,
+        auction.picture4.url if auction.picture4 else None,
+        auction.picture5.url if auction.picture5 else None,
+        auction.picture6.url if auction.picture6 else None,
+        auction.picture7.url if auction.picture7 else None,
+    ]
+    pictures = [pic for pic in pictures if pic] 
 
     if request.method == 'POST':
         form = ReceiveForm(request.POST)
@@ -795,7 +816,7 @@ def receive_auction_details(request, auction_winner_id):
     else:
         form = ReceiveForm()
 
-    return render(request, 'receive_auction_details.html', {'auction_winner': auction_winner, 'form': form})
+    return render(request, 'receive_auction_details.html', {'auction_winner': auction_winner, 'form': form, 'pictures':pictures})
 
 
 @login_required

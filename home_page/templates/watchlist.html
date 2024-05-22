@@ -21,7 +21,7 @@
                 <a href="{% url 'edit_profile' %}">Edit Profile</a>
                 <a href="{% url 'change_pass' %}">Change Password</a>
                 <a href="{% url 'report' %}">Report</a>
-                <a href="{% url 'logout' %}">Logout</a>
+                <a href="{% url 'logout' %}" class="logout-btn">Logout</a>
             </div>
         </li>
         <li style="float:right"><a href="{% url 'wallet' %}"><img src="{% static 'image/wallet_icon.png' %}" class="wallet-icon">  RM{{ user.balance }}</a></li>
@@ -54,6 +54,7 @@
                     <p class="auction-desc">End Date: <b>{{ item.auction.auction_end_time|date:"d M Y" }}</b></p>
                     <p class="auction-desc">End Time: <b>{{ item.auction.auction_end_time|date:"h:iA" }}</b></p>
                 </a>
+                <hr>
                 <form method="post" action="{% url 'remove_from_watchlist' item.auction.id %}">
                     {% csrf_token %}
                         <button type="submit" name="action" value="remove_watchlist" class="remove-from-watchlist-button">Remove from Watchlist</button>
@@ -106,6 +107,18 @@
                 });
             });
         });
+    </script>
+
+    <script>
+        document.querySelectorAll('.logout-btn').forEach(function(button) {
+                button.addEventListener('click', function(event) {
+                    const confirmed = confirm('Logout from your account?');
+                    
+                    if (!confirmed) {
+                        event.preventDefault();
+                    }
+                });
+            });
     </script>
 </body> 
 </html>
