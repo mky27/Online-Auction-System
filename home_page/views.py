@@ -460,12 +460,42 @@ def withdraw_from_auction(request, auction_id):
 @login_required
 def saved_auction(request):
     saved_auctions = OASauction.objects.filter(seller=request.user, is_saved=True)
-    return render(request, 'saved_auction.html', {'saved_auctions': saved_auctions})
+    query = request.GET.get('q', '')
+    selected_category = request.GET.get('category', '')
+
+    if query:
+        saved_auctions = saved_auctions.filter(item_name__icontains=query)
+    
+    if selected_category:
+        saved_auctions = saved_auctions.filter(item_cat=selected_category)
+
+    context = {
+        'saved_auctions': saved_auctions,
+        'query': query,
+        'selected_category': selected_category,
+        'categories': [
+            'Apparel & Accessories', 'Animal & Pet Supplies', 'Arts & Entertainment', 'Baby & Toddler',
+            'Camera & Optics', 'Electronics', 'Food & Beverages', 'Furniture', 'Hardware', 
+            'Home & Garden', 'Health & Beauty', 'Luggage & Bags', 'Office Supplies', 'Religious', 
+            'Sporting Goods', 'Toys & Games', 'Vehicle & Parts', 'Others'
+        ],
+    }
+    return render(request, 'saved_auction.html', context)
 
 
 @login_required
 def edit_auction(request, auction_id):
     auction = get_object_or_404(OASauction, pk=auction_id)
+    pictures = [
+        auction.picture1.url if auction.picture1 else None,
+        auction.picture2.url if auction.picture2 else None,
+        auction.picture3.url if auction.picture3 else None,
+        auction.picture4.url if auction.picture4 else None,
+        auction.picture5.url if auction.picture5 else None,
+        auction.picture6.url if auction.picture6 else None,
+        auction.picture7.url if auction.picture7 else None,
+    ]
+    pictures = [pic for pic in pictures if pic] 
 
     if request.method == 'POST':
         form = EditAuctionForm(request.POST, request.FILES)
@@ -540,34 +570,83 @@ def edit_auction(request, auction_id):
             'auction_end_time': auction.auction_end_time,
         })
         
-    return render(request, 'edit_auction.html', {'form': form, 'auction': auction})
+    return render(request, 'edit_auction.html', {'form': form, 'auction': auction, 'pictures':pictures})
 
 
 @login_required
 def completed_auction(request):
     completed_auctions = OASauction.objects.filter(seller=request.user, is_completed=True)
+    query = request.GET.get('q', '')
+    selected_category = request.GET.get('category', '')
+
+    if query:
+        completed_auctions = completed_auctions.filter(item_name__icontains=query)
     
-    return render(request, 'completed_auction.html', {'completed_auctions': completed_auctions})
+    if selected_category:
+        completed_auctions = completed_auctions.filter(item_cat=selected_category)
+
+    context = {
+        'completed_auctions': completed_auctions,
+        'query': query,
+        'selected_category': selected_category,
+        'categories': [
+            'Apparel & Accessories', 'Animal & Pet Supplies', 'Arts & Entertainment', 'Baby & Toddler',
+            'Camera & Optics', 'Electronics', 'Food & Beverages', 'Furniture', 'Hardware', 
+            'Home & Garden', 'Health & Beauty', 'Luggage & Bags', 'Office Supplies', 'Religious', 
+            'Sporting Goods', 'Toys & Games', 'Vehicle & Parts', 'Others'
+        ],
+    }
+
+    return render(request, 'completed_auction.html', context)
 
 
 @login_required
 def completed_auction_details(request, auction_id):
     auction = get_object_or_404(OASauction, pk=auction_id)
     auction_winner = get_object_or_404(OASauctionWinner, auction_id=auction_id)
-
+    pictures = [
+        auction.picture1.url if auction.picture1 else None,
+        auction.picture2.url if auction.picture2 else None,
+        auction.picture3.url if auction.picture3 else None,
+        auction.picture4.url if auction.picture4 else None,
+        auction.picture5.url if auction.picture5 else None,
+        auction.picture6.url if auction.picture6 else None,
+        auction.picture7.url if auction.picture7 else None,
+    ]
+    pictures = [pic for pic in pictures if pic] 
     deadline_passed = auction_winner.checkout_deadline < timezone.now()
 
     if request.method == 'POST':
         auction.delete()
         return redirect('completed_auction')
     
-    return render(request, 'completed_auction_details.html', {'auction': auction, 'deadline_passed': deadline_passed, 'auction_winner': auction_winner})
+    return render(request, 'completed_auction_details.html', {'auction': auction, 'deadline_passed': deadline_passed, 'auction_winner': auction_winner, 'pictures': pictures})
 
 
 @login_required
 def ongoing_auction(request):
     ongoing_auctions = OASauction.objects.filter(seller=request.user, is_ongoing=True)
-    return render(request, 'ongoing_auction.html', {'ongoing_auctions': ongoing_auctions})
+    query = request.GET.get('q', '')
+    selected_category = request.GET.get('category', '')
+
+    if query:
+        ongoing_auctions = ongoing_auctions.filter(item_name__icontains=query)
+    
+    if selected_category:
+        ongoing_auctions = ongoing_auctions.filter(item_cat=selected_category)
+
+    context = {
+        'ongoing_auctions': ongoing_auctions,
+        'query': query,
+        'selected_category': selected_category,
+        'categories': [
+            'Apparel & Accessories', 'Animal & Pet Supplies', 'Arts & Entertainment', 'Baby & Toddler',
+            'Camera & Optics', 'Electronics', 'Food & Beverages', 'Furniture', 'Hardware', 
+            'Home & Garden', 'Health & Beauty', 'Luggage & Bags', 'Office Supplies', 'Religious', 
+            'Sporting Goods', 'Toys & Games', 'Vehicle & Parts', 'Others'
+        ],
+    }
+    return render(request, 'ongoing_auction.html', context)
 
 
 @login_required

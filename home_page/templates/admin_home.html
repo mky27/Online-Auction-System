@@ -10,11 +10,14 @@
     <title>Admin Page | Bidify</title>
 </head>
 <body>
-    <ul>
-        <li style="float:left"><a href="#"><img src="{% static 'image/profile_icon.png' %}" alt="profile" class="profile-icon"></a></li>
-        <li style="float:left">Welcome, admin</li>
-        <li style="float:left" class="dropdown">
-            <a href="javascript:void(0)" class="dropbtn">Settings</a>
+    <ul class="navbar">
+            <li style="float:left"><a href=""><img src="{% static 'image/profile_icon.png' %}" class="profile-icon">
+            &nbsp;&nbsp;Welcome, ADMIN
+            </a></li>
+            <li style="float:left" class="dropdown">
+            <a href="javascript:void(0)" class="dropbtn"><img src="{% static 'image/settings_icon.png' %}" class="settings-icon">
+                &nbsp;Settings
+            </a>
             <div class="dropdown-content">
                 <a href="{% url 'change_pass' %}">Change Password</a>
                 <a href="{% url 'logout' %}">Logout</a>
@@ -75,7 +78,7 @@
                 }
             })
             .catch(error => console.error("Error:", error));
-        }, 60000); // Check every minute
+        }, 60000); 
     </script>
 </body> 
 </html>

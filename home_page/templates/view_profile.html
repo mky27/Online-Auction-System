@@ -9,20 +9,57 @@
     <link rel="stylesheet" type="text/css" href="{% static 'css/home_page.css' %}">
 </head>
 <body>
-    <p><a href="{% url 'home_page' %}"> &lt; Back</a></p>
-    <h1>{{ user.username }}'s Profile</h1>
-    <p>First Name: {{ user.fName }}</p>
-    <p>Last Name: {{ user.lName }}</p>
-    <p>Email: {{ user.email }}</p>
+    <ul class="navbar">
+            <li style="float:left"><a href="{% url 'view_profile' %}"><img src="{% static 'image/profile_icon.png' %}" class="profile-icon">
+            &nbsp;&nbsp;Welcome, {{ user.username }}
+            </a></li>
+        <li style="float:left" class="dropdown">
+            <a href="javascript:void(0)" class="dropbtn"><img src="{% static 'image/settings_icon.png' %}" class="settings-icon">
+                &nbsp;Settings
+            </a>
+            <div class="dropdown-content">
+                <a href="{% url 'edit_profile' %}">Edit Profile</a>
+                <a href="{% url 'change_pass' %}">Change Password</a>
+                <a href="{% url 'report' %}">Report</a>
+                <a href="{% url 'logout' %}" class="logout-btn">Logout</a>
+            </div>
+        </li>
+        <li style="float:right"><a href="{% url 'wallet' %}"><img src="{% static 'image/wallet_icon.png' %}" class="wallet-icon">  RM{{ user.balance }}</a></li>
+        <li style="float:right"><a href="{% url 'cart' %}"><img src="{% static 'image/cart_icon.png' %}" class="cart-icon">  Cart</a></li>
+        <li style="float:right"><a href="{% url 'watchlist' %}"><img src="{% static 'image/watchlist_icon.png' %}" class="watchlist-icon">  Watchlist</a></li>
+        <li style="float:right"><a href="{% url 'to_receive' %}">To Receive</a></li>
+        <li style="float:right"><a href="{% url 'to_deliver' %}">To Deliver</a></li>
+        <li style="float:right" class="dropdown">
+            <a href="javascript:void(0)" class="dropbtn">Sell</a>
+            <div class="dropdown-content">
+                <a href="{% url 'create_auction' %}">Create Auction</a>
+                <a href="{% url 'saved_auction' %}">Saved Auction</a>
+                <a href="{% url 'ongoing_auction' %}">Ongoing Auction</a>
+                <a href="{% url 'completed_auction' %}">Completed Auction</a>
+            </div>
+        </li>
+    </ul>
+
+    <div class="header-content">
+        <img src="{% static 'image/bidify.png' %}" alt="Bidify Logo" class="logo">
+    </div>
     <hr>
-    <h2>Ongoing Auctions</h2>
+    <h1 class="personal-info">{{ user.username }}'s Profile</h1>
+    <p class="personal-info">First Name: {{ user.fName }}</p>
+    <p class="personal-info">Last Name: {{ user.lName }}</p>
+    <p class="personal-info">Email: {{ user.email }}</p>
+    <hr>
+    <h2 style="margin-left: 30px; color: #2f3651;">Ongoing Auctions</h2>
     {% if ongoing_auctions %}
-        <ul>
+        <ul class="auction-list">
             {% for auction in ongoing_auctions %}
                 <li>
                     <a href="{% url 'auction_details' auction.id %}">
-                        <img src="{{ auction.picture1.url }}" alt="Item Picture 1" class="item-pic">
-                        <p>{{ auction.item_name }}</p>                    
+                        <img src="{{ auction.picture1.url }}" class="item-pic">
+                        <h2>{{ auction.item_name }}</h2><br>
+                        <p class="auction-desc">Current Bid: <b>RM{{ auction.current_bid }}</b></p>
+                        <p class="auction-desc">End Date: <b>{{ auction.auction_end_time|date:"d M Y" }}</b></p>
+                        <p class="auction-desc">End Time: <b>{{ auction.auction_end_time|date:"h:iA" }}</b></p>           
                     </a>
                 </li>
             {% endfor %}
@@ -31,14 +68,18 @@
         <p>No ongoing auctions.</p>
     {% endif %}
 
-    <h2>Completed Auctions</h2>
+    <h2 style="margin-left: 30px; color: #2f3651;">Completed Auctions</h2>
     {% if completed_auctions %}
-        <ul>
+        <ul class="auction-list">
             {% for auction in completed_auctions %}
                 <li>
                     <a href="{% url 'completed_auction_details' auction.id %}">
                         <img src="{{ auction.picture1.url }}" alt="Item Picture 1" class="item-pic">
-                        <p>{{ auction.item_name }}</p>
+                        <h2>{{ auction.item_name }}</h2><br>
+                        <p class="auction-desc">Winner: <b>{% if auction.current_bidder %}{{ auction.current_bidder.username }}{% else %}No winner{% endif %}</b></p>
+                        <p class="auction-desc">Price: <b>{% if auction.current_bidder %}{{ auction.current_bid }}{% else %}No winner{% endif %}</b></p>
+                        <p class="auction-desc">End Date: <b>{{ auction.auction_end_time|date:"d M Y" }}</b></p>
+                        <p class="auction-desc">End Time: <b>{{ auction.auction_end_time|date:"h:iA" }}</b></p>
                     </a>
                 </li>
             {% endfor %}

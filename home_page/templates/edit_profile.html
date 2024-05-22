@@ -6,7 +6,46 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Edit Profile | Bidify</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/register_pi.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/font.css' %}">
     <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.0/themes/base/jquery-ui.css">
+</head>
+
+<body>
+    <img src="{% static 'image/bidify.png' %}" alt="bidify" class="logo">
+
+    <div class="rounded-box">
+        <h2>Edit Profile</h2><br>
+        <form method="post" action="{% url 'edit_profile' %}">
+            {% csrf_token %}
+            <div class="form-row1">
+                {{ form.fName.label_tag }}
+                {{ form.fName }}
+                <span class="tab"></span>
+                {{ form.lName.label_tag }}
+                {{ form.lName }}
+            </div><br><br>
+            <div class="form-row2">
+                {{ form.date_of_birth.label_tag }}
+                {{ form.date_of_birth }}
+                <span class="tab"></span>
+                {{ form.gender.label_tag }}
+                {{ form.gender }}
+                <span class="tab"></span>
+                {{ form.phoneNo.label_tag }}
+                {{ form.phoneNo }}
+            </div><br><br>
+            <div class="form-row3">
+                {{ form.email.label_tag }}
+                {{ form.email }}
+                <span class="tab"></span><span class="tab"></span>
+                {{ form.address.label_tag }}
+                {{ form.address }}
+            </div><br><br>
+            <button type="submit" name="register">Submit</button>
+        </form>
+    </div>
+
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://code.jquery.com/ui/1.13.0/jquery-ui.min.js"></script>
     <script>
@@ -15,21 +54,9 @@
                 dateFormat: 'yy-mm-dd',
                 changeMonth: true,
                 changeYear: true,
-                yearRange: "-100:+0" // Allow selection from 100 years ago to today
+                yearRange: "-100:+0" 
             });
         });
     </script>
-</head>
-<body>
-    <div class="image-container">
-        <p><a href="{% url 'home_page' %}"> &lt; Back</a></p>
-        <img src="{% static 'image/bidify.png' %}" alt="bidify">
-    </div>
-    <hr>
-    <form method="post" action="{% url 'edit_profile' %}">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Save</button>
-    </form>
-</body> 
+</body>
 </html>

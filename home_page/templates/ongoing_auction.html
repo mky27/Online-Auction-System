@@ -8,28 +8,27 @@
     <link rel="stylesheet" type="text/css" href="{% static 'css/home_page.css' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'css/font.css' %}">
     <title>Ongoing Auction | Bidify</title>
+</head>
 <body>
-    <ul>
-        <li style="float:left"><a href="#"><img src="{% static 'image/profile_icon.png' %}" alt="profile" class="profile-icon"></a></li>
-        {% if user.is_authenticated %}
-            <li style="float:left"><a href="#">Welcome, {{user.username}}</a></li>
-        {% else %}
-            <li style="float:left">Welcome, guest</li>
-            <li style="float:left"><a href="{% url 'login' %}">Login or Register</a></li>
-        {% endif %}
+    <ul class="navbar">
+        <li style="float:left"><a href="{% url 'home_page' %}"> &lt; Back</a></li>
+        <li style="float:left"><a href="{% url 'view_profile' %}"><img src="{% static 'image/profile_icon.png' %}" class="profile-icon"></a></li>
         <li style="float:left" class="dropdown">
-            <a href="javascript:void(0)" class="dropbtn">Settings</a>
+            <a href="javascript:void(0)" class="dropbtn"><img src="{% static 'image/settings_icon.png' %}" class="settings-icon">
+                &nbsp;Settings
+            </a>
             <div class="dropdown-content">
                 <a href="{% url 'edit_profile' %}">Edit Profile</a>
-                <a href="#">Change Password</a>
-                <a href="#">Report</a>
-                <a href="{% url 'logout' %}">Logout</a>
+                <a href="{% url 'change_pass' %}">Change Password</a>
+                <a href="{% url 'report' %}">Report</a>
+                <a href="{% url 'logout' %}" class="logout-btn">Logout</a>
             </div>
         </li>
-        <li style="float:right"><a href="#">To Deliver</a></li>
-        <li style="float:right"><a href="#">To Receive</a></li>
-        <li style="float:right"><a href="{% url 'watchlist' %}">Watchlist</a></li>
-        <li style="float:right"><a href="#"><img src="{% static 'image/cart_icon.png' %}" alt="cart" class="profile-icon"></a></li>
+        <li style="float:right"><a href="{% url 'wallet' %}"><img src="{% static 'image/wallet_icon.png' %}" class="wallet-icon">  RM{{ user.balance }}</a></li>
+        <li style="float:right"><a href="{% url 'cart' %}"><img src="{% static 'image/cart_icon.png' %}" class="cart-icon">  Cart</a></li>
+        <li style="float:right"><a href="{% url 'watchlist' %}"><img src="{% static 'image/watchlist_icon.png' %}" class="watchlist-icon">  Watchlist</a></li>
+        <li style="float:right"><a href="{% url 'to_receive' %}">To Receive</a></li>
+        <li style="float:right"><a href="{% url 'to_deliver' %}">To Deliver</a></li>
         <li style="float:right" class="dropdown">
             <a href="javascript:void(0)" class="dropbtn">Sell</a>
             <div class="dropdown-content">
@@ -41,25 +40,104 @@
         </li>
     </ul>
         
-    <p><a href="{% url 'home_page' %}"> &lt; Back</a></p>
-    <img src="{% static 'image/bidify.png' %}" alt="bidify">
+    <div class="header-content">
+        <img src="{% static 'image/bidify.png' %}" alt="Bidify Logo" class="logo">
+    </div>
+    <form method="GET" action="{% url 'ongoing_auction' %}">
+        <input type="text" name="q" placeholder="Search for anything" value="{{ query }}">
+        <select name="category">
+            <option value="">All Categories</option>
+            {% for category in categories %}
+                <option value="{{ category }}" {% if selected_category == category %}selected{% endif %}>{{ category }}</option>
+            {% endfor %}
+        </select>
+        <button type="submit">Search</button>
+        {% if query or selected_category %}
+            <a href="{% url 'ongoing_auction' %}"><button type="button">Clear Results</button></a>
+        {% endif %}
+    </form>
     <hr>
-    <h1>Your Ongoing Auctions</h1>
-    <ul>
+    <h1 style="color: #2f3651;">Your Ongoing Auctions</h1>
+
+    {% if query and selected_category %}
+        {% if not ongoing_auctions %}
+            <h2 style="color: #2f3651; padding-left: 20px;">No results found for "<b>{{ query }}</b>", "<b>{{ selected_category }}</b>".</h2>
+        {% else %}
+            <h2 style="color: #2f3651; padding-left: 20px;">Search Results:</h2>
+        {% endif %}
+    {% elif query %}
+        {% if not ongoing_auctions %}
+            <h2 style="color: #2f3651; padding-left: 20px;">No results found for "<b>{{ query }}</b>".</h2>
+        {% else %}
+            <h2 style="color: #2f3651; padding-left: 20px;">Search Results:</h2>
+        {% endif %}
+    {% elif selected_category %}
+        {% if not ongoing_auctions %}
+            <h2 style="color: #2f3651; padding-left: 20px;">No results found for "<b>{{ selected_category }}</b>".</h2>
+        {% else %}
+            <h2 style="color: #2f3651; padding-left: 20px;">Search Results:</h2>
+        {% endif %}
+    {% endif %}
+
+    <ul class="auction-list">
         {% for auction in ongoing_auctions %}
             <li>
                 <a href="{% url 'auction_details' auction.id %}">
-                    <img src="{{ auction.picture1.url }}" alt="Auction Picture 1" class="item-pic">
-                    <h2>{{ auction.item_name }}</h2>
-                    <p>Current Bid: {{ auction.current_bid }}</p>
-                    <p>Current Bidder: {% if auction.current_bidder %}{{ auction.current_bidder.username }}{% else %}No current bidder{% endif %}</p>
-                    <p>End Time: {{ auction.auction_end_time }}</p>
+                    <img src="{{ auction.picture1.url }}" class="item-pic">
+                    <h2>{{ auction.item_name }}</h2><br>
+                    <p class="auction-desc">Current Bid: <b>RM{{ auction.current_bid }}</b></p>
+                    <p class="auction-desc">End Date: <b>{{ auction.auction_end_time|date:"d M Y" }}</b></p>
+                    <p class="auction-desc">End Time: <b>{{ auction.auction_end_time|date:"h:iA" }}</b></p>
                 </a>
             </li>
-            <br>
-        {% empty %}
-            <li>No ongoing auctions</li>
         {% endfor %}
     </ul>
+
+    <img onclick="topFunction()" id="backToTopBtn" title="Back to Top" src="{% static 'image/back_to_top_icon.png' %}" class="back-to-top-icon">
+
+    <script src="{% static 'js/back_to_top.js' %}"></script>
+
+    <script>
+        setInterval(function() {
+            fetch("{% url 'auto_update_auction' %}")
+            .then(response => {
+                if (response.ok) {
+                    window.location.reload();
+                } else {
+                    console.error("Failed to update auction status");
+                }
+            })
+            .catch(error => console.error("Error:", error));
+        }, 60000);
+    </script>
+
+    <script>
+        fetch("{% url 'get_wallet_balance' %}")
+            .then(response => {
+                if (response.ok) {
+                    return response.json();
+                } else {
+                    throw new Error('Failed to fetch wallet balance');
+                }
+            })
+            .then(data => {
+                document.getElementById('wallet-balance').textContent = `RM${data.balance}`;
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+    </script>
+
+    <script>
+        document.querySelectorAll('.logout-btn').forEach(function(button) {
+                button.addEventListener('click', function(event) {
+                    const confirmed = confirm('Logout from your account?');
+                    
+                    if (!confirmed) {
+                        event.preventDefault();
+                    }
+                });
+            });
+    </script>
 </body> 
 </html>

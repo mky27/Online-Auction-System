@@ -49,8 +49,8 @@ class EditProfileForm(forms.Form):
     address = forms.CharField(label='Address ', widget=forms.Textarea(attrs={'class': 'address-field', 'autocomplete': 'off'}))
 
 class CreateAuctionForm(forms.Form):
-    item_name = forms.CharField(label='Item Name ', required=True, max_length=50, widget=forms.TextInput(attrs={'autocomplete': 'off', 'class': 'item-name-field'}))
-    item_desc = forms.CharField(label='Item Description ', required=True, max_length=100, widget=forms.Textarea(attrs={'autocomplete': 'off', 'class': 'item-desc-field'}))
+    item_name = forms.CharField(label='Item Name ', required=True, max_length=100, widget=forms.TextInput(attrs={'autocomplete': 'off', 'class': 'item-name-field'}))
+    item_desc = forms.CharField(label='Item Description ', required=True, max_length=200, widget=forms.Textarea(attrs={'autocomplete': 'off', 'class': 'item-desc-field'}))
     item_cat = forms.ChoiceField(label='Item Category ', required=True, choices=[('Apparel & Accessories', 'Apparel & Accessories'), ('Animal & Pet Supplies', 'Animal & Pet Supplies'),
                                                                                 ('Arts & Entertainment', 'Arts & Entertainment'), ('Baby & Toddler', 'Baby & Toddler'),
                                                                                 ('Camera & Optics', 'Camera & Optics'), ('Electronics', 'Electronics'), ('Food & Beverages', 'Food & Beverages'),
@@ -66,9 +66,9 @@ class CreateAuctionForm(forms.Form):
     picture2 = forms.ImageField(required=True, widget=forms.FileInput(attrs={'class': 'picture-field'}))
     picture3 = forms.ImageField(required=True, widget=forms.FileInput(attrs={'class': 'picture-field'}))
     picture4 = forms.ImageField(required=True, widget=forms.FileInput(attrs={'class': 'picture-field'}))
-    picture5 = forms.ImageField(widget=forms.FileInput(attrs={'class': 'picture-field'}))
-    picture6 = forms.ImageField(widget=forms.FileInput(attrs={'class': 'picture-field'}))
-    picture7 = forms.ImageField(widget=forms.FileInput(attrs={'class': 'picture-field'}))
+    picture5 = forms.ImageField(required=False, widget=forms.FileInput(attrs={'class': 'picture-field'}))
+    picture6 = forms.ImageField(required=False, widget=forms.FileInput(attrs={'class': 'picture-field'}))
+    picture7 = forms.ImageField(required=False, widget=forms.FileInput(attrs={'class': 'picture-field'}))
 
     def clean_start_bid(self):
         start_bid = self.cleaned_data['start_bid']
@@ -88,25 +88,26 @@ class PlaceBidForm(forms.Form):
     bid_amount = forms.DecimalField(label='Bid Amount', min_value=0, max_digits=10, decimal_places=2, required=True)
 
 class EditAuctionForm(forms.Form):
-    item_name = forms.CharField(label='Item Name ', max_length=50, widget=forms.TextInput(attrs={'autocomplete': 'off'}))
-    item_desc = forms.CharField(label='Item Description ', max_length=100, widget=forms.Textarea(attrs={}))
-    item_cat = forms.ChoiceField(label='Item Category ', choices=[('Apparel & Accessories', 'Apparel & Accessories'), ('Animal & Pet Supplies', 'Animal & Pet Supplies'),
-                                                                  ('Arts & Entertainment', 'Arts & Entertainment'), ('Baby & Toddler', 'Baby & Toddler'),
-                                                                  ('Camera & Optics', 'Camera & Optics'), ('Electronics', 'Electronics'), ('Food & Beverages', 'Food & Beverages'),
-                                                                  ('Furniture', 'Furniture'), ('Hardware', 'Hardware'), ('Home & Garden', 'Home & Garden'), 
-                                                                  ('Health & Beauty', 'Health & Beauty'), ('Luggage & Bags', 'Luggage & Bags'), ('Office Supplies', 'Office Supplies'),
-                                                                  ('Religious', 'Religious'), ('Sporting Goods', 'Sporting Goods'), ('Toys & Games', 'Toys & Games'),
-                                                                  ('Vehicle & Parts', 'Vehicle & Parts'), ('Others', 'Others')
-                                                                  ], widget=forms.Select(attrs={}))
-    start_bid = forms.DecimalField(label='Starting Bid ', max_digits=10, decimal_places=2, min_value=1)
-    auction_end_time = forms.DateTimeField(label='End Time ', widget=forms.DateTimeInput(attrs={'type': 'datetime-local'}))
-    picture1 = forms.ImageField(required=False)
-    picture2 = forms.ImageField(required=False)
-    picture3 = forms.ImageField(required=False)
-    picture4 = forms.ImageField(required=False)
-    picture5 = forms.ImageField(required=False)
-    picture6 = forms.ImageField(required=False)
-    picture7 = forms.ImageField(required=False)
+    item_name = forms.CharField(required=True, label='Item Name ', max_length=100, widget=forms.TextInput(attrs={'autocomplete': 'off', 'class': 'item-name-field'}))
+    item_desc = forms.CharField(required=True, label='Item Description ', max_length=200, widget=forms.Textarea(attrs={ 'class': 'item-desc-field'}))
+    item_cat = forms.ChoiceField(required=True, label='Item Category ', choices=[('Apparel & Accessories', 'Apparel & Accessories'), ('Animal & Pet Supplies', 'Animal & Pet Supplies'),
+                                                                                ('Arts & Entertainment', 'Arts & Entertainment'), ('Baby & Toddler', 'Baby & Toddler'),
+                                                                                ('Camera & Optics', 'Camera & Optics'), ('Electronics', 'Electronics'), ('Food & Beverages', 'Food & Beverages'),
+                                                                                ('Furniture', 'Furniture'), ('Hardware', 'Hardware'), ('Home & Garden', 'Home & Garden'), 
+                                                                                ('Health & Beauty', 'Health & Beauty'), ('Luggage & Bags', 'Luggage & Bags'), ('Office Supplies', 'Office Supplies'),
+                                                                                ('Religious', 'Religious'), ('Sporting Goods', 'Sporting Goods'), ('Toys & Games', 'Toys & Games'),
+                                                                                ('Vehicle & Parts', 'Vehicle & Parts'), ('Others', 'Others')
+                                                                                ], widget=forms.Select(attrs={ 'class': 'item-cat-field'}))
+    start_bid = forms.DecimalField(required=True, label='Starting Bid ', max_digits=10, decimal_places=2, min_value=1,
+                                   widget=forms.NumberInput(attrs={'class': 'start-bid-field', 'autocomplete': 'off', 'step':'0.10', 'placeholder': 'Minimum RM 1.00'}))
+    auction_end_time = forms.DateTimeField(required=True, label='End Time ', widget=forms.DateTimeInput(attrs={'type': 'datetime-local',  'class': 'auction-end-time-field'}))
+    picture1 = forms.ImageField(required=False, widget=forms.FileInput(attrs={'class': 'picture-field'}))
+    picture2 = forms.ImageField(required=False, widget=forms.FileInput(attrs={'class': 'picture-field'}))
+    picture3 = forms.ImageField(required=False, widget=forms.FileInput(attrs={'class': 'picture-field'}))
+    picture4 = forms.ImageField(required=False, widget=forms.FileInput(attrs={'class': 'picture-field'}))
+    picture5 = forms.ImageField(required=False, widget=forms.FileInput(attrs={'class': 'picture-field'}))
+    picture6 = forms.ImageField(required=False, widget=forms.FileInput(attrs={'class': 'picture-field'}))
+    picture7 = forms.ImageField(required=False, widget=forms.FileInput(attrs={'class': 'picture-field'}))
 
     def clean_start_bid(self):
         start_bid = self.cleaned_data['start_bid']
@@ -133,7 +134,7 @@ class CheckoutForm(forms.Form):
     buyer_address = forms.CharField(required=True, label='Buyer Shipping Address', widget=forms.Textarea(attrs={'class': 'address-field'}))
 
 class ReceiveForm(forms.Form):
-    comment = forms.CharField(label='Comment', required=True, widget=forms.Textarea(attrs={'class': 'comment-field', 'autocomplete': 'off'}))
+    comment = forms.CharField(max_length=50, label='Comment', required=True, widget=forms.Textarea(attrs={'class': 'comment-field', 'autocomplete': 'off'}))
     ratings = forms.IntegerField(label='Ratings', min_value=1, max_value=5, required=True, widget=forms.NumberInput(attrs={'class': 'rating-field'}))
 
 class ReportForm(forms.Form):

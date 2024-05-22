@@ -5,54 +5,81 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Create Auction | Bidify</title>
-    <link rel="stylesheet" type="text/css" href="{% static 'css/create_saved_auction.css' %}">
+    <title>Edit Auction | Bidify</title>
     <link rel="stylesheet" type="text/css" href="{% static 'css/font.css' %}">
-    <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.0/themes/base/jquery-ui.css">
-    <style>
-        .image-container {
-            width: 100%;
-            overflow: hidden;
-            white-space: nowrap;
-            transition: transform 0.5s ease;
-        }
-        
-        .image-container img {
-            width: 100%;
-            display: inline-block;
-            vertical-align: top;
-        }
-    </style>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/auction_details.css' %}">
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
 </head>
-
 <body>
-    <p><a href="{% url 'home_page' %}"> &lt; Back</a></p>
-    <img src="{% static 'image/bidify.png' %}" alt="bidify" class="logo">
-    <div class="image-container">
-        <!-- Display images here -->
-            <img src="{{ auction.picture1.url }}" alt="Picture 1">
-            <img src="{{ auction.picture2.url }}" alt="Picture 2">
-            <img src="{{ auction.picture3.url }}" alt="Picture 3">
-            <img src="{{ auction.picture4.url }}" alt="Picture 4">
-            
-    </div>
+    <ul class="navbar">
+        <li><a href="javascript:history.back()"> &lt; Back</a></li>
+        <li><a href="{% url 'home_page' %}"><img src="{% static 'image/bidify_white.png' %}" class="bidify-white-icon"></a></li>
+        <li><a href="{% url 'watchlist' %}"><img src="{% static 'image/watchlist_icon.png' %}" class="watchlist-icon">  Watchlist</a></li>
+        <li><a href="{% url 'cart' %}"><img src="{% static 'image/cart_icon.png' %}" class="cart-icon">  Cart</a></li>
+        <li><a href="{% url 'wallet' %}"><img src="{% static 'image/wallet_icon.png' %}" class="wallet-icon">  RM{{ user.balance }}</a></li>
+    </ul>
     
-    <div class="controls">
-        <button onclick="slideLeft()">Slide Left</button>
-        <button onclick="slideRight()">Slide Right</button>
-        <button onclick="deleteImage()">Delete Image</button>
+    <hr>
+    <h1>Edit Auction</h1>
+    <div class="auction-details">
+        <div class="row">
+            <div class="col-md-6">
+                <div id="itemCarousel" class="carousel slide" data-ride="carousel">
+                    <div class="carousel-inner">
+                        {% for picture in pictures %}
+                            <div class="carousel-item {% if forloop.first %}active{% endif %}">
+                                <img src="{{ picture }}" alt="Item Picture {{ forloop.counter }}">
+                            </div>
+                        {% endfor %}
+                    </div>
+                    <a class="carousel-control-prev" href="#itemCarousel" role="button" data-slide="prev">
+                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                        <span class="sr-only">Previous</span>
+                    </a>
+                    <a class="carousel-control-next" href="#itemCarousel" role="button" data-slide="next">
+                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                        <span class="sr-only">Next</span>
+                    </a>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <form method="post" action="{% url 'edit_auction' auction.id %}" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <p style="color: #2f3651;">Item Name: {{ form.item_name }}</p>
+                    <p style="color: #2f3651;" class="category">Item Category: <br> {{ form.item_cat }}</p>
+                    <hr>
+                    <p style="color: #2f3651;" class="description">Item Description: {{ form.item_desc }}</p>
+                    <hr>
+                    <h5 style="color: #2f3651;">Auction Info</h5>
+                    <p>Starting Bid: <b>RM</b> {{ form.start_bid }}</p>
+                    <p>Auction End Time: {{ form.auction_end_time }}</p>
+                    <p>Replace Picture 1: {{ form.picture1 }}</p>
+                    <p>Replace Picture 2: {{ form.picture2 }}</p>
+                    <p>Replace Picture 3: {{ form.picture3 }}</p>
+                    <p>Replace Picture 4: {{ form.picture4 }}</p>
+                    <p>Replace Picture 5: {{ form.picture5 }}</p>
+                    <p>Replace Picture 6: {{ form.picture6 }}</p>
+                    <p>Replace Picture 7: {{ form.picture7 }}</p>
+                    <div class="btn-section">
+                        <button class="save-btn" type="submit" name="action" value="save">Save Auction</button>
+                        <button class="post-btn" type="submit" name="action" value="post">Post Auction</button>
+                        <button class="delete-btn" type="submit" name="action" value="delete">Delete Auction</button>
+                    </div>
+                </form>     
+            </div>
+        </div>
     </div>
-    <form method="post" action="{% url 'edit_auction' auction.id %}" enctype="multipart/form-data">
-        {% csrf_token %}
-        {{ form.as_p }}
 
-        <button type="submit" name="action" value="save">Save Auction</button>
-        <button type="submit" name="action" value="post">Post Auction</button>
-        <button type="submit" name="action" value="delete">Delete Auction</button>
-    </form>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://code.jquery.com/ui/1.13.0/jquery-ui.min.js"></script>
+    <script>
+        function goBack() {
+            window.history.back();
+        }
+    </script>
+
     <script>
         function validateAuctionEndDatetime() {
             var auctionEndDatetime = new Date(document.getElementById('auction_end_time').value);
@@ -64,33 +91,59 @@
             }
             return true;
         }
-
-        document.getElementById('CreateAuctionForm').addEventListener('submit', function(event) {
-            
-            if (!validateAuctionEndDatetime()) {
-                event.preventDefault();
-            }
-        });
     </script>
 
     <script>
-        let currentIndex = 0;
-        const images = document.querySelectorAll('.image-container img');
-        
-        function slideLeft() {
-            currentIndex = (currentIndex - 1 + images.length) % images.length;
-            updateSlider();
-        }
-        
-        function slideRight() {
-            currentIndex = (currentIndex + 1) % images.length;
-            updateSlider();
-        }
-        
-        function updateSlider() {
-            const offset = -currentIndex * 100;
-            document.querySelector('.image-container').style.transform = `translateX(${offset}%)`;
-        }
+        document.querySelectorAll('.delete-btn').forEach(function(button) {
+                button.addEventListener('click', function(event) {
+                    const confirmed = confirm('Confirm delete this auction?');
+                    
+                    if (!confirmed) {
+                        event.preventDefault();
+                    }
+                });
+            });
+    </script>
+
+    <script>
+        document.querySelectorAll('.save-btn').forEach(function(button) {
+                button.addEventListener('click', function(event) {
+                    const confirmed = confirm('Confirm save this auction?');
+                    
+                    if (!confirmed) {
+                        event.preventDefault();
+                    }
+                });
+            });
+    </script>
+
+    <script>
+        document.querySelectorAll('.post-btn').forEach(function(button) {
+                button.addEventListener('click', function(event) {
+                    const confirmed = confirm('Confirm post this auction?');
+                    
+                    if (!confirmed) {
+                        event.preventDefault();
+                    }
+                });
+            });
+    </script>
+
+    <script>
+        fetch("{% url 'get_wallet_balance' %}")
+            .then(response => {
+                if (response.ok) {
+                    return response.json();
+                } else {
+                    throw new Error('Failed to fetch wallet balance');
+                }
+            })
+            .then(data => {
+                document.getElementById('wallet-balance').textContent = `RM${data.balance}`;
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
     </script>
 </body>
 </html>

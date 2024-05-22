@@ -37,8 +37,8 @@ class OASuser(models.Model):
         self.userPass = make_password(raw_password)
 
 class OASauction(models.Model):
-    item_name = models.CharField(max_length=50)
-    item_desc = models.TextField(max_length=100)
+    item_name = models.CharField(max_length=100)
+    item_desc = models.TextField(max_length=200)
     item_cat = models.CharField(max_length=50)
     start_bid = models.DecimalField(max_digits=10, decimal_places=2, validators=[MinValueValidator(0)])
     current_bid = models.DecimalField(max_digits=10, decimal_places=2, default=start_bid)
