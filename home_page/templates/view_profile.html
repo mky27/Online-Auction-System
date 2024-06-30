@@ -10,9 +10,7 @@
 </head>
 <body>
     <ul class="navbar">
-            <li style="float:left"><a href="{% url 'view_profile' %}"><img src="{% static 'image/profile_icon.png' %}" class="profile-icon">
-            &nbsp;&nbsp;Welcome, {{ user.username }}
-            </a></li>
+        <li style="float:left"><a href="{% url 'home_page' %}"> &lt; Back</a></li>
         <li style="float:left" class="dropdown">
             <a href="javascript:void(0)" class="dropbtn"><img src="{% static 'image/settings_icon.png' %}" class="settings-icon">
                 &nbsp;Settings
@@ -41,15 +39,13 @@
     </ul>
 
     <div class="header-content">
-        <img src="{% static 'image/bidify.png' %}" alt="Bidify Logo" class="logo">
+        <img src="{% static 'image/profile_icon_black.png' %}" alt="Profile image" class="profile-image">
     </div>
+    <h1 class="personal-info">{{ user.username }}</h1>
+    <p class="personal-info">{{ user.fName }} {{ user.lName }}</p>
+    <p class="personal-info">{{ user.email }}</p><br>
     <hr>
-    <h1 class="personal-info">{{ user.username }}'s Profile</h1>
-    <p class="personal-info">First Name: {{ user.fName }}</p>
-    <p class="personal-info">Last Name: {{ user.lName }}</p>
-    <p class="personal-info">Email: {{ user.email }}</p>
-    <hr>
-    <h2 style="margin-left: 30px; color: #2f3651;">Ongoing Auctions</h2>
+    <h2 style="color: #2f3651; text-align: center;">Ongoing Auctions</h2>
     {% if ongoing_auctions %}
         <ul class="auction-list">
             {% for auction in ongoing_auctions %}
@@ -68,7 +64,7 @@
         <p>No ongoing auctions.</p>
     {% endif %}
 
-    <h2 style="margin-left: 30px; color: #2f3651;">Completed Auctions</h2>
+    <h2 style="color: #2f3651; text-align: center;">Completed Auctions</h2>
     {% if completed_auctions %}
         <ul class="auction-list">
             {% for auction in completed_auctions %}
@@ -77,7 +73,7 @@
                         <img src="{{ auction.picture1.url }}" alt="Item Picture 1" class="item-pic">
                         <h2>{{ auction.item_name }}</h2><br>
                         <p class="auction-desc">Winner: <b>{% if auction.current_bidder %}{{ auction.current_bidder.username }}{% else %}No winner{% endif %}</b></p>
-                        <p class="auction-desc">Price: <b>{% if auction.current_bidder %}{{ auction.current_bid }}{% else %}No winner{% endif %}</b></p>
+                        <p class="auction-desc">Price: <b>{% if auction.current_bidder %}{{ auction.current_bid }}{% else %}{{auction.start_bid}}{% endif %}</b></p>
                         <p class="auction-desc">End Date: <b>{{ auction.auction_end_time|date:"d M Y" }}</b></p>
                         <p class="auction-desc">End Time: <b>{{ auction.auction_end_time|date:"h:iA" }}</b></p>
                     </a>

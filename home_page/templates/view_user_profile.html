@@ -5,32 +5,58 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>User Profile | Admin</title>
-    <link rel="stylesheet" type="text/css" href="{% static 'css/manage_user.css' %}">
+    <title>View User Profile | Admin</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/home_page.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/font.css' %}">
 </head>
 <body>
-    <p><a href="{% url 'manage_user' %}"> &lt; Back</a></p>
-    <h1>User Profile: {{ user.username }}</h1>
-    <p>First Name: {{ user.fName }}</p>
-    <p>Last Name: {{ user.lName }}</p>
-    <p>Email: {{ user.email }}</p>
-    <p>Phone: {{ user.phoneNo }}</p>
-    <p>Address: {{ user.address }}</p>
-    <p>Date of Birth: {{ user.date_of_birth }}</p>
-    <p>Gender: {{ user.gender }}</p>
-    <form id="delete-form-{{ user.id }}" method="post" action="{% url 'delete_user' user.id %}" style="display:inline;">
+    <ul class="navbar">
+        <li style="float:left"><a href="{% url 'home_page' %}"> &lt; Back</a></li>
+        <li style="float:left"><a><img src="{% static 'image/profile_icon.png' %}" class="profile-icon">
+        &nbsp;&nbsp;Welcome, ADMIN
+        </a></li>
+        <li style="float:left" class="dropdown">
+            <a href="javascript:void(0)" class="dropbtn"><img src="{% static 'image/settings_icon.png' %}" class="settings-icon">
+                &nbsp;Settings
+            </a>
+            <div class="dropdown-content">
+                <a href="{% url 'change_pass' %}">Change Password</a>
+                <a href="{% url 'logout' %}" class="logout-btn">Logout</a>
+            </div>
+        </li>
+        <li style="float:right"><a href="{% url 'manage_user' %}">Manage Users</a></li>
+        <li style="float:right"><a href="{% url 'manage_trans' %}">Manage Transactions</a></li>
+        <li style="float:right"><a href="{% url 'manage_report' %}">Manage Reports</a></li>
+    </ul>
+
+    <div class="header-content">
+        <img src="{% static 'image/profile_icon_black.png' %}" alt="Profile image" class="profile-image">
+        <h1 class="personal-info">{{ user.username }}</h1>
+        <p class="personal-info">{{ user.fName }} {{ user.lName }}</p>
+    </div>
+    <hr>
+
+    <h2 style="text-align: left; margin-left: 7%;">User's Personal Information</h2>
+    <div class="row1" style="text-align: left; margin-left: 5%; margin-top: 3%; font-size: large;">
+        <p><b>First Name: </b>{{ user.fName }}<span class="tab"></span><b>Last Name: </b>{{ user.lName }}</p>
+    </div>
+    <div class="row2" style="text-align: left; margin-left: 5%; margin-top: 2%; font-size: large;">
+        <p><b>Gender: </b>{{ user.gender }}<span class="tab"></span><b>Phone: </b>{{ user.phoneNo }}<span class="tab"></span><b>Date of Birth: </b>{{ user.date_of_birth }}</p>
+    </div>
+    <div class="row3" style="text-align: left; margin-left: 5%; margin-top: 2%; font-size: large;">
+        <p><b>Email: </b>{{ user.email }}<span class="tab"></span><b>Address: </b>{{ user.address }}</p>
+    </div>
+    <br>
+    <form id="delete-form-{{ user.id }}" method="post" action="{% url 'delete_user' user.id %}" style="text-align: center;">
         {% csrf_token %}
         <button type="submit" class="delete-button" data-user-id="{{ user.id }}">Delete</button>
     </form>
 
     <script>
-        // Add event listener to all delete buttons
         document.querySelectorAll('.delete-button').forEach(function(button) {
             button.addEventListener('click', function(event) {
-                // Show confirmation prompt
                 const confirmed = confirm('Are you sure you want to delete this user?');
                 
-                // If user cancels, prevent the form submission
                 if (!confirmed) {
                     event.preventDefault();
                 }

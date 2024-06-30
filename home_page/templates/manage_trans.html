@@ -7,47 +7,95 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Manage Transactions | Admin</title>
     <link rel="stylesheet" type="text/css" href="{% static 'css/home_page.css' %}">
-</head>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/font.css' %}"></head>
 <body>
-    <p><a href="{% url 'home_page' %}"> &lt; Back</a></p>
-    <h1>Manage Transactions</h1>
-    <table>
-        <thead>
-            <tr>
-                <th>Date</th>
-                <th>Type</th>
-                <th>Amount</th>
-                <th>Payer</th>
-                <th>Receiver</th>
-                <th>Action</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for transaction in transactions %}
-                <tr>
-                    <td>{{ transaction.timestamp }}</td>
-                    <td>{{ transaction.transaction_type }}</td>
-                    <td>{{ transaction.amount }}</td>
-                    <td>{{ transaction.main_user.username }}</td>
-                    <td>{{ transaction.second_user.username }}</td>
-                    <td>
-                        <form action="{% url 'approve_trans' transaction.id %}" id="approve-form-{{ transaction.id }}" method="post" style="display:inline;">
-                            {% csrf_token %}
-                            <button type="submit" class="approve-button" data-user-id="{{ transaction.id }}">Approved</button>
-                        </form>
-                        <form action="{% url 'decline_trans' transaction.id %}" id="decline-form-{{ transaction.id }}" method="post" style="display:inline;">
-                            {% csrf_token %}
-                            <button type="submit" class="decline-button" data-user-id="{{ transaction.id }}">Decline</button>
-                        </form>
-                    </td>
-                </tr>
-            {% empty %}
-                <tr>
-                    <td colspan="5">No transactions.</td>
-                </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+    <ul class="navbar">
+        <li style="float:left"><a href="{% url 'home_page' %}"> &lt; Back</a></li>
+        <li style="float:left"><a><img src="{% static 'image/profile_icon.png' %}" class="profile-icon">
+        &nbsp;&nbsp;Welcome, ADMIN
+        </a></li>
+        <li style="float:left" class="dropdown">
+            <a href="javascript:void(0)" class="dropbtn"><img src="{% static 'image/settings_icon.png' %}" class="settings-icon">
+                &nbsp;Settings
+            </a>
+            <div class="dropdown-content">
+                <a href="{% url 'change_pass' %}">Change Password</a>
+                <a href="{% url 'logout' %}" class="logout-btn">Logout</a>
+            </div>
+        </li>
+        <li style="float:right"><a href="{% url 'manage_user' %}">Manage Users</a></li>
+        <li style="float:right"><a href="{% url 'manage_trans' %}">Manage Transactions</a></li>
+        <li style="float:right"><a href="{% url 'manage_report' %}">Manage Reports</a></li>
+    </ul>
+
+    <div class="header-content">
+        <h1>Manage Transactions</h1>
+    </div>
+    <hr>
+    <div class="trans-container">
+        <div class="transaction-list">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Type</th>
+                        <th>Amount</th>
+                        <th>Payer</th>
+                        <th>Receiver</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for transaction in transactions %}
+                        <tr>
+                            <td>{{ transaction.timestamp }}</td>
+                            <td>{{ transaction.transaction_type }}</td>
+                            <td>{{ transaction.amount }}</td>
+                            <td>{{ transaction.main_user.username }}</td>
+                            <td>{{ transaction.second_user.username }}</td>
+                            <td>
+                                <form action="{% url 'approve_trans' transaction.id %}" id="approve-form-{{ transaction.id }}" method="post" style="display:inline;">
+                                    {% csrf_token %}
+                                    <button type="submit" class="approve-button" data-user-id="{{ transaction.id }}">Approved</button>
+                                </form>
+                                <form action="{% url 'decline_trans' transaction.id %}" id="decline-form-{{ transaction.id }}" method="post" style="display:inline;">
+                                    {% csrf_token %}
+                                    <button type="submit" class="decline-button" data-user-id="{{ transaction.id }}">Decline</button>
+                                </form>
+                            </td>
+                        </tr>
+                    {% empty %}
+                        <tr>
+                            <td colspan="5"><b>No transactions.</b></td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <style>
+        .trans-container {
+            width: 80%;
+            margin: 0 auto;
+            text-align: center;
+        }
+        .transaction-list {
+            margin-bottom: 20px;
+        }
+        table {
+            margin-top: 5%;
+            width: 100%;
+            border-collapse: collapse;
+        }
+        table, th, td {
+            border: 1px solid black;
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+        }
+    </style>
 
     <script>
         document.querySelectorAll('.approve-button').forEach(function(button) {

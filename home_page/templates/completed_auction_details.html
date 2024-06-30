@@ -57,6 +57,10 @@
                 <p>Winner Name: <b>{% if auction_winner.buyer_name %}{{ auction_winner.buyer_name }}{% else %}No winner{% endif %}</b></p>
                 <p>Winner Phone No: <b>{% if auction_winner.buyer_phone %}{{ auction_winner.buyer_phone }}{% else %}No winner{% endif %}</b></p>
                 <p>Winner Address: <b>{% if auction_winner.buyer_address %}{{ auction_winner.buyer_address }}{% else %}No winner{% endif %}</b></p>
+                <hr>
+                <h5 style="color: #2f3651;">Buyer's Feedback</h5>
+                <p>Ratings: <b>{{ auction.ratings }} ⭐️</b></p>
+                <p>Comment: <b>{{ auction.comment }}</b></p>
                 <div class="btn-section">
                     {% if deadline_passed and not auction_winner.is_checkout %}
                         <form action="" method="post">

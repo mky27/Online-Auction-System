@@ -5,19 +5,66 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" type="text/css" href="{% static 'css/wallet.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/home_page.css' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'css/font.css' %}">
     <title>Wallet | Bidify</title>
 </head>
 <body>
-    <p><a href="{% url 'home_page' %}"> &lt; Back</a></p>
+    <ul class="navbar">
+        <li style="float:left"><a href="{% url 'home_page' %}"> &lt; Back</a></li>
+        {% if user.is_authenticated %}
+            <li style="float:left"><a href="{% url 'view_profile' %}"><img src="{% static 'image/profile_icon.png' %}" class="profile-icon">
+            &nbsp;&nbsp;Welcome, {{ user.username }}
+            </a></li>
+        {% else %}
+            <li style="float:left"><a href="{% url 'view_profile' %}"><img src="{% static 'image/profile_icon.png' %}" class="profile-icon">
+            &nbsp;&nbsp;Welcome, guest
+            </a></li>
+            <li style="float:left"><a href="{% url 'login' %}">Login or Register</a></li>
+        {% endif %}
+        <li style="float:left" class="dropdown">
+            <a href="javascript:void(0)" class="dropbtn"><img src="{% static 'image/settings_icon.png' %}" class="settings-icon">
+                &nbsp;Settings
+            </a>
+            <div class="dropdown-content">
+                <a href="{% url 'edit_profile' %}">Edit Profile</a>
+                <a href="{% url 'change_pass' %}">Change Password</a>
+                <a href="{% url 'report' %}">Report</a>
+                <a href="{% url 'logout' %}" class="logout-btn">Logout</a>
+            </div>
+        </li>
+        <li style="float:right"><a href="{% url 'wallet' %}"><img src="{% static 'image/wallet_icon.png' %}" class="wallet-icon">  RM{{ user.balance }}</a></li>
+        <li style="float:right"><a href="{% url 'cart' %}"><img src="{% static 'image/cart_icon.png' %}" class="cart-icon">  Cart</a></li>
+        <li style="float:right"><a href="{% url 'watchlist' %}"><img src="{% static 'image/watchlist_icon.png' %}" class="watchlist-icon">  Watchlist</a></li>
+        <li style="float:right"><a href="{% url 'to_receive' %}">To Receive</a></li>
+        <li style="float:right"><a href="{% url 'to_deliver' %}">To Deliver</a></li>
+        <li style="float:right" class="dropdown">
+            <a href="javascript:void(0)" class="dropbtn">Sell</a>
+            <div class="dropdown-content">
+                <a href="{% url 'create_auction' %}">Create Auction</a>
+                <a href="{% url 'saved_auction' %}">Saved Auction</a>
+                <a href="{% url 'ongoing_auction' %}">Ongoing Auction</a>
+                <a href="{% url 'completed_auction' %}">Completed Auction</a>
+            </div>
+        </li>
+    </ul>
+
+    <div class="header-content">
+        <img src="{% static 'image/bidify.png' %}" alt="logo" class="logo">
+    </div>
+    <hr>
     <div class="wallet-container">
         <h1>Wallet</h1>
-
         <div class="wallet-balance">
             <h2>Balance: RM{{ user.balance }}</h2>
+            <form method="post" action="{% url 'reload_wallet' %}">
+                {% csrf_token %}
+                <label for="amount">Amount (RM):</label>
+                <input type="number" id="amount" name="amount" min="1" step="0.01" required>
+                <button type="submit">Reload</button>
+            </form>
+            <hr>
         </div>
-
         <div class="transaction-history">
             <h2>Transaction History</h2>
             <table>
@@ -31,35 +78,25 @@
                 </thead>
                 <tbody>
                     {% for transaction in transactions %}
-                    <tr>
-                        <td>{{ transaction.timestamp }}</td>
-                        <td>{{ transaction.transaction_type }}</td>
-                        <td>RM{{ transaction.amount }}</td>
-                        <td>
-                            {% if transaction.transaction_type == 'PAYMENT' %}
-                                Transfer To: {{ transaction.second_user.username }}
-                            {% elif transaction.transaction_type == 'RECEIVE' %}
-                                Receive From: {{ transaction.second_user.username }}
-                            {% elif transaction.transaction_type == 'RELOAD' %}
-                                Reload wallet
-                            {% elif transaction.transaction_type == 'REFUND' %}
-                                Transaction declined by admin
-                            {% endif %}
-                        </td>
-                    </tr>
+                        <tr>
+                            <td>{{ transaction.timestamp }}</td>
+                            <td>{{ transaction.transaction_type }}</td>
+                            <td>RM{{ transaction.amount }}</td>
+                            <td>
+                                {% if transaction.transaction_type == 'PAYMENT' %}
+                                    Transfer To: {{ transaction.second_user.username }}
+                                {% elif transaction.transaction_type == 'RECEIVE' %}
+                                    Receive From: {{ transaction.second_user.username }}
+                                {% elif transaction.transaction_type == 'RELOAD' %}
+                                    Reload wallet
+                                {% elif transaction.transaction_type == 'REFUND' %}
+                                    Transaction declined by admin
+                                {% endif %}
+                            </td>
+                        </tr>
                     {% endfor %}
                 </tbody>
             </table>
-        </div>
-
-        <div class="reload-wallet">
-            <h2>Reload Wallet</h2>
-            <form method="post" action="{% url 'reload_wallet' %}">
-                {% csrf_token %}
-                <label for="amount">Amount (RM):</label>
-                <input type="number" id="amount" name="amount" min="1" step="0.01" required>
-                <button type="submit">Reload</button>
-            </form>
         </div>
     </div>
 

@@ -7,52 +7,102 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Manage Reports | Admin</title>
     <link rel="stylesheet" type="text/css" href="{% static 'css/home_page.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/font.css' %}">
 </head>
 <body>
-    <p><a href="{% url 'home_page' %}"> &lt; Back</a></p>
-    <h1>Manage Reports</h1>
-    <form method="GET" action="{% url 'manage_report' %}">
-        <input type="text" name="q" placeholder="Search by report title" value="{{ query }}">
-        <select name="category">
-            <option value="">All Categories</option>
-            {% for category in categories %}
-                <option value="{{ category }}" {% if selected_category == category %}selected{% endif %}>{{ category }}</option>
-            {% endfor %}
-        </select>
-        <button type="submit">Search</button>
-        {% if query or selected_category %}
-            <a href="{% url 'manage_report' %}"><button type="button">Clear Results</button></a>
-        {% endif %}
-    </form>
-    <table>
-        <thead>
-            <tr>
-                <th>Title</th>
-                <th>Category</th>
-                <th>Created at</th>
-                <th></th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for report in reports %}
-                <tr>
-                    <td><a href="{% url 'view_report' report.id %}">{{ report.title }}</a></td>
-                    <td>{{ report.category }}</td>
-                    <td>{{ report.created_at }}</td>
-                    <td>
-                        <form method="post" action="{% url 'delete_report' report.id %}" style="display:inline;">
-                            {% csrf_token %}
-                            <button type="submit" class="delete-button" data-report-id="{{ report.id }}">Delete</button>
-                        </form>
-                    </td>
-                </tr>
-            {% empty %}
-                <tr>
-                    <td colspan="5">No reports found.</td>
-                </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+    <ul class="navbar">
+        <li style="float:left"><a href="{% url 'home_page' %}"> &lt; Back</a></li>
+        <li style="float:left"><a><img src="{% static 'image/profile_icon.png' %}" class="profile-icon">
+        &nbsp;&nbsp;Welcome, ADMIN
+        </a></li>
+        <li style="float:left" class="dropdown">
+            <a href="javascript:void(0)" class="dropbtn"><img src="{% static 'image/settings_icon.png' %}" class="settings-icon">
+                &nbsp;Settings
+            </a>
+            <div class="dropdown-content">
+                <a href="{% url 'change_pass' %}">Change Password</a>
+                <a href="{% url 'logout' %}" class="logout-btn">Logout</a>
+            </div>
+        </li>
+        <li style="float:right"><a href="{% url 'manage_user' %}">Manage Users</a></li>
+        <li style="float:right"><a href="{% url 'manage_trans' %}">Manage Transactions</a></li>
+        <li style="float:right"><a href="{% url 'manage_report' %}">Manage Reports</a></li>
+    </ul>
+
+    <div class="header-content">
+        <h1>Manage Reports</h1>
+        <form method="GET" action="{% url 'manage_report' %}">
+            <input type="text" name="q" placeholder="Search by report title" value="{{ query }}">
+            <select name="category">
+                <option value="">All Categories</option>
+                {% for category in categories %}
+                    <option value="{{ category }}" {% if selected_category == category %}selected{% endif %}>{{ category }}</option>
+                {% endfor %}
+            </select>
+            <button type="submit">Search</button>
+            {% if query or selected_category %}
+                <a href="{% url 'manage_report' %}"><button type="button">Clear Results</button></a>
+            {% endif %}
+        </form>
+    </div>
+    <hr>
+
+    <div class="report-container">
+        <div class="report-list">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Title</th>
+                        <th>Category</th>
+                        <th>Created at</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for report in reports %}
+                        <tr>
+                            <td><a href="{% url 'view_report' report.id %}">{{ report.title }}</a></td>
+                            <td>{{ report.category }}</td>
+                            <td>{{ report.created_at }}</td>
+                            <td>
+                                <form method="post" action="{% url 'delete_report' report.id %}" style="display:inline;">
+                                    {% csrf_token %}
+                                    <button type="submit" class="delete-button" data-report-id="{{ report.id }}">Delete</button>
+                                </form>
+                            </td>
+                        </tr>
+                    {% empty %}
+                        <tr>
+                            <td colspan="5"><b>No reports found.</b></td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <style>
+        .report-container {
+            width: 80%;
+            margin: 0 auto;
+            text-align: center;
+        }
+        .report-list {
+            margin-bottom: 20px;
+        }
+        table {
+            margin-top: 5%;
+            width: 100%;
+            border-collapse: collapse;
+        }
+        table, th, td {
+            border: 1px solid black;
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+        }
+    </style>
 
     <script>
         document.querySelectorAll('.delete-button').forEach(function(button) {
