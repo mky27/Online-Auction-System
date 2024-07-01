@@ -6,17 +6,41 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Report | Admin</title>
-    <link rel="stylesheet" type="text/css" href="{% static 'css/manage_user.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/home_page.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/font.css' %}">
 </head>
 <body>
-    <p><a href="{% url 'manage_report' %}"> &lt; Back</a></p>
-    <h1>Report Details</h1>
-    <p>Title: {{ report.title }}</p>
-    <p>User: {{ report.user.username }}</p>
-    <p>Category: {{ report.category }}</p>
-    <p>Submitted At: {{ report.created_at }}</p>
-    <p>Content: {{ report.content }}</p>
-    <form method="post" action="{% url 'delete_report' report.id %}" style="display:inline;">
+    <ul class="navbar">
+        <li style="float:left"><a href="{% url 'manage_report' %}"> &lt; Back</a></li>
+        <li style="float:left"><a><img src="{% static 'image/profile_icon.png' %}" class="profile-icon">
+        &nbsp;&nbsp;Welcome, ADMIN
+        </a></li>
+        <li style="float:left" class="dropdown">
+            <a href="javascript:void(0)" class="dropbtn"><img src="{% static 'image/settings_icon.png' %}" class="settings-icon">
+                &nbsp;Settings
+            </a>
+            <div class="dropdown-content">
+                <a href="{% url 'change_pass' %}">Change Password</a>
+                <a href="{% url 'logout' %}" class="logout-btn">Logout</a>
+            </div>
+        </li>
+        <li style="float:right"><a href="{% url 'manage_user' %}">Manage Users</a></li>
+        <li style="float:right"><a href="{% url 'manage_trans' %}">Manage Transactions</a></li>
+        <li style="float:right"><a href="{% url 'manage_report' %}">Manage Reports</a></li>
+    </ul>
+
+    <div class="header-content">
+        <img src="{% static 'image/report_icon.png' %}" alt="Report" class="profile-image">
+        <h1>Report Details</h1>
+    </div>
+    <hr>
+
+    <p style="margin-left: 3%;"><b>User: </b><a href="{% url 'view_user_profile' user.id %}">{{ report.user.username }}</a></p>
+    <p style="margin-left: 3%;"><b>Title: </b>{{ report.title }}</p>
+    <p style="margin-left: 3%;"><b>Category: </b>{{ report.category }}</p>
+    <p style="margin-left: 3%;"><b>Content: </b>{{ report.content }}</p>
+    <p style="margin-left: 3%;"><b>Submitted At: </b>{{ report.created_at }}</p>
+    <form method="post" action="{% url 'delete_report' report.id %}" style="text-align: left; margin-left: 5%; margin-top: 3%;">
         {% csrf_token %}
         <button type="submit" class="delete-button" data-report-id="{{ report.id }}">Delete</button>
     </form>

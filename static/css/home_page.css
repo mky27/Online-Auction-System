@@ -134,9 +134,9 @@ button[type="submit"]:hover, button[type="button"]:hover {
 }
 
 .item-pic {
-    width: 200px;
+    width: 210px;
     height: 150px;
-    object-fit: cover;
+    object-fit:contain;
     border-radius: 3px;
 }
 
