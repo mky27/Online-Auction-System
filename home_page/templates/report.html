@@ -46,7 +46,17 @@
     <h1>Report</h1>
     <form method="post" action="{% url 'report' %}">
         {% csrf_token %}
-        {{ form.as_p }}
+        <div class="form-row1" style="margin-top: 4%;">
+            {{ form.title.label_tag }}
+            {{ form.title }}
+            <span class="tab2"></span>
+            {{ form.category.label_tag }}
+            {{ form.category }}
+        </div><br><br>
+        <div class="form-row2">
+            {{ form.content.label_tag }}
+            {{ form.content }}
+        </div><br><br>
         <button type="submit" class="report-button">Submit</button>
     </form>
 

@@ -35,7 +35,7 @@
     </div>
     <hr>
 
-    <p style="margin-left: 3%;"><b>User: </b><a href="{% url 'view_user_profile' user.id %}">{{ report.user.username }}</a></p>
+    <p style="margin-left: 3%;"><b>User: </b>{{ report.user.username }}</p>
     <p style="margin-left: 3%;"><b>Title: </b>{{ report.title }}</p>
     <p style="margin-left: 3%;"><b>Category: </b>{{ report.category }}</p>
     <p style="margin-left: 3%;"><b>Content: </b>{{ report.content }}</p>

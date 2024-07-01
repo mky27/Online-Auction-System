@@ -406,6 +406,7 @@ def manual_update_auction():
 
 @login_required
 def watchlist(request):
+    manual_update_auction()
     watchlist_items = OASwatchlist.objects.filter(user=request.user)
     return render(request, 'watchlist.html', {'watchlist_items': watchlist_items})
 
@@ -630,6 +631,7 @@ def completed_auction_details(request, auction_id):
 
 @login_required
 def ongoing_auction(request):
+    manual_update_auction()
     ongoing_auctions = OASauction.objects.filter(seller=request.user, is_ongoing=True)
     query = request.GET.get('q', '')
     selected_category = request.GET.get('category', '')
