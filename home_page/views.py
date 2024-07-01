@@ -1,3 +1,4 @@
+import random
 from datetime import timedelta
 from django.db import IntegrityError
 from django.core.exceptions import ValidationError
@@ -31,8 +32,11 @@ def home_page(request):
     if selected_category:
         active_auctions = active_auctions.filter(item_cat=selected_category)
 
+    active_auctions_list = list(active_auctions)
+    random.shuffle(active_auctions_list)
+
     context = {
-        'active_auctions': active_auctions,
+        'active_auctions': active_auctions_list,
         'query': query,
         'selected_category': selected_category,
         'categories': [
@@ -47,6 +51,7 @@ def home_page(request):
         return render(request, 'admin_home.html', context)
     
     return render(request, 'home_page.html', context)
+
 
   
 def log_in(request):
